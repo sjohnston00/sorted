@@ -1,11 +1,18 @@
+import mongoose from "mongoose";
 import React from "react";
 import { ActionFunction, Form, LoaderFunction, useLoaderData } from "remix";
 import { Habit as HabitType } from "types/habits.server";
 import Habit from "~/models/Habit.server";
+import MarkedHabit from "~/models/MarkedHabit.server";
 import { requireUserId } from "~/utils/session.server";
 
 type LoaderData = {
-  habits: Array<HabitType>;
+  habits: Array<
+    mongoose.Document<unknown, any, HabitType> &
+      HabitType & {
+        _id: mongoose.Types.ObjectId;
+      }
+  >;
   dates: any;
 };
 
@@ -14,26 +21,36 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
   const habits = await Habit.find({ user: userId });
+  const dates = await MarkedHabit.find({ user: userId }).populate("habit");
   return {
     habits: habits,
-    dates: [
-      {
-        date: "2021-12-12",
-        habit: "Test",
-        user: "123,12312312312"
-      }
-    ]
+    dates: dates
   };
 };
 
 export const action: ActionFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
   const formData = await request.formData();
   const habitId = formData.get("selectedHabit");
   const markedDate = formData.get("markedDate");
-  return {
-    habitId,
-    markedDate
-  };
+
+  if (typeof habitId !== "string" || typeof markedDate !== "string") {
+    return {
+      errors: {
+        habitId: "Please provide a valid Habit",
+        markedDate: "Please provide a valid Date"
+      }
+    };
+  }
+
+  const newMarkedHabit = new MarkedHabit({
+    user: new mongoose.Types.ObjectId(userId),
+    habit: new mongoose.Types.ObjectId(habitId),
+    date: new Date(markedDate)
+  });
+
+  await newMarkedHabit.save();
+  return {};
 };
 
 export default function Index() {
@@ -55,7 +72,7 @@ export default function Index() {
                 Select a habit
               </option>
               {habits.map((habit) => (
-                <option key={habit._id} value={habit._id}>
+                <option key={habit._id.toString()} value={habit._id.toString()}>
                   {habit.name}
                 </option>
               ))}
@@ -79,11 +96,12 @@ export default function Index() {
         )}
       </div>
       <div className='right flex-1'>
+        <h1 className='text-4xl mb-2'>Marked Dates</h1>
         {dates &&
           dates.map((markedDate: any) => (
             <p key={markedDate._id}>
               {new Date(markedDate.date).toLocaleDateString()} -{" "}
-              {markedDate.habit}
+              {markedDate.habit.name}
             </p>
           ))}
       </div>

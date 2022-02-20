@@ -16,15 +16,14 @@ export default function Index() {
       <h1 className='text-3xl'>Habits</h1>
       <ul>
         {data.map((habit: any) => (
-          <li
-            key={habit._id}
-            className='opacity-70 hover:opacity-100 cursor-pointer'>
-            <Link to={habit._id}>
-              {habit.name} - {habit.user.username}
+          <li key={habit._id} className='hover:underline cursor-pointer mb-2'>
+            <Link to={habit._id} title={`${habit.name}`}>
+              {habit.name}
             </Link>
             <div
-              className='h-6 w-6 inline-block border-2 border-slate-900'
-              style={{ backgroundColor: habit.colour }}></div>
+              className='h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle'
+              style={{ backgroundColor: habit.colour }}
+              title={`Colour: ${habit.colour}`}></div>
           </li>
         ))}
       </ul>

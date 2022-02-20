@@ -13,6 +13,9 @@ export default function Navbar() {
         <li>
           <Link to={"/habits"}>Habits</Link>
         </li>
+        <li>
+          <Link to={"/dashboard"}>Dashboard</Link>
+        </li>
 
         {data.user ? (
           <li>
