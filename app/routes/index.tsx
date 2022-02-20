@@ -9,7 +9,7 @@ export default function Index() {
       <Link
         to={"/habits"}
         className='text-blue-400 hover:text-blue-500 hover:underline'>
-        View Habits
+        My Habits
       </Link>
     </main>
   );

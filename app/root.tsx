@@ -40,7 +40,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className='dark:bg-slate-700'>
         <Navbar />
         <main className='sm:m-1 md:mx-2 lg:mx-4 xl:mx-10'>
           <Outlet />

@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 import React from "react";
-import { ActionFunction, Form, LoaderFunction, useLoaderData } from "remix";
+import {
+  ActionFunction,
+  Form,
+  Link,
+  LoaderFunction,
+  useLoaderData
+} from "remix";
 import { Habit as HabitType } from "types/habits.server";
 import Habit from "~/models/Habit.server";
 import MarkedHabit from "~/models/MarkedHabit.server";
@@ -92,17 +98,30 @@ export default function Index() {
             </button>
           </Form>
         ) : (
-          <p className='text-red-500'>You don't have any habits to add</p>
+          <p className='text-red-500'>
+            You don't have any habits to add.{" "}
+            <Link
+              to={"/habits/new"}
+              className='text-blue-300 hover:text-blue-400'>
+              Create One
+            </Link>
+          </p>
         )}
       </div>
       <div className='right flex-1'>
         <h1 className='text-4xl mb-2'>Marked Dates</h1>
         {dates &&
           dates.map((markedDate: any) => (
-            <p key={markedDate._id}>
-              {new Date(markedDate.date).toLocaleDateString()} -{" "}
-              {markedDate.habit.name}
-            </p>
+            <>
+              <p key={markedDate._id}>
+                {new Date(markedDate.date).toLocaleDateString()} -{" "}
+                {markedDate.habit.name}
+              </p>
+              <div
+                className='h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle'
+                style={{ backgroundColor: markedDate.habit.colour }}
+                title={`Colour: ${markedDate.habit.colour}`}></div>
+            </>
           ))}
       </div>
     </div>
