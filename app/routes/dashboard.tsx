@@ -8,6 +8,7 @@ import {
   useLoaderData
 } from "remix";
 import { Habit as HabitType } from "types/habits.server";
+import CalendarComponent from "~/components/calendar";
 import Habit from "~/models/Habit.server";
 import MarkedHabit from "~/models/MarkedHabit.server";
 import { requireUserId } from "~/utils/session.server";
@@ -64,6 +65,7 @@ export default function Index() {
   const minDate = new Date().toISOString().split("T")[0];
   return (
     <div className='flex md:flex-row sm:flex-col gap-2'>
+      <CalendarComponent />
       <div className='left flex-1'>
         <h1 className='text-4xl mb-2'>Dashboard</h1>
         {habits.length > 0 ? (

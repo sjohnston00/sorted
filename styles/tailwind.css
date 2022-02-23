@@ -37,3 +37,20 @@
     @apply text-blue-400 hover:text-blue-500 hover:underline transition-all;
   }
 }
+
+.react-calendar__tile--active {
+  background-color: green;
+}
+
+.react-calendar__tile:disabled {
+  opacity: 0.3;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth abbr {
+  opacity: 0.5;
+}
+
+.react-calendar__month-view__days__day--weekend abbr {
+  opacity: 0.5;
+  color: aqua;
+}
