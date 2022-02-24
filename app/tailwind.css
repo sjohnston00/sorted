@@ -576,6 +576,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin: 0.25rem;
 }
 
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
 .ml-2 {
   margin-left: 0.5rem;
 }
@@ -612,8 +616,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   display: none;
 }
 
+.h-4 {
+  height: 1rem;
+}
+
 .h-6 {
   height: 1.5rem;
+}
+
+.w-4 {
+  width: 1rem;
 }
 
 .w-6 {
@@ -628,8 +640,20 @@ Ensure the default browser behavior of the `hidden` attribute.
   cursor: pointer;
 }
 
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
 .gap-2 {
   gap: 0.5rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
 }
 
 .rounded-sm {
@@ -638,6 +662,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .border-2 {
   border-width: 2px;
+}
+
+.border-slate-700 {
+  --tw-border-opacity: 1;
+  border-color: rgb(51 65 85 / var(--tw-border-opacity));
 }
 
 .border-slate-900 {
@@ -747,6 +776,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.filter {
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 .transition {
   transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
@@ -755,8 +788,32 @@ Ensure the default browser behavior of the `hidden` attribute.
   transition-duration: 150ms;
 }
 
-.react-calendar__tile--active {
-  background-color: green;
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr[title="Saturday"],
+.react-calendar__month-view__weekdays__weekday abbr[title="Sunday"] {
+  color: rgb(249 115 22);
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  text-align: center;
+}
+
+.react-calendar__tile--active abbr {
+  background-color: rgb(249 115 22);
+  box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+}
+
+.react-calendar__month-view__days__day {
+  transition: 0.2s all ease-in-out;
+}
+
+.react-calendar__month-view__days__day abbr {
+  padding: 8px;
+  border-radius: 9999px;
 }
 
 .react-calendar__tile:disabled {
@@ -768,8 +825,8 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 
 .react-calendar__month-view__days__day--weekend abbr {
-  opacity: 0.5;
-  color: aqua;
+  opacity: 0.9;
+  color: rgb(249 115 22);
 }
 
 .hover\:bg-red-700:hover {

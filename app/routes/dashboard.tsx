@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import React from "react";
+import React, { useState } from "react";
 import {
   ActionFunction,
   Form,
@@ -27,8 +27,10 @@ export const loader: LoaderFunction = async ({
   request
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
-  const habits = await Habit.find({ user: userId });
-  const dates = await MarkedHabit.find({ user: userId }).populate("habit");
+  const habits = await Habit.find({ user: userId }).sort({ name: 1 });
+  const dates = await MarkedHabit.find({ user: userId })
+    .populate("habit")
+    .sort({ date: 1 });
   return {
     habits: habits,
     dates: dates
@@ -63,9 +65,14 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const { dates, habits } = useLoaderData<LoaderData>();
   const minDate = new Date().toISOString().split("T")[0];
+  const [value, onChange] = useState(new Date());
   return (
     <div className='flex md:flex-row sm:flex-col gap-2'>
-      <CalendarComponent />
+      <CalendarComponent
+        markedHabits={dates}
+        value={value}
+        onChange={onChange}
+      />
       <div className='left flex-1'>
         <h1 className='text-4xl mb-2'>Dashboard</h1>
         {habits.length > 0 ? (
@@ -85,8 +92,8 @@ export default function Index() {
                 </option>
               ))}
             </select>
-            <label htmlFor='markedDate'>Date</label>
-            <input
+            {/* <label htmlFor='markedDate'>Date</label> */}
+            {/* <input
               type='date'
               name='markedDate'
               id='markedDate'
@@ -94,6 +101,12 @@ export default function Index() {
               min={minDate}
               defaultValue={minDate}
               required
+            /> */}
+            <input
+              type={"hidden"}
+              name='markedDate'
+              id='markedDate'
+              value={value.toISOString()}
             />
             <button className='btn block' type='submit'>
               Mark
@@ -110,7 +123,7 @@ export default function Index() {
           </p>
         )}
       </div>
-      <div className='right flex-1'>
+      {/* <div className='right flex-1'>
         <h1 className='text-4xl mb-2'>Marked Dates</h1>
         {dates &&
           dates.map((markedDate: any) => (
@@ -125,7 +138,7 @@ export default function Index() {
                 title={`Colour: ${markedDate.habit.colour}`}></div>
             </>
           ))}
-      </div>
+      </div> */}
     </div>
   );
 }
