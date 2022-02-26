@@ -41,10 +41,13 @@
     @apply text-orange-500;
   }
   .modal.show {
-    @apply block;
+    @apply flex;
   }
   .modal {
-    @apply hidden absolute bottom-0 left-0 right-0 h-72 w-full bg-neutral-800 shadow-md text-white rounded-tl-md rounded-tr-md transition-all p-4;
+    @apply hidden absolute inset-0 items-end bg-neutral-800 bg-opacity-25;
+  }
+  .modal-body {
+    @apply w-full h-72 bg-neutral-800 shadow-md text-white rounded-tl-md rounded-tr-md transition-all p-4;
   }
 }
 

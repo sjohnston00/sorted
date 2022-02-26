@@ -11,7 +11,7 @@ import {
 import type { MetaFunction } from "remix";
 import tailwind from "./tailwind.css";
 import Navbar from "./components/navbar";
-import { getUser, getUserId } from "./utils/session.server";
+// import { getUser, getUserId } from "./utils/session.server";
 
 export const links: LinksFunction = () => {
   return [
@@ -24,7 +24,8 @@ export const links: LinksFunction = () => {
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  return { user: await getUser(request) };
+  // return { user: await getUser(request) };
+  return {};
 };
 
 export const meta: MetaFunction = () => {
