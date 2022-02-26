@@ -1,6 +1,12 @@
+import { useState } from "react";
 import { Link } from "remix";
+import Modal from "~/components/modal";
 
 export default function Index() {
+  const [modal, setModal] = useState(true);
+  const handleShowModal = () => {
+    setModal((prev) => !prev);
+  };
   return (
     <main>
       <h1 className='text-2xl'>
@@ -11,6 +17,8 @@ export default function Index() {
         className='text-blue-400 hover:text-blue-500 hover:underline'>
         My Habits
       </Link>
+      <button onClick={handleShowModal}>Toggle Modal</button>
+      <Modal open={modal} setOpen={setModal} />
     </main>
   );
 }
