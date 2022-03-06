@@ -46,8 +46,6 @@ export const action: ActionFunction = async ({ request }) => {
     return json(user, 400);
   }
 
-  console.log(typeof user._id);
-
   return createUserSession(user._id, redirectTo);
 };
 

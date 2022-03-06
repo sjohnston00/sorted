@@ -15,7 +15,7 @@ export default function CalendarComponent({
   const today = new Date();
 
   useEffect(() => {
-    console.log(value);
+    // console.log(value);
   }, [value]);
 
   return (
@@ -33,8 +33,6 @@ export default function CalendarComponent({
               new Date(markedHabit.date).getMonth() === date.getMonth() &&
               new Date(markedHabit.date).getFullYear() === date.getFullYear()
           );
-
-          console.log(date, todaysHabits);
 
           return (
             <div className='flex justify-center items-center mt-2'>

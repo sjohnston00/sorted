@@ -64,7 +64,6 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   const { dates, habits } = useLoaderData<LoaderData>();
-  const minDate = new Date().toISOString().split("T")[0];
   const [value, onChange] = useState(new Date());
   return (
     <div className='flex md:flex-row sm:flex-col gap-2'>
@@ -92,16 +91,6 @@ export default function Index() {
                 </option>
               ))}
             </select>
-            {/* <label htmlFor='markedDate'>Date</label> */}
-            {/* <input
-              type='date'
-              name='markedDate'
-              id='markedDate'
-              className='block mb-2 bg-slate-50 p-2 cursor-pointer'
-              min={minDate}
-              defaultValue={minDate}
-              required
-            /> */}
             <input
               type={"hidden"}
               name='markedDate'

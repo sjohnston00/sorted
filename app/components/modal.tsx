@@ -14,14 +14,12 @@ export default function Modal({ open, setOpen, children }: Props) {
 
   useEffect(() => {
     document.addEventListener("keydown", (e) => {
-      //FIXME: Doesn't seem to recognise the `esc` key
       if (e.key === "Escape") {
         handleShowModal();
       }
     });
   }, []);
 
-  //TODO: Add an `esc` key listener so the user can close the modal
   //TODO: Add an on click handler to the modal overlay, so a user can click outside the modal to close it
   return (
     <div className={`modal ${open ? "show" : ""}`}>
