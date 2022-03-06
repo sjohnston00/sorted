@@ -61,7 +61,9 @@
 .react-calendar__month-view__weekdays__weekday {
   text-align: center;
 }
-.react-calendar__tile--active abbr {
+.react-calendar__tile--active abbr,
+.react-calendar__month-view__days__day--weekend.react-calendar__tile--active
+  abbr {
   background-color: rgb(249 115 22);
   box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.15);
   text-decoration: none;
@@ -87,4 +89,8 @@
 .react-calendar__month-view__days__day--weekend abbr {
   opacity: 0.9;
   color: rgb(249 115 22);
+}
+
+.react-calendar__month-view__days__day--weekend.react-calendar__tile--now abbr {
+  color: white;
 }

@@ -649,6 +649,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-right: 0.5rem;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -820,6 +825,21 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(134 239 172 / var(--tw-bg-opacity));
 }
 
+.bg-neutral-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(64 64 64 / var(--tw-bg-opacity));
+}
+
+.bg-neutral-800 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(38 38 38 / var(--tw-bg-opacity));
+}
+
+.bg-neutral-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(82 82 82 / var(--tw-bg-opacity));
+}
+
 .p-2 {
   padding: 0.5rem;
 }
@@ -935,7 +955,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   text-align: center;
 }
 
-.react-calendar__tile--active abbr {
+.react-calendar__tile--active abbr,
+.react-calendar__month-view__days__day--weekend.react-calendar__tile--active
+  abbr {
   background-color: rgb(249 115 22);
   box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.15);
   text-decoration: none;
@@ -961,6 +983,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .react-calendar__month-view__days__day--weekend abbr {
   opacity: 0.9;
   color: rgb(249 115 22);
+}
+
+.react-calendar__month-view__days__day--weekend.react-calendar__tile--now abbr {
+  color: white;
 }
 
 .hover\:scale-125:hover {
@@ -1011,6 +1037,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .hover\:opacity-100:hover {
   opacity: 1;
+}
+
+.focus\:bg-neutral-900:focus {
+  --tw-bg-opacity: 1;
+  background-color: rgb(23 23 23 / var(--tw-bg-opacity));
 }
 
 @media (prefers-color-scheme: dark) {

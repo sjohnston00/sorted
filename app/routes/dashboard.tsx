@@ -9,6 +9,7 @@ import {
 } from "remix";
 import { Habit as HabitType } from "types/habits.server";
 import CalendarComponent from "~/components/calendar";
+import Modal from "~/components/modal";
 import Habit from "~/models/Habit.server";
 import MarkedHabit from "~/models/MarkedHabit.server";
 import { requireUserId } from "~/utils/session.server";
@@ -65,16 +66,19 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const { dates, habits } = useLoaderData<LoaderData>();
   const [value, onChange] = useState(new Date());
+  const [showModal, setShowModal] = useState(false);
   return (
     <div className='flex md:flex-row sm:flex-col gap-2'>
       <CalendarComponent
         markedHabits={dates}
         value={value}
-        onChange={onChange}
+        onChange={(newValue) => {
+          setShowModal(true);
+          onChange(newValue);
+          return;
+        }}
       />
-      <div className='left flex-1'>
-        <h1 className='text-4xl mb-2'>Dashboard</h1>
-        {habits.length > 0 ? (
+      {/* {habits.length > 0 ? (
           <Form method='post'>
             <label htmlFor='selectedHabit'>Habit</label>
             <select
@@ -110,24 +114,56 @@ export default function Index() {
               Create One
             </Link>
           </p>
-        )}
-      </div>
-      {/* <div className='right flex-1'>
-        <h1 className='text-4xl mb-2'>Marked Dates</h1>
-        {dates &&
-          dates.map((markedDate: any) => (
-            <>
-              <p key={markedDate._id}>
-                {new Date(markedDate.date).toLocaleDateString()} -{" "}
-                {markedDate.habit.name}
-              </p>
-              <div
-                className='h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle'
-                style={{ backgroundColor: markedDate.habit.colour }}
-                title={`Colour: ${markedDate.habit.colour}`}></div>
-            </>
-          ))}
-      </div> */}
+        )} */}
+
+      {showModal && (
+        <Modal
+          open={showModal}
+          setOpen={setShowModal}
+          title={value.toDateString()}>
+          {habits.length > 0 ? (
+            <Form method='post'>
+              <label htmlFor='selectedHabit'>Habit</label>
+              <select
+                name='selectedHabit'
+                id='selectedHabit'
+                className='block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer'
+                required>
+                <option selected disabled hidden>
+                  Select a habit
+                </option>
+                {habits.map((habit) => (
+                  <option
+                    key={habit._id.toString()}
+                    value={habit._id.toString()}>
+                    {habit.name}
+                  </option>
+                ))}
+              </select>
+              <input
+                type={"hidden"}
+                name='markedDate'
+                id='markedDate'
+                value={value.toISOString()}
+              />
+              <button
+                className='btn bg-neutral-700 hover:bg-neutral-900 focus:bg-neutral-900'
+                type='submit'>
+                Mark
+              </button>
+            </Form>
+          ) : (
+            <p className='text-red-500'>
+              You don't have any habits to add.{" "}
+              <Link
+                to={"/habits/new"}
+                className='text-blue-300 hover:text-blue-400'>
+                Create One
+              </Link>
+            </p>
+          )}
+        </Modal>
+      )}
     </div>
   );
 }
