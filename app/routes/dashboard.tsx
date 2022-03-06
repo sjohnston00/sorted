@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActionFunction,
   Form,
   Link,
   LoaderFunction,
+  useFetcher,
   useLoaderData
 } from "remix";
 import { Habit as HabitType } from "types/habits.server";
@@ -64,9 +65,20 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Index() {
+  const fetcher = useFetcher();
   const { dates, habits } = useLoaderData<LoaderData>();
   const [value, onChange] = useState(new Date());
+  const [selectedDateHabits, setSelectedDateHabits] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  useEffect(() => {
+    const searchDate = value.toISOString().split("T")[0];
+    fetcher.load(`/api/markedHabits/${searchDate}`);
+
+    return () => {
+      setSelectedDateHabits([]);
+    };
+  }, [value]);
+
   return (
     <div className='flex md:flex-row sm:flex-col gap-2'>
       <CalendarComponent
@@ -122,36 +134,39 @@ export default function Index() {
           setOpen={setShowModal}
           title={value.toDateString()}>
           {habits.length > 0 ? (
-            <Form method='post'>
-              <label htmlFor='selectedHabit'>Habit</label>
-              <select
-                name='selectedHabit'
-                id='selectedHabit'
-                className='block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer'
-                required>
-                <option selected disabled hidden>
-                  Select a habit
-                </option>
-                {habits.map((habit) => (
-                  <option
-                    key={habit._id.toString()}
-                    value={habit._id.toString()}>
-                    {habit.name}
+            <>
+              {JSON.stringify(fetcher.data, null, 2)}
+              <Form method='post'>
+                <label htmlFor='selectedHabit'>Habit</label>
+                <select
+                  name='selectedHabit'
+                  id='selectedHabit'
+                  className='block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer'
+                  required>
+                  <option selected disabled hidden>
+                    Select a habit
                   </option>
-                ))}
-              </select>
-              <input
-                type={"hidden"}
-                name='markedDate'
-                id='markedDate'
-                value={value.toISOString()}
-              />
-              <button
-                className='btn bg-neutral-700 hover:bg-neutral-900 focus:bg-neutral-900'
-                type='submit'>
-                Mark
-              </button>
-            </Form>
+                  {habits.map((habit) => (
+                    <option
+                      key={habit._id.toString()}
+                      value={habit._id.toString()}>
+                      {habit.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type={"hidden"}
+                  name='markedDate'
+                  id='markedDate'
+                  value={value.toISOString()}
+                />
+                <button
+                  className='btn bg-neutral-700 hover:bg-neutral-900 focus:bg-neutral-900'
+                  type='submit'>
+                  Mark
+                </button>
+              </Form>
+            </>
           ) : (
             <p className='text-red-500'>
               You don't have any habits to add.{" "}

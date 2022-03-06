@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Form } from "remix";
+import { Form, useFetcher } from "remix";
 
 type Props = {
   open: boolean;
@@ -15,7 +15,6 @@ export default function Modal({ open, setOpen, children, title }: Props) {
 
   useEffect(() => {
     //TODO: get list of habits for this Date
-
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         handleShowModal();
