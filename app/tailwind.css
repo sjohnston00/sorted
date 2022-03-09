@@ -625,7 +625,7 @@ Ensure the default browser behavior of the `hidden` attribute.
 .modal-body {
   height: 18rem;
   width: 100%;
-  overflow: scroll;
+  overflow: auto;
   border-top-left-radius: 0.375rem;
   border-top-right-radius: 0.375rem;
   --tw-bg-opacity: 1;
@@ -643,6 +643,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .m-1 {
   margin: 0.25rem;
+}
+
+.m-auto {
+  margin: auto;
 }
 
 .my-2 {
@@ -727,8 +731,20 @@ Ensure the default browser behavior of the `hidden` attribute.
   width: 100%;
 }
 
+.w-10 {
+  width: 2.5rem;
+}
+
+.w-16 {
+  width: 4rem;
+}
+
 .cursor-pointer {
   cursor: pointer;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .items-center {

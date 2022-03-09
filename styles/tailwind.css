@@ -47,7 +47,7 @@
     @apply hidden absolute inset-0 items-end bg-neutral-800 bg-opacity-25;
   }
   .modal-body {
-    @apply w-full h-72 bg-neutral-800 shadow-md text-white rounded-tl-md rounded-tr-md transition-all p-4 overflow-scroll;
+    @apply w-full h-72 bg-neutral-800 shadow-md text-white rounded-tl-md rounded-tr-md transition-all p-4 overflow-auto;
   }
 }
 

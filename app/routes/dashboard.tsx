@@ -152,7 +152,7 @@ export default function Index() {
                   </p>
                 ))
               ) : (
-                <p></p>
+                <p>&nbsp;</p>
               )}
               <Form method='post'>
                 <label htmlFor='selectedHabit'>Habit</label>

@@ -34,7 +34,7 @@ export default function CalendarComponent({
         );
 
         return (
-          <div className='flex justify-center items-center mt-2'>
+          <div className='flex justify-center items-center mt-2 m-auto w-16 flex-wrap'>
             {todaysHabits.length > 0 ? (
               todaysHabits.map((todayHabit: any) => (
                 <div
