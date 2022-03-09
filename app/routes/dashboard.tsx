@@ -23,6 +23,7 @@ type LoaderData = {
       }
   >;
   dates: any;
+  userId: string;
 };
 
 export const loader: LoaderFunction = async ({
@@ -35,7 +36,8 @@ export const loader: LoaderFunction = async ({
     .sort({ date: 1 });
   return {
     habits: habits,
-    dates: dates
+    dates: dates,
+    userId: userId
   };
 };
 
@@ -66,13 +68,13 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   const fetcher = useFetcher();
-  const { dates, habits } = useLoaderData<LoaderData>();
+  const { dates, habits, userId } = useLoaderData<LoaderData>();
   const [value, onChange] = useState(new Date());
   const [selectedDateHabits, setSelectedDateHabits] = useState([]);
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     const searchDate = value.toISOString().split("T")[0];
-    fetcher.load(`/api/markedHabits/${searchDate}`);
+    fetcher.load(`/api/markedHabits/${userId}/${searchDate}`);
 
     return () => {
       setSelectedDateHabits([]);
@@ -135,7 +137,23 @@ export default function Index() {
           title={value.toDateString()}>
           {habits.length > 0 ? (
             <>
-              {JSON.stringify(fetcher.data, null, 2)}
+              {fetcher.data ? (
+                fetcher.data.map(({ habit }: any) => (
+                  <p
+                    key={habit._id}
+                    className='hover:underline cursor-pointer mb-2'>
+                    <Link to={`/habits/${habit._id}`} title={`${habit.name}`}>
+                      {habit.name}
+                    </Link>
+                    <div
+                      className='h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle'
+                      style={{ backgroundColor: habit.colour }}
+                      title={`Colour: ${habit.colour}`}></div>
+                  </p>
+                ))
+              ) : (
+                <p></p>
+              )}
               <Form method='post'>
                 <label htmlFor='selectedHabit'>Habit</label>
                 <select
