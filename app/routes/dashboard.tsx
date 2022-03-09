@@ -130,73 +130,71 @@ export default function Index() {
           </p>
         )} */}
 
-      {showModal && (
-        <Modal
-          open={showModal}
-          setOpen={setShowModal}
-          title={value.toDateString()}>
-          {habits.length > 0 ? (
-            <>
-              {fetcher.data ? (
-                fetcher.data.map(({ habit }: any) => (
-                  <p
-                    key={habit._id}
-                    className='hover:underline cursor-pointer mb-2'>
-                    <Link to={`/habits/${habit._id}`} title={`${habit.name}`}>
-                      {habit.name}
-                    </Link>
-                    <div
-                      className='h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle'
-                      style={{ backgroundColor: habit.colour }}
-                      title={`Colour: ${habit.colour}`}></div>
-                  </p>
-                ))
-              ) : (
-                <p>&nbsp;</p>
-              )}
-              <Form method='post'>
-                <label htmlFor='selectedHabit'>Habit</label>
-                <select
-                  name='selectedHabit'
-                  id='selectedHabit'
-                  className='block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer'
-                  required>
-                  <option selected disabled hidden>
-                    Select a habit
+      <Modal
+        open={showModal}
+        setOpen={setShowModal}
+        title={value.toDateString()}>
+        {habits.length > 0 ? (
+          <>
+            {fetcher.data ? (
+              fetcher.data.map(({ habit }: any) => (
+                <p
+                  key={habit._id}
+                  className='hover:underline cursor-pointer mb-2'>
+                  <Link to={`/habits/${habit._id}`} title={`${habit.name}`}>
+                    {habit.name}
+                  </Link>
+                  <div
+                    className='h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle'
+                    style={{ backgroundColor: habit.colour }}
+                    title={`Colour: ${habit.colour}`}></div>
+                </p>
+              ))
+            ) : (
+              <p>&nbsp;</p>
+            )}
+            <Form method='post'>
+              <label htmlFor='selectedHabit'>Habit</label>
+              <select
+                name='selectedHabit'
+                id='selectedHabit'
+                className='block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer'
+                required>
+                <option selected disabled hidden>
+                  Select a habit
+                </option>
+                {habits.map((habit) => (
+                  <option
+                    key={habit._id.toString()}
+                    value={habit._id.toString()}>
+                    {habit.name}
                   </option>
-                  {habits.map((habit) => (
-                    <option
-                      key={habit._id.toString()}
-                      value={habit._id.toString()}>
-                      {habit.name}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type={"hidden"}
-                  name='markedDate'
-                  id='markedDate'
-                  value={value.toISOString()}
-                />
-                <button
-                  className='btn bg-neutral-700 hover:bg-neutral-900 focus:bg-neutral-900'
-                  type='submit'>
-                  Mark
-                </button>
-              </Form>
-            </>
-          ) : (
-            <p className='text-red-500'>
-              You don't have any habits to add.{" "}
-              <Link
-                to={"/habits/new"}
-                className='text-blue-300 hover:text-blue-400'>
-                Create One
-              </Link>
-            </p>
-          )}
-        </Modal>
-      )}
+                ))}
+              </select>
+              <input
+                type={"hidden"}
+                name='markedDate'
+                id='markedDate'
+                value={value.toISOString()}
+              />
+              <button
+                className='btn bg-neutral-700 hover:bg-neutral-900 focus:bg-neutral-900'
+                type='submit'>
+                Mark
+              </button>
+            </Form>
+          </>
+        ) : (
+          <p className='text-red-500'>
+            You don't have any habits to add.{" "}
+            <Link
+              to={"/habits/new"}
+              className='text-blue-300 hover:text-blue-400'>
+              Create One
+            </Link>
+          </p>
+        )}
+      </Modal>
     </div>
   );
 }

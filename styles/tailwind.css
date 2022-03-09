@@ -40,14 +40,14 @@
   .react-calendar__month-view__weekdays__weekday abbr[title="Sunday"] {
     @apply text-orange-500;
   }
-  .modal.show {
-    @apply flex;
-  }
   .modal {
-    @apply hidden absolute inset-0 items-end bg-neutral-800 bg-opacity-25;
+    @apply flex absolute inset-0 items-end pointer-events-none overflow-hidden;
+  }
+  .modal.show {
+    @apply pointer-events-auto bg-neutral-800 bg-opacity-25;
   }
   .modal-body {
-    @apply w-full h-72 bg-neutral-800 shadow-md text-white rounded-tl-md rounded-tr-md transition-all p-4 overflow-auto;
+    @apply w-full h-72 bg-neutral-800 shadow-md text-white rounded-tl-md transition-all rounded-tr-md p-4 overflow-auto;
   }
 }
 
@@ -111,4 +111,11 @@
 .react-calendar__navigation__arrow:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.modal .modal-body {
+  transform: translateY(500px);
+}
+.modal.show .modal-body {
+  transform: translateY(0px);
 }

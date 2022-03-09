@@ -606,18 +606,20 @@ Ensure the default browser behavior of the `hidden` attribute.
           text-decoration-line: underline;
 }
 
-.modal.show {
-  display: flex;
-}
-
 .modal {
+  pointer-events: none;
   position: absolute;
   top: 0px;
   right: 0px;
   bottom: 0px;
   left: 0px;
-  display: none;
+  display: flex;
   align-items: flex-end;
+  overflow: hidden;
+}
+
+.modal.show {
+  pointer-events: auto;
   background-color: rgb(38 38 38 / var(--tw-bg-opacity));
   --tw-bg-opacity: 0.25;
 }
@@ -1011,6 +1013,14 @@ Ensure the default browser behavior of the `hidden` attribute.
 .react-calendar__navigation__arrow:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+.modal .modal-body {
+  transform: translateY(500px);
+}
+
+.modal.show .modal-body {
+  transform: translateY(0px);
 }
 
 .hover\:scale-125:hover {
