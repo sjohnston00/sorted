@@ -94,3 +94,13 @@
 .react-calendar__month-view__days__day--weekend.react-calendar__tile--now abbr {
   color: white;
 }
+
+.react-calendar__navigation {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+.react-calendar__navigation__label {
+  margin: 0 20px;
+  width: 170px;
+}

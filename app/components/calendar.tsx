@@ -23,7 +23,7 @@ export default function CalendarComponent({
       onChange={onChange}
       value={value}
       minDate={today}
-      minDetail={"year"}
+      minDetail={"month"}
       className='text-white'
       tileContent={({ activeStartDate, date, view }) => {
         const todaysHabits = markedHabits.filter(
