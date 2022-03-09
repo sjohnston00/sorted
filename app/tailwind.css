@@ -681,10 +681,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin-right: 0.5rem;
 }
 
-.mt-4 {
-  margin-top: 1rem;
-}
-
 .block {
   display: block;
 }
@@ -713,14 +709,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 1.5rem;
 }
 
-.h-8 {
-  height: 2rem;
-}
-
-.h-10 {
-  height: 2.5rem;
-}
-
 .w-16 {
   width: 4rem;
 }
@@ -731,10 +719,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .w-6 {
   width: 1.5rem;
-}
-
-.w-full {
-  width: 100%;
 }
 
 .cursor-pointer {
@@ -761,16 +745,16 @@ Ensure the default browser behavior of the `hidden` attribute.
   gap: 0.5rem;
 }
 
-.gap-4 {
-  gap: 1rem;
-}
-
 .rounded-full {
   border-radius: 9999px;
 }
 
 .rounded-sm {
   border-radius: 0.125rem;
+}
+
+.rounded-md {
+  border-radius: 0.375rem;
 }
 
 .border-2 {
@@ -792,9 +776,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   border-color: rgb(100 116 139 / var(--tw-border-opacity));
 }
 
-.border-stone-100 {
+.border-neutral-900 {
   --tw-border-opacity: 1;
-  border-color: rgb(245 245 244 / var(--tw-border-opacity));
+  border-color: rgb(23 23 23 / var(--tw-border-opacity));
 }
 
 .bg-slate-800 {
@@ -827,20 +811,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(94 234 212 / var(--tw-bg-opacity));
 }
 
-.bg-transparent {
-  background-color: transparent;
-}
-
-.bg-fuchsia-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(232 121 249 / var(--tw-bg-opacity));
-}
-
-.bg-neutral-900 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(23 23 23 / var(--tw-bg-opacity));
-}
-
 .bg-green-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(134 239 172 / var(--tw-bg-opacity));
@@ -848,10 +818,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .p-2 {
   padding: 0.5rem;
-}
-
-.p-1 {
-  padding: 0.25rem;
 }
 
 .align-middle {
@@ -918,6 +884,11 @@ Ensure the default browser behavior of the `hidden` attribute.
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity));
+}
+
+.text-neutral-900 {
+  --tw-text-opacity: 1;
+  color: rgb(23 23 23 / var(--tw-text-opacity));
 }
 
 .opacity-60 {
@@ -1042,11 +1013,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .hover\:bg-teal-400:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(45 212 191 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-fuchsia-500:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(217 70 239 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-green-400:hover {

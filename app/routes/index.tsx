@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ActionFunction, Form, Link } from "remix";
-import Modal from "~/components/modal";
+import Modal from "react-modal";
 
 const mockHabits = [
   {
@@ -51,10 +51,6 @@ export default function Index() {
   const handleShowModal = () => {
     setModal((prev) => !prev);
   };
-  const handleShowHabitModal = (habit: { name: string; colour: string }) => {
-    setFocusedHabit(habit);
-    handleShowModal();
-  };
   return (
     <main className='container mx-2'>
       <h1 className='text-2xl'>
@@ -65,67 +61,35 @@ export default function Index() {
         className='text-blue-400 hover:text-blue-500 hover:underline'>
         My Habits
       </Link>
-      <ul>
-        {mockHabits.map((habit) => (
-          <li key={habit.name} onClick={() => handleShowHabitModal(habit)}>
-            {habit.name}{" "}
-            <div
-              className='h-8 cursor-pointer'
-              style={{ backgroundColor: habit.colour }}
-            />
-          </li>
-        ))}
-      </ul>
-      <Modal open={modal} setOpen={setModal}>
-        <Form method='post'>
-          <div className='form-groug mb-2'>
-            <label htmlFor='name' className='block'>
-              Name
-            </label>
-            <input
-              className='rounded-sm border-2 border-stone-100 bg-transparent p-2 w-full'
-              type='text'
-              placeholder='Name'
-              defaultValue={focusedHabit.name}
-              required
-              autoComplete='off'
-              id='name'
-              name='name'
-            />
-          </div>
-          <div className='form-groug mb-2'>
-            <label htmlFor='name' className='block'>
-              Colour
-            </label>
-            <input
-              className='rounded-sm border-2 border-stone-100 bg-transparent h-10 p-1 w-full'
-              type='color'
-              defaultValue={focusedHabit?.colour}
-              id='colour'
-              name='colour'
-              required
-            />
-            <input
-              type='hidden'
-              value={focusedHabit?._id}
-              id='_id'
-              name='_id'
-              required
-            />
-          </div>
-          <div className='flex gap-4 justify-center items-center mt-4'>
-            <button
-              className='btn bg-fuchsia-400 hover:bg-fuchsia-500'
-              onClick={handleShowModal}>
-              Close
-            </button>
-            <button
-              className='btn bg-neutral-900 hover:bg-neutral-900'
-              type='submit'>
-              Update
-            </button>
-          </div>
-        </Form>
+      <br />
+      <button className='btn' onClick={handleShowModal}>
+        Open modal
+      </button>
+      <Modal
+        isOpen={modal}
+        onRequestClose={handleShowModal}
+        contentLabel={"Hello"}
+        style={{
+          content: {
+            left: 0,
+            right: 0,
+            bottom: 0
+          },
+          overlay: {
+            backgroundColor: "#00000015"
+          }
+        }}>
+        <button
+          className='p-2 border-2 border-neutral-900 rounded-md'
+          onClick={handleShowModal}>
+          &times;
+        </button>
+        <div className='text-neutral-900'>
+          <p>This is a paragraph</p>
+          <p>This is a paragraph</p>
+          <p>This is a paragraph</p>
+          <p>This is a paragraph</p>
+        </div>
       </Modal>
     </main>
   );
