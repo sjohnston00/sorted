@@ -4,7 +4,6 @@ import Habit from "~/models/Habit.server";
 import { requireUserId } from "~/utils/session.server";
 import mongoose, { ObjectId } from "mongoose";
 
-//TODO: Post a new habit to DB using action function
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const formData = await request.formData();

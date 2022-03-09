@@ -23,7 +23,6 @@ export const loader: LoaderFunction = async ({ params }) => {
 export const action: ActionFunction = async ({ request, params }) => {
   const { id } = params;
   if (request.method === "DELETE") {
-    //TODO: Delete the habit
     const deletedHabit = await Habit.deleteOne({ _id: id });
     const deletedMarkedHabits = await MarkedHabit.deleteMany({ habit: id });
 
@@ -31,7 +30,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (request.method === "PUT") {
-    //TODO: Update the habit
     const formData = await request.formData();
     const name = formData.get("name");
     const colour = formData.get("colour");

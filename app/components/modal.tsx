@@ -14,7 +14,6 @@ export default function Modal({ open, setOpen, children, title }: Props) {
   };
 
   useEffect(() => {
-    //TODO: get list of habits for this Date
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
         handleShowModal();

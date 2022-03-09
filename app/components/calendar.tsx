@@ -24,6 +24,8 @@ export default function CalendarComponent({
       value={value}
       minDate={today}
       minDetail={"month"}
+      next2Label={null}
+      prev2Label={null}
       className='text-white'
       tileContent={({ activeStartDate, date, view }) => {
         const todaysHabits = markedHabits.filter(

@@ -641,12 +641,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   transition-duration: 150ms;
 }
 
-.m-1 {
-  margin: 0.25rem;
-}
-
 .m-auto {
   margin: auto;
+}
+
+.m-1 {
+  margin: 0.25rem;
 }
 
 .my-2 {
@@ -719,6 +719,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 2.5rem;
 }
 
+.w-16 {
+  width: 4rem;
+}
+
 .w-4 {
   width: 1rem;
 }
@@ -729,14 +733,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .w-full {
   width: 100%;
-}
-
-.w-10 {
-  width: 2.5rem;
-}
-
-.w-16 {
-  width: 4rem;
 }
 
 .cursor-pointer {
@@ -1006,6 +1002,15 @@ Ensure the default browser behavior of the `hidden` attribute.
 .react-calendar__navigation__label {
   margin: 0 20px;
   width: 170px;
+}
+
+.react-calendar__navigation__arrow {
+  padding: 5px;
+}
+
+.react-calendar__navigation__arrow:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .hover\:scale-125:hover {

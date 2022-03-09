@@ -2,7 +2,6 @@ import { LoaderFunction } from "remix";
 import MarkedHabit from "~/models/MarkedHabit.server";
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  //TODO: go to mongoose and load the habits
   const { userId, date } = params;
 
   if (typeof userId !== "string" || typeof date !== "string") {
