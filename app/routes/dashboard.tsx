@@ -10,7 +10,8 @@ import {
 } from "remix";
 import { Habit as HabitType } from "types/habits.server";
 import CalendarComponent from "~/components/calendar";
-import Modal from "~/components/modal";
+// import Modal from "~/components/modal";
+import Modal from "react-modal";
 import Habit from "~/models/Habit.server";
 import MarkedHabit from "~/models/MarkedHabit.server";
 import { requireUserId } from "~/utils/session.server";
@@ -81,6 +82,8 @@ export default function Index() {
     };
   }, [value]);
 
+  const closeModal = () => setShowModal(false);
+
   return (
     <div className='flex md:flex-row sm:flex-col gap-2'>
       <CalendarComponent
@@ -131,9 +134,27 @@ export default function Index() {
         )} */}
 
       <Modal
-        open={showModal}
-        setOpen={setShowModal}
-        title={value.toDateString()}>
+        isOpen={showModal}
+        onRequestClose={closeModal}
+        contentLabel={value.toDateString()}
+        closeTimeoutMS={500}
+        style={{
+          overlay: {
+            backgroundColor: undefined
+          },
+          content: {
+            backgroundColor: undefined,
+            inset: undefined
+          }
+        }}>
+        <div className='flex justify-end'>
+          <button
+            className='p-2 rounded-sm hover:scale-110 hover:opacity-100 opacity-70 transition-all text-xl text-neutral-50'
+            onClick={closeModal}
+            title='Close'>
+            &times;
+          </button>
+        </div>
         {habits.length > 0 ? (
           <>
             {fetcher.data ? (
@@ -154,11 +175,10 @@ export default function Index() {
               <p>&nbsp;</p>
             )}
             <Form method='post'>
-              <label htmlFor='selectedHabit'>Habit</label>
               <select
                 name='selectedHabit'
                 id='selectedHabit'
-                className='block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer'
+                className='block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer text-neutral-50'
                 required>
                 <option selected disabled hidden>
                   Select a habit
@@ -178,7 +198,7 @@ export default function Index() {
                 value={value.toISOString()}
               />
               <button
-                className='btn bg-neutral-700 hover:bg-neutral-900 focus:bg-neutral-900'
+                className='btn text-neutral-50 bg-neutral-600 hover:bg-neutral-700 focus:bg-neutral-700'
                 type='submit'>
                 Mark
               </button>

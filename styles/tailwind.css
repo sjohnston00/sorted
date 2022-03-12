@@ -36,19 +36,6 @@
   .link {
     @apply text-blue-400 hover:text-blue-500 hover:underline transition-all;
   }
-  .react-calendar__month-view__weekdays__weekday abbr[title="Saturday"],
-  .react-calendar__month-view__weekdays__weekday abbr[title="Sunday"] {
-    @apply text-orange-500;
-  }
-  .modal {
-    @apply flex absolute inset-0 items-end pointer-events-none overflow-hidden;
-  }
-  .modal.show {
-    @apply pointer-events-auto bg-neutral-800 bg-opacity-25;
-  }
-  .modal-body {
-    @apply w-full h-72 bg-neutral-800 shadow-md text-white rounded-tl-md transition-all rounded-tr-md p-4 overflow-auto;
-  }
 }
 
 .react-calendar__month-view__weekdays__weekday abbr {
@@ -61,9 +48,7 @@
 .react-calendar__month-view__weekdays__weekday {
   text-align: center;
 }
-.react-calendar__tile--active abbr,
-.react-calendar__month-view__days__day--weekend.react-calendar__tile--active
-  abbr {
+.react-calendar__tile--active abbr {
   background-color: rgb(249 115 22);
   box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.15);
   text-decoration: none;
@@ -86,15 +71,6 @@
   opacity: 0.5;
 }
 
-.react-calendar__month-view__days__day--weekend abbr {
-  opacity: 0.9;
-  color: rgb(249 115 22);
-}
-
-.react-calendar__month-view__days__day--weekend.react-calendar__tile--now abbr {
-  color: white;
-}
-
 .react-calendar__navigation {
   text-align: center;
   font-size: 1.5rem;
@@ -112,10 +88,34 @@
   cursor: not-allowed;
   opacity: 0.6;
 }
-
-.modal .modal-body {
-  transform: translateY(500px);
+.ReactModal__Overlay {
+  background-color: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
 }
-.modal.show .modal-body {
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+.ReactModal__Overlay--before-close {
+  opacity: 0 !important;
+}
+
+.ReactModal__Content {
+  transform: translateY(100px);
+  padding: 10px !important;
+  transition: all 0.3s ease-in-out;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 300px;
+  overflow: auto;
+  background-color: #262626;
+  border: none !important;
+}
+.ReactModal__Content--after-open {
   transform: translateY(0px);
+}
+.ReactModal__Content--before-close {
+  transform: translateY(100px);
 }

@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ActionFunction, Form, Link } from "remix";
-import Modal from "react-modal";
 
 const mockHabits = [
   {
@@ -44,13 +43,6 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Index() {
-  const [modal, setModal] = useState(false);
-  const [focusedHabit, setFocusedHabit] = useState<
-    { _id: string; name: string; colour: string } | {}
-  >({});
-  const handleShowModal = () => {
-    setModal((prev) => !prev);
-  };
   return (
     <main className='container mx-2'>
       <h1 className='text-2xl'>
@@ -62,35 +54,6 @@ export default function Index() {
         My Habits
       </Link>
       <br />
-      <button className='btn' onClick={handleShowModal}>
-        Open modal
-      </button>
-      <Modal
-        isOpen={modal}
-        onRequestClose={handleShowModal}
-        contentLabel={"Hello"}
-        style={{
-          content: {
-            left: 0,
-            right: 0,
-            bottom: 0
-          },
-          overlay: {
-            backgroundColor: "#00000015"
-          }
-        }}>
-        <button
-          className='p-2 border-2 border-neutral-900 rounded-md'
-          onClick={handleShowModal}>
-          &times;
-        </button>
-        <div className='text-neutral-900'>
-          <p>This is a paragraph</p>
-          <p>This is a paragraph</p>
-          <p>This is a paragraph</p>
-          <p>This is a paragraph</p>
-        </div>
-      </Modal>
     </main>
   );
 }
