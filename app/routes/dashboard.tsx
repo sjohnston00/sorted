@@ -48,6 +48,8 @@ export const action: ActionFunction = async ({ request }) => {
   const habitId = formData.get("selectedHabit");
   const markedDate = formData.get("markedDate");
 
+  //TODO: check it isn't that same habits being added to the same day
+
   if (typeof habitId !== "string" || typeof markedDate !== "string") {
     return {
       errors: {
