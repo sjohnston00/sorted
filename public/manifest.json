@@ -5,6 +5,8 @@
   "display": "standalone",
   "background_color": "#fff",
   "description": "Track your habits and say Sorted!",
+  "theme_color": "#fff",
+  "scope": "/",
   "icons": [
     {
       "src": "images/icon48.png",

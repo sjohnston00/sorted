@@ -19,6 +19,10 @@ export const links: LinksFunction = () => {
     {
       rel: "stylesheet",
       href: "https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css"
+    },
+    {
+      rel: "manifest",
+      href: "/manifest.json"
     }
   ];
 };
@@ -39,6 +43,7 @@ export default function App() {
         <meta name='viewport' content='width=device-width,initial-scale=1' />
         <Meta />
         <Links />
+        <script src='/service-worker.js' />
       </head>
       <body className='dark:bg-slate-700'>
         <Navbar />
