@@ -21,7 +21,7 @@ export default function Navbar() {
           <li>
             <span>{data.user.username}</span>
             <form action='/logout' method='post' className='inline'>
-              <button className='btn ml-2 text-black'>Logout</button>
+              <button className='btn btn-primary ml-2'>Logout</button>
             </form>
           </li>
         ) : (

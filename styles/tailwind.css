@@ -30,6 +30,10 @@
     @apply py-1 px-2 bg-slate-100 hover:bg-slate-200 rounded-sm transition-all;
   }
 
+  .btn-primary {
+    @apply bg-sky-600 hover:bg-sky-700;
+  }
+
   .btn-submit {
     @apply bg-amber-300 hover:bg-amber-400;
   }
