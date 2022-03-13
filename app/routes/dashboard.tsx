@@ -8,7 +8,7 @@ import {
   useFetcher,
   useLoaderData
 } from "remix";
-import { Habit as HabitType } from "types/habits.server";
+import { Habit as HabitType } from "~/types/habits.server";
 import CalendarComponent from "~/components/calendar";
 // import Modal from "~/components/modal";
 import Modal from "react-modal";

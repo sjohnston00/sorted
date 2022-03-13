@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import mongoose from "../mongoose.server";
-import { MarkedHabit as MarkedHabitType } from "types/markedHabit.server";
+import { MarkedHabit as MarkedHabitType } from "~/types/markedHabit.server";
 
 const markedHabitSchema = new mongoose.Schema<MarkedHabitType>({
   date: {

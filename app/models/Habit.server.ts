@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 import mongoose from "../mongoose.server";
-import { Habit as HabitType } from "types/habits.server";
+import { Habit as HabitType } from "~/types/habits.server";
 
 const habitSchema = new mongoose.Schema<HabitType>({
   name: { type: String, required: true, trim: true },
