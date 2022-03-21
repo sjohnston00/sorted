@@ -1,46 +1,132 @@
-import bcrypt from "bcrypt";
-import User from "~/models/User.server";
+import React from "react"
+import {
+  ActionFunction,
+  Form,
+  json,
+  useActionData,
+  useTransition,
+  useSearchParams,
+  LoaderFunction,
+  redirect,
+  Link,
+} from "remix"
+import {
+  isValidPassword,
+  registerUser,
+  usernameExists,
+} from "~/utils/register.server"
+import {
+  createUserSession,
+  getUserId,
+  loginUser,
+  requireUserId,
+} from "~/utils/session.server"
 
-export const usernameExists = async (username: string): Promise<boolean> => {
-  const user = await User.findOne({ username: username });
-  if (user) {
-    return true;
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request)
+  if (userId) {
+    return redirect("/habits")
   }
-  return false;
-};
+  return null
+}
 
-export const registerUser = async (
-  username: string,
-  password: string
-): Promise<any> => {
-  const hashedPassword = await bcrypt.hash(password, 10);
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData()
+  const username = formData.get("username")?.toString()
+  const password = formData.get("password")?.toString()
+  const redirectTo = formData.get("redirectTo")?.toString() || "/habits"
 
-  const newUser = new User({
-    username: username,
-    password: hashedPassword
-  });
-
-  const savedUser = await newUser.save();
-  return savedUser;
-};
-
-export const isValidPassword = (password: string): boolean => {
-  if (password.length < 8) {
-    return false;
+  if (!username || !password || !redirectTo) {
+    return {
+      errors: {
+        username: "Please provide a username",
+        password: "Please provide a password",
+      },
+    }
   }
 
-  const containNumbers = /[0-9]/;
-  const containUppercase = /[A-Z]/;
-  const specialCharacters = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  const validPassword = isValidPassword(password)
+  if (!validPassword) {
+    return {
+      errors: {
+        password:
+          "Please provide a password that is at least 8 characters long, 1 uppercase, 1 number and 1 special character",
+      },
+    }
+  }
 
-  if (!specialCharacters.test(password)) {
-    return false;
+  const usernameTaken = await usernameExists(username)
+  if (usernameTaken) {
+    return {
+      errors: {
+        username:
+          "This username has already been taken, please try another one",
+      },
+    }
   }
-  if (!containNumbers.test(password)) {
-    return false;
-  }
-  if (!containUppercase.test(password)) {
-    return false;
-  }
-  return true;
-};
+
+  const user = await registerUser(username, password)
+
+  return createUserSession(user._id, redirectTo)
+}
+
+export default function Register() {
+  const [searchParams] = useSearchParams()
+  const actionData = useActionData()
+  const transition = useTransition()
+
+  const submitting = transition.state === "submitting"
+  return (
+    <>
+      <h1 className="text-4xl">Register</h1>
+      <Form method="post" className="auth-form">
+        <label htmlFor="username">
+          Username <span className="text-red-600">*</span>
+        </label>
+        <input
+          type="text"
+          name="username"
+          id="username"
+          autoComplete="username"
+          minLength={3}
+          maxLength={20}
+          required
+        />
+        <small className="text-red-600">
+          {actionData?.errors?.username}&nbsp;
+        </small>
+        <label htmlFor="password">
+          Password <span className="text-red-600">*</span>
+        </label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          autoComplete="password"
+          minLength={6}
+          maxLength={64}
+          required
+        />
+        <small className="text-red-600">
+          {actionData?.errors?.password}&nbsp;
+        </small>
+        <br />
+        <button
+          type="submit"
+          className="btn btn-submit mt-2  mr-2"
+          disabled={submitting}
+        >
+          {submitting ? "Registering... " : "Register"}
+        </button>
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={searchParams.get("redirectTo") ?? undefined}
+        />
+        <Link to={"/login"} className="link">
+          Already have an account? Login
+        </Link>
+      </Form>
+    </>
+  )
+}
