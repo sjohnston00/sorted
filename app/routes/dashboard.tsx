@@ -1,28 +1,23 @@
-import mongoose from "mongoose";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActionFunction,
   Form,
   Link,
   LoaderFunction,
+  useCatch,
   useFetcher,
   useLoaderData
 } from "remix";
-import { Habit as HabitType } from "~/types/habits.server";
 import CalendarComponent from "~/components/calendar";
-// import Modal from "~/components/modal";
 import Modal from "react-modal";
-import Habit from "~/models/Habit.server";
-import MarkedHabit from "~/models/MarkedHabit.server";
 import { requireUserId } from "~/utils/session.server";
+import { getHabitsForUser } from "~/utils/habits.server";
+import { getMarkedHabitsForUser } from "~/utils/markedHabits.server";
+import MarkedHabit from "~/models/MarkedHabit.server";
+import mongoose from "mongoose";
 
 type LoaderData = {
-  habits: Array<
-    mongoose.Document<unknown, any, HabitType> &
-      HabitType & {
-        _id: mongoose.Types.ObjectId;
-      }
-  >;
+  habits: any;
   dates: any;
   userId: string;
 };
@@ -31,10 +26,9 @@ export const loader: LoaderFunction = async ({
   request
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request);
-  const habits = await Habit.find({ user: userId }).sort({ name: 1 });
-  const dates = await MarkedHabit.find({ user: userId })
-    .populate("habit")
-    .sort({ date: 1 });
+  const habits = await getHabitsForUser(userId);
+  const dates = await getMarkedHabitsForUser(userId);
+
   return {
     habits: habits,
     dates: dates,
@@ -48,13 +42,34 @@ export const action: ActionFunction = async ({ request }) => {
   const habitId = formData.get("selectedHabit");
   const markedDate = formData.get("markedDate");
 
-  //TODO: check it isn't that same habits being added to the same day
-
   if (typeof habitId !== "string" || typeof markedDate !== "string") {
     return {
       errors: {
         habitId: "Please provide a valid Habit",
         markedDate: "Please provide a valid Date"
+      }
+    };
+  }
+
+  if (request.method === "DELETE") {
+    //TODO: Delete the marked habit from the date
+    await MarkedHabit.deleteOne({
+      date: { $lt: new Date(markedDate) },
+      habit: habitId
+    });
+    return {};
+  }
+
+  //TODO: check it isn't that same habits being added to the same day
+  const sameMarkedHabit = await MarkedHabit.findOne({
+    date: { $lt: new Date(markedDate) },
+    habit: habitId
+  });
+
+  if (sameMarkedHabit) {
+    return {
+      errors: {
+        message: "You cannot mark the same habit for the same day"
       }
     };
   }
@@ -69,7 +84,7 @@ export const action: ActionFunction = async ({ request }) => {
   return {};
 };
 
-export default function Index() {
+export default function Dashboard() {
   const fetcher = useFetcher();
   const { dates, habits, userId } = useLoaderData<LoaderData>();
   const [value, onChange] = useState(new Date());
@@ -82,7 +97,7 @@ export default function Index() {
     return () => {
       setSelectedDateHabits([]);
     };
-  }, [value]);
+  }, [fetcher, userId, value]);
 
   const closeModal = () => setShowModal(false);
 
@@ -97,44 +112,6 @@ export default function Index() {
           return;
         }}
       />
-      {/* {habits.length > 0 ? (
-          <Form method='post'>
-            <label htmlFor='selectedHabit'>Habit</label>
-            <select
-              name='selectedHabit'
-              id='selectedHabit'
-              className='block mb-2 bg-slate-50 p-2 cursor-pointer'
-              required>
-              <option selected disabled hidden>
-                Select a habit
-              </option>
-              {habits.map((habit) => (
-                <option key={habit._id.toString()} value={habit._id.toString()}>
-                  {habit.name}
-                </option>
-              ))}
-            </select>
-            <input
-              type={"hidden"}
-              name='markedDate'
-              id='markedDate'
-              value={value.toISOString()}
-            />
-            <button className='btn block' type='submit'>
-              Mark
-            </button>
-          </Form>
-        ) : (
-          <p className='text-red-500'>
-            You don't have any habits to add.{" "}
-            <Link
-              to={"/habits/new"}
-              className='text-blue-300 hover:text-blue-400'>
-              Create One
-            </Link>
-          </p>
-        )} */}
-
       <Modal
         isOpen={showModal}
         onRequestClose={closeModal}
@@ -185,7 +162,7 @@ export default function Index() {
                 <option selected disabled hidden>
                   Select a habit
                 </option>
-                {habits.map((habit) => (
+                {habits.map((habit: any) => (
                   <option
                     key={habit._id.toString()}
                     value={habit._id.toString()}>
@@ -219,4 +196,13 @@ export default function Index() {
       </Modal>
     </div>
   );
+}
+export function CatchBoundary() {
+  const error = useCatch();
+  console.error(error);
+  return <p>Something went wrong</p>;
+}
+export function ErrorBoundary({ error }: any) {
+  console.error(error);
+  return <p>Something went wrong</p>;
 }

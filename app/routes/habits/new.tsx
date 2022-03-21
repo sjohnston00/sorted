@@ -1,8 +1,7 @@
-import React from "react";
-import { LoaderFunction, ActionFunction, Form, Link, redirect } from "remix";
+import { ActionFunction, Form, Link, redirect } from "remix";
 import Habit from "~/models/Habit.server";
 import { requireUserId } from "~/utils/session.server";
-import mongoose, { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
