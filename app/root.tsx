@@ -1,4 +1,5 @@
 import {
+  Link,
   Links,
   LinksFunction,
   LiveReload,
@@ -7,6 +8,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useCatch,
   useLocation,
   useMatches,
 } from "remix"
@@ -14,7 +16,7 @@ import type { MetaFunction } from "remix"
 import tailwind from "./tailwind.css"
 import Navbar from "./components/navbar"
 import { getUser, getUserId } from "./utils/session.server"
-import { useEffect } from "react"
+import React, { useEffect } from "react"
 import { useTransition } from "remix"
 import LoadingIndicator from "./components/LoadingIndicator"
 export const links: LinksFunction = () => {
@@ -76,6 +78,15 @@ export default function App() {
   }, [location])
 
   return (
+    <Layout>
+      {isLoading && <LoadingIndicator />}
+      <Outlet />
+    </Layout>
+  )
+}
+
+function Layout({ children }: { children: React.ReactNode }) {
+  return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
@@ -84,14 +95,39 @@ export default function App() {
         <Links />
         <link rel="manifest" href="/resources/manifest.json" />
       </head>
-      <body className="dark:bg-slate-700">
+      <body className="dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-200">
         <Navbar />
-        {isLoading && <LoadingIndicator />}
-        <main className="sm:m-1 md:mx-2 lg:mx-4 xl:mx-10">
-          <Outlet />
-        </main>
+        <main className="sm:m-1 md:mx-2 lg:mx-4 xl:mx-10">{children}</main>
         <ScrollRestoration /> <Scripts /> <LiveReload />
       </body>
     </html>
+  )
+}
+
+export function CatchBoundary() {
+  const { data, status, statusText } = useCatch()
+  return (
+    <Layout>
+      <p>
+        {data} <span>{status}</span> <span>{statusText}</span>
+      </p>
+    </Layout>
+  )
+}
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <Layout>
+      {process.env.NODE_ENV !== "production" ? (
+        <>
+          <p>Something went wrong, please try again later</p>
+          <Link to={"/"}>Home</Link>
+        </>
+      ) : (
+        <>
+          <pre>{error.stack}</pre>
+          <Link to={"/"}>Home</Link>
+        </>
+      )}
+    </Layout>
   )
 }
