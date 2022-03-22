@@ -117,7 +117,7 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
   return (
     <Layout>
-      {process.env.NODE_ENV !== "production" ? (
+      {process.env.NODE_ENV === "production" ? (
         <>
           <p>Something went wrong, please try again later</p>
           <Link to={"/"}>Home</Link>
