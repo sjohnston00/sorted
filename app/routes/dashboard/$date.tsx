@@ -4,8 +4,10 @@ import {
   Form,
   Link,
   LoaderFunction,
+  useActionData,
   useLoaderData,
   useNavigate,
+  useTransition,
 } from "remix"
 import Modal from "react-modal"
 import { requireUserId } from "~/utils/session.server"
@@ -13,11 +15,20 @@ import { getMarkedHabitsForUser } from "~/utils/markedHabits.server"
 import { getHabitsForUser } from "~/utils/habits.server"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import mongoose from "mongoose"
+import LoadingIndicator from "~/components/LoadingIndicator"
 
 type LoaderData = {
   loaderDate: string
   habits: Array<any>
   markedHabits: Array<any>
+}
+
+type ActionData = {
+  errors?: {
+    message?: string
+    habit?: string
+    markedDate?: string
+  }
 }
 
 export const loader: LoaderFunction = async ({
@@ -38,7 +49,10 @@ export const loader: LoaderFunction = async ({
   }
 }
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action: ActionFunction = async ({
+  request,
+  params,
+}): Promise<ActionData> => {
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const habitId = formData.get("selectedHabit")
@@ -47,7 +61,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (typeof habitId !== "string" || typeof markedDate !== "string") {
     return {
       errors: {
-        habitId: "Please provide a valid Habit",
+        message: "Please provide a valid Habit",
         markedDate: "Please provide a valid Date",
       },
     }
@@ -55,9 +69,13 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   if (request.method === "DELETE") {
     //TODO: Delete the marked habit from the date
+    const markedHabit = formData.get("markedHabit")
+    // await MarkedHabit.deleteOne({
+    //   date: { $lt: new Date(markedDate) },
+    //   habit: habitId,
+    // })
     await MarkedHabit.deleteOne({
-      date: { $lt: new Date(markedDate) },
-      habit: habitId,
+      _id: markedHabit,
     })
     return {}
   }
@@ -88,9 +106,12 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function DashboardDate() {
   const { loaderDate, habits, markedHabits } = useLoaderData<LoaderData>()
+  const actionData = useActionData<ActionData>()
   const date = new Date(loaderDate)
-
   const navigate = useNavigate()
+  const transition = useTransition()
+  const isLoading =
+    transition.state === "loading" || transition.state === "submitting"
 
   const closeModal = () => {
     navigate("..")
@@ -101,6 +122,7 @@ export default function DashboardDate() {
       isOpen={true}
       onRequestClose={closeModal}
       closeTimeoutMS={500}
+      contentLabel={date.toDateString()}
       style={{
         overlay: {
           backgroundColor: undefined,
@@ -111,72 +133,85 @@ export default function DashboardDate() {
         },
       }}
     >
-      <div className="flex justify-end">
-        <button
-          className="p-2 rounded-sm hover:scale-110 hover:opacity-100 opacity-70 transition-all text-xl text-neutral-50"
-          onClick={closeModal}
-          title="Close"
-        >
-          &times;
-        </button>
-      </div>
-      {habits.length > 0 ? (
-        <>
-          {markedHabits.map(({ habit }: any) => (
-            <p key={habit._id} className="hover:underline cursor-pointer mb-2">
-              <Link to={`/habits/${habit._id}`} title={`${habit.name}`}>
-                {habit.name}
-              </Link>
-              <div
-                className="h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle"
-                style={{ backgroundColor: habit.colour }}
-                title={`Colour: ${habit.colour}`}
-              ></div>
-            </p>
-          ))}
-          <Form method="post">
-            <select
-              name="selectedHabit"
-              id="selectedHabit"
-              className="block my-2 bg-neutral-600 p-2 rounded-sm cursor-pointer text-neutral-50"
-              required
-            >
-              <option selected disabled hidden>
-                Select a habit
-              </option>
-              {habits.map((habit: any) => (
-                <option key={habit._id.toString()} value={habit._id.toString()}>
+      <div className="modal-body">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl">{date.toDateString()}</h2>
+          <button
+            className="p-2 rounded-sm hover:scale-110 hover:opacity-100 opacity-70 transition-all text-xl"
+            onClick={closeModal}
+            title="Close"
+          >
+            &times;
+          </button>
+        </div>
+        {habits.length > 0 ? (
+          <>
+            <div className="flex flex-col gap-2">
+              {markedHabits.map(({ habit }: any) => (
+                <Link
+                  key={habit._id}
+                  to={`/habits/${habit._id}`}
+                  title={`${habit.name} - Colour: ${habit.colour}`}
+                >
                   {habit.name}
-                </option>
+                  <div
+                    className="h-6 w-6 ml-2 inline-block border-2 border-slate-900 align-middle"
+                    style={{ backgroundColor: habit.colour }}
+                  ></div>
+                </Link>
               ))}
-            </select>
-            <input
-              type={"hidden"}
-              name="markedDate"
-              id="markedDate"
-              value={date.toISOString()}
-            />
-            <button
-              className="btn text-neutral-50 bg-neutral-600 hover:bg-neutral-700 focus:bg-neutral-700"
-              type="submit"
-            >
-              Mark
-            </button>
-          </Form>
-        </>
-      ) : (
-        <>
-          <p className="text-red-500">
-            You don't have any habits to add.{" "}
-            <Link
-              to={"/habits/new"}
-              className="text-blue-300 hover:text-blue-400"
-            >
-              Create One
-            </Link>
-          </p>
-        </>
-      )}
+            </div>
+            <Form method="post">
+              <small className="block text-danger p-2">
+                {actionData && actionData.errors?.message}&nbsp;
+              </small>
+              <select
+                name="selectedHabit"
+                id="selectedHabit"
+                className="block mb-2 bg-neutral-600 p-2 rounded-sm cursor-pointer text-neutral-50"
+                required
+              >
+                <option selected disabled hidden>
+                  Select a habit
+                </option>
+                {habits.map((habit: any) => (
+                  <option
+                    key={habit._id.toString()}
+                    value={habit._id.toString()}
+                  >
+                    {habit.name}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type={"hidden"}
+                name="markedDate"
+                id="markedDate"
+                value={date.toISOString()}
+              />
+              <button
+                className="btn text-neutral-50 bg-neutral-600 hover:bg-neutral-700 focus:bg-neutral-700"
+                type="submit"
+              >
+                {isLoading ? (
+                  <span className="flex gap-2">
+                    Marking...{" "}
+                    <LoadingIndicator className="spinner static h-6 w-6" />
+                  </span>
+                ) : (
+                  "Mark"
+                )}
+              </button>
+            </Form>
+          </>
+        ) : (
+          <>
+            <p className="text-red-500">You don't have any habits to add. </p>
+            <Link to={"/habits/new"}>Create One</Link>
+          </>
+        )}
+      </div>
     </Modal>
   )
 }

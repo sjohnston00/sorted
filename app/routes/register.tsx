@@ -90,6 +90,7 @@ export default function Register() {
           autoComplete="username"
           minLength={3}
           maxLength={20}
+          className="input"
           required
         />
         <small className="text-red-600">
@@ -105,27 +106,29 @@ export default function Register() {
           autoComplete="password"
           minLength={6}
           maxLength={64}
+          className="input"
           required
         />
         <small className="text-red-600">
           {actionData?.errors?.password}&nbsp;
         </small>
-        <br />
-        <button
-          type="submit"
-          className="btn btn-submit mt-2  mr-2"
-          disabled={submitting}
-        >
-          {submitting ? "Registering... " : "Register"}
-        </button>
         <input
           type="hidden"
           name="redirectTo"
           value={searchParams.get("redirectTo") ?? undefined}
         />
-        <Link to={"/login"} className="link">
-          Already have an account? Login
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="submit"
+            className="btn btn-primary mt-2  mr-2"
+            disabled={submitting}
+          >
+            {submitting ? "Registering... " : "Register"}
+          </button>
+          <Link to={"/login"} className="link">
+            Already have an account? Login
+          </Link>
+        </div>
       </Form>
     </>
   )

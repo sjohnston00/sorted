@@ -18,6 +18,7 @@ import { getMarkedHabitsForUser } from "~/utils/markedHabits.server"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import mongoose from "mongoose"
 import LoadingIndicator from "~/components/LoadingIndicator"
+import useIsMount from "~/utils/hooks/useIsMount"
 
 type LoaderData = {
   habits: any
@@ -45,10 +46,15 @@ export const loader: LoaderFunction = async ({
 
 export default function Dashboard() {
   const fetcher = useFetcher()
+  const isMount = useIsMount()
   const { dates, habits, userId } = useLoaderData<LoaderData>()
   const navigate = useNavigate()
   const [value, onChange] = useState(new Date())
   useEffect(() => {
+    if (isMount) {
+      //means its th first render
+      return
+    }
     navigate(`${value.toISOString().split("T")[0]}`)
   }, [value])
 

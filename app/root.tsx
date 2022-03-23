@@ -95,9 +95,9 @@ function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <link rel="manifest" href="/resources/manifest.json" />
       </head>
-      <body className="dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-200">
+      <body className="dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-50">
         <Navbar />
-        <main className="sm:m-1 md:mx-2 lg:mx-4 xl:mx-10">{children}</main>
+        <main className="container m-auto lg:px-0 px-1">{children}</main>
         <ScrollRestoration /> <Scripts /> <LiveReload />
       </body>
     </html>

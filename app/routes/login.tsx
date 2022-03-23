@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"
 import {
   ActionFunction,
   Form,
@@ -8,97 +8,100 @@ import {
   useSearchParams,
   LoaderFunction,
   redirect,
-  Link
-} from "remix";
+  Link,
+} from "remix"
 import {
   createUserSession,
   getUserId,
   loginUser,
-  requireUserId
-} from "~/utils/session.server";
+  requireUserId,
+} from "~/utils/session.server"
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const userId = await getUserId(request);
+  const userId = await getUserId(request)
   if (userId) {
-    return redirect("/habits");
+    return redirect("/habits")
   }
-  return null;
-};
+  return null
+}
 
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData();
-  const username = formData.get("username")?.toString();
-  const password = formData.get("password")?.toString();
-  const redirectTo = formData.get("redirectTo")?.toString() || "/habits";
+  const formData = await request.formData()
+  const username = formData.get("username")?.toString()
+  const password = formData.get("password")?.toString()
+  const redirectTo = formData.get("redirectTo")?.toString() || "/habits"
 
   if (!username || !password || !redirectTo) {
     return {
       errors: {
         username: "Please provide a username",
-        password: "Please provide a password"
-      }
-    };
+        password: "Please provide a password",
+      },
+    }
   }
 
-  const user = await loginUser(username, password);
+  const user = await loginUser(username, password)
 
   if (user?.errors) {
-    return json(user, 400);
+    return json(user, 400)
   }
 
-  return createUserSession(user._id, redirectTo);
-};
+  return createUserSession(user._id, redirectTo)
+}
 
 export default function Login() {
-  const [searchParams] = useSearchParams();
-  const actionData = useActionData();
-  const transition = useTransition();
+  const [searchParams] = useSearchParams()
+  const actionData = useActionData()
+  const transition = useTransition()
 
-  const submitting = transition.state === "submitting";
+  const submitting = transition.state === "submitting"
   return (
     <>
-      <h1 className='text-4xl'>Login</h1>
-      <Form method='post' className='auth-form'>
-        <small className='text-red-400'>{actionData?.errors}&nbsp;</small>
-        <label htmlFor='username'>
-          Username <span className='text-red-600'>*</span>
+      <h1 className="text-4xl">Login</h1>
+      <Form method="post" className="auth-form">
+        <small className="text-red-400">{actionData?.errors}&nbsp;</small>
+        <label htmlFor="username">
+          Username <span className="text-red-600">*</span>
         </label>
         <input
-          type='text'
-          name='username'
-          id='username'
-          autoComplete='username'
+          type="text"
+          name="username"
+          id="username"
+          autoComplete="username"
           minLength={3}
           maxLength={20}
+          className="input"
           required
         />
-        <label htmlFor='password'>
-          Password <span className='text-red-600'>*</span>
+        <label htmlFor="password">
+          Password <span className="text-red-600">*</span>
         </label>
         <input
-          type='password'
-          name='password'
-          id='password'
-          autoComplete='password'
+          type="password"
+          name="password"
+          id="password"
+          autoComplete="password"
           minLength={6}
           maxLength={64}
+          className="input"
           required
         />
-        <button
-          type='submit'
-          className='btn btn-submit mt-2  mr-2'
-          disabled={submitting}>
-          {submitting ? "Loging in... " : "Login"}
-        </button>
         <input
-          type='hidden'
-          name='redirectTo'
+          type="hidden"
+          name="redirectTo"
           value={searchParams.get("redirectTo") ?? undefined}
         />
-        <Link to={"/register"} className='link'>
-          Don't have an account? Create one
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            type="submit"
+            className="btn btn-primary mt-2  mr-2"
+            disabled={submitting}
+          >
+            {submitting ? "Loging in... " : "Login"}
+          </button>
+          <Link to={"/register"}>Don't have an account? Create one</Link>
+        </div>
       </Form>
     </>
-  );
+  )
 }
