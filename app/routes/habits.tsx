@@ -1,7 +1,20 @@
 import React from "react";
 import Habit from "~/models/Habit.server";
-import { Link, LoaderFunction, Outlet, redirect, useLoaderData } from "remix";
+import {
+  Link,
+  LoaderFunction,
+  MetaFunction,
+  Outlet,
+  redirect,
+  useLoaderData
+} from "remix";
 import { requireUserId } from "~/utils/session.server";
+
+export const meta: MetaFunction = () => {
+  return {
+    title: "Sorted | Habits"
+  };
+};
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
