@@ -715,6 +715,14 @@ a.btn:hover {
   --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.react-calendar-tile.react-calendar__tile--active abbr:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(3 105 161 / var(--tw-bg-opacity));
 }
 
 .react-calendar-tile.react-calendar__month-view__days__day {
@@ -726,6 +734,10 @@ a.btn:hover {
 .react-calendar-tile.react-calendar__month-view__days__day abbr {
   border-radius: 9999px;
   padding: 0.5rem;
+}
+
+.react-calendar-tile.react-calendar__month-view__days__day abbr:hover {
+  opacity: 0.8;
 }
 
 .react-calendar-tile:disabled {
@@ -769,11 +781,6 @@ a.btn:hover {
   margin: 0.25rem;
 }
 
-.mx-2 {
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-}
-
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -808,6 +815,10 @@ a.btn:hover {
 
 .flex {
   display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
 }
 
 .hidden {
@@ -957,10 +968,6 @@ a.btn:hover {
   font-weight: 700;
 }
 
-.italic {
-  font-style: italic;
-}
-
 .-tracking-wide {
   letter-spacing: -0.025em;
 }
@@ -973,11 +980,6 @@ a.btn:hover {
 .text-red-500 {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
-}
-
-.text-blue-400 {
-  --tw-text-opacity: 1;
-  color: rgb(96 165 250 / var(--tw-text-opacity));
 }
 
 .text-red-400 {
@@ -1172,11 +1174,6 @@ a.btn:hover {
 .hover\:bg-neutral-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(64 64 64 / var(--tw-bg-opacity));
-}
-
-.hover\:text-blue-500:hover {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity));
 }
 
 .hover\:underline:hover {

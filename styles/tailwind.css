@@ -62,7 +62,7 @@
   }
 
   .react-calendar-tile.react-calendar__tile--active abbr {
-    @apply bg-sky-600 text-neutral-50 shadow-sm no-underline;
+    @apply bg-sky-600 hover:bg-sky-700  text-neutral-50 shadow-sm no-underline transition-all;
   }
 
   .react-calendar-tile.react-calendar__month-view__days__day {
@@ -70,7 +70,7 @@
   }
 
   .react-calendar-tile.react-calendar__month-view__days__day abbr {
-    @apply p-2 rounded-full;
+    @apply p-2 rounded-full hover:opacity-80;
   }
 
   .react-calendar-tile:disabled {

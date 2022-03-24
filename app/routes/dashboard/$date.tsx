@@ -226,8 +226,15 @@ export default function DashboardDate() {
           </>
         ) : (
           <>
-            <p className="text-red-500">You don't have any habits to add. </p>
-            <Link to={"/habits/new"}>Create One</Link>
+            <p className="py-2 text-red-500">
+              You don't have any habits to add.{" "}
+            </p>
+            <Link
+              to={"/habits/new"}
+              className="btn btn-primary inline-flex gap-2 items-center"
+            >
+              Create One <HiPlus />
+            </Link>
           </>
         )}
       </div>
