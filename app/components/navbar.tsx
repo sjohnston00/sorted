@@ -9,9 +9,6 @@ export default function Navbar() {
       <ul className="flex items-center justify-between flex-row py-2 gap-2 container m-auto">
         <div className="flex gap-2">
           <li>
-            <Link to={"/"}>Home</Link>
-          </li>
-          <li>
             <Link to={"/habits"}>Habits</Link>
           </li>
           <li>
