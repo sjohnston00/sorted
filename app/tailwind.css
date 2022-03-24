@@ -705,6 +705,38 @@ a.btn:hover {
   }
 }
 
+.react-calendar-tile.react-calendar__tile--active abbr {
+  --tw-bg-opacity: 1;
+  background-color: rgb(2 132 199 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(250 250 250 / var(--tw-text-opacity));
+  -webkit-text-decoration-line: none;
+          text-decoration-line: none;
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.react-calendar-tile.react-calendar__month-view__days__day {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.react-calendar-tile.react-calendar__month-view__days__day abbr {
+  border-radius: 9999px;
+  padding: 0.5rem;
+}
+
+.react-calendar-tile:disabled {
+  opacity: 0.3;
+}
+
+.react-calendar-tile.react-calendar__month-view__days__day--neighboringMonth
+    abbr {
+  opacity: 0.5;
+}
+
 .visible {
   visibility: visible;
 }
@@ -834,10 +866,6 @@ a.btn:hover {
   gap: 0.5rem;
 }
 
-.self-center {
-  align-self: center;
-}
-
 .rounded-full {
   border-radius: 9999px;
 }
@@ -878,12 +906,12 @@ a.btn:hover {
   padding: 0.5rem;
 }
 
-.p-0 {
-  padding: 0px;
-}
-
 .p-1 {
   padding: 0.25rem;
+}
+
+.p-0 {
+  padding: 0px;
 }
 
 .px-1 {
@@ -999,41 +1027,7 @@ a.btn:hover {
   transition-duration: 150ms;
 }
 
-.react-calendar__month-view__weekdays__weekday abbr {
-  text-decoration: none;
-}
-
-.react-calendar__month-view__weekdays__weekday abbr[title="Saturday"],
-.react-calendar__month-view__weekdays__weekday abbr[title="Sunday"] {
-  color: rgb(249 115 22);
-}
-
-.react-calendar__month-view__weekdays__weekday {
-  text-align: center;
-}
-
-.react-calendar__tile--active abbr {
-  background-color: rgb(249 115 22);
-  box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.15);
-  text-decoration: none;
-}
-
-.react-calendar__month-view__days__day {
-  transition: 0.2s all ease-in-out;
-}
-
-.react-calendar__month-view__days__day abbr {
-  padding: 8px;
-  border-radius: 9999px;
-}
-
-.react-calendar__tile:disabled {
-  opacity: 0.3;
-}
-
-.react-calendar__month-view__days__day--neighboringMonth abbr {
-  opacity: 0.5;
-}
+/* Calendar navigation */
 
 .react-calendar__navigation {
   text-align: center;
@@ -1053,6 +1047,24 @@ a.btn:hover {
 .react-calendar__navigation__arrow:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+/* Week day titles */
+
+.react-calendar__month-view__weekdays__weekday {
+  text-align: center;
+}
+
+.react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+}
+
+/* Weekend day titles */
+
+.react-calendar__month-view__weekdays__weekday abbr[title="Saturday"],
+.react-calendar__month-view__weekdays__weekday abbr[title="Sunday"],
+.react-calendar__month-view__days__day--weekend {
+  opacity: 0.8;
 }
 
 .ReactModal__Overlay {
@@ -1154,12 +1166,6 @@ a.btn:hover {
 .hover\:scale-110:hover {
   --tw-scale-x: 1.1;
   --tw-scale-y: 1.1;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.hover\:scale-105:hover {
-  --tw-scale-x: 1.05;
-  --tw-scale-y: 1.05;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 

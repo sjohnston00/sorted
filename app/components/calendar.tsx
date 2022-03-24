@@ -15,6 +15,7 @@ export default function CalendarComponent({
   const today = new Date()
   return (
     <Calendar
+      tileClassName="react-calendar-tile"
       onChange={onChange}
       value={value}
       minDetail={"month"}
