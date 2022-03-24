@@ -54,17 +54,23 @@ export default function Dashboard() {
   }, [value])
 
   return (
-    <div className="flex md:flex-row sm:flex-col gap-2">
-      <CalendarComponent
-        markedHabits={dates}
-        value={value}
-        onChange={(newValue) => {
-          onChange(newValue)
-          return
-        }}
-      />
-      <Outlet />
-    </div>
+    <>
+      <div className="flex md:flex-row sm:flex-col gap-2">
+        <CalendarComponent
+          markedHabits={dates}
+          value={value}
+          onChange={(newValue) => {
+            onChange(newValue)
+            return
+          }}
+        />
+
+        <Outlet />
+      </div>
+      <button onClick={() => onChange(new Date())} className="btn btn-primary">
+        Today
+      </button>
+    </>
   )
 }
 export function CatchBoundary() {
