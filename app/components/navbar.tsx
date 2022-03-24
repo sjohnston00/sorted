@@ -29,7 +29,12 @@ export default function Navbar() {
                 <Link to={"/login"}>Login</Link>
               </li>
               <li>
-                <Link to={"/register"}>Register</Link>
+                <Link
+                  to={"/register"}
+                  className="btn btn-primary hover:no-underline"
+                >
+                  Register
+                </Link>
               </li>
             </>
           )}

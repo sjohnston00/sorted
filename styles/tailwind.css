@@ -14,10 +14,6 @@
   a {
     @apply text-blue-400 hover:text-blue-500 hover:underline;
   }
-
-  a.btn {
-    @apply hover:text-neutral-50 hover:no-underline;
-  }
 }
 
 @layer components {
@@ -35,6 +31,10 @@
   }
   .btn {
     @apply py-1 px-2 bg-neutral-300 hover:bg-slate-400 rounded-sm shadow-sm transition-all;
+  }
+
+  a.btn {
+    @apply hover:text-neutral-50 hover:no-underline;
   }
 
   .btn-primary {

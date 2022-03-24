@@ -110,10 +110,10 @@ export default function Login() {
           name="redirectTo"
           value={searchParams.get("redirectTo") ?? undefined}
         />
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 my-2">
           <button
             type="submit"
-            className="btn btn-primary mt-2  mr-2"
+            className="btn btn-primary"
             disabled={submitting}
           >
             {submitting ? "Loging in... " : "Login"}
