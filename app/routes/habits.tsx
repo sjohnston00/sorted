@@ -42,10 +42,7 @@ export default function Index() {
             </li>
           ))
         ) : (
-          <p className="text-red-500">
-            You don't have any habits.{" "}
-            <Link to={"/habits/new"}>Create One</Link>
-          </p>
+          <p className="py-2 text-red-500">You don't have any habits.</p>
         )}
       </ul>
       <Outlet />
