@@ -13,16 +13,10 @@ export default function CalendarComponent({
   onChange,
 }: Props) {
   const today = new Date()
-
-  useEffect(() => {
-    // console.log(value);
-  }, [value])
-
   return (
     <Calendar
       onChange={onChange}
       value={value}
-      minDate={today}
       minDetail={"month"}
       next2Label={null}
       prev2Label={null}
