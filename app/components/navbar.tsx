@@ -18,7 +18,7 @@ export default function Navbar() {
         <div className="flex gap-2 ">
           {data?.user ? (
             <li>
-              <span>{data?.user?.username}</span>
+              <Link to={"/profile"}>{data?.user?.username}</Link>
               <form action="/logout" method="post" className="inline">
                 <button className="btn btn-primary ml-2">Logout</button>
               </form>

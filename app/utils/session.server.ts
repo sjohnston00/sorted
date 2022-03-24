@@ -67,7 +67,7 @@ export async function getUserId(request: Request) {
 export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
-) {
+): Promise<string> {
   const session = await getUserSession(request)
   const userId = session.get("userId")
   if (!userId || typeof userId !== "string") {
