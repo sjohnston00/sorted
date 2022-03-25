@@ -790,10 +790,6 @@ a.btn:hover {
   margin-top: 0.5rem;
 }
 
-.mr-1 {
-  margin-right: 0.25rem;
-}
-
 .mb-2 {
   margin-bottom: 0.5rem;
 }
@@ -838,10 +834,6 @@ a.btn:hover {
   height: 1.5rem;
 }
 
-.h-3 {
-  height: 0.75rem;
-}
-
 .w-16 {
   width: 4rem;
 }
@@ -852,10 +844,6 @@ a.btn:hover {
 
 .w-6 {
   width: 1.5rem;
-}
-
-.w-3 {
-  width: 0.75rem;
 }
 
 .cursor-pointer {
@@ -886,12 +874,12 @@ a.btn:hover {
   justify-content: space-between;
 }
 
-.gap-2 {
-  gap: 0.5rem;
-}
-
 .gap-1 {
   gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
 }
 
 .rounded-full {
@@ -904,11 +892,6 @@ a.btn:hover {
 
 .border-2 {
   border-width: 2px;
-}
-
-.border-slate-700 {
-  --tw-border-opacity: 1;
-  border-color: rgb(51 65 85 / var(--tw-border-opacity));
 }
 
 .border-slate-900 {

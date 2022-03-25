@@ -10,42 +10,49 @@ import {
   ScrollRestoration,
   useCatch,
   useLocation,
-  useMatches
-} from "remix";
-import type { MetaFunction } from "remix";
-import tailwind from "./tailwind.css";
-import Navbar from "./components/navbar";
-import { getUser, getUserId } from "./utils/session.server";
-import React, { useEffect } from "react";
-import { useTransition } from "remix";
-import LoadingIndicator from "./components/LoadingIndicator";
+  useMatches,
+} from "remix"
+import type { MetaFunction } from "remix"
+import tailwind from "./tailwind.css"
+import Navbar from "./components/navbar"
+import { getUser, getUserId } from "./utils/session.server"
+import React, { useEffect } from "react"
+import { useTransition } from "remix"
+import LoadingIndicator from "./components/LoadingIndicator"
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: tailwind },
     {
       rel: "stylesheet",
-      href: "https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css"
-    }
-  ];
-};
+      href: "https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css",
+    },
+    { rel: "apple-touch-icon", href: "/icons/apple-icon-180x180.png" },
+    { rel: "icon", type: "image/x-icon", href: "/icons/favicon.ico" },
+  ]
+}
 export const loader: LoaderFunction = async ({ request }) => {
-  return { user: await getUser(request) };
-};
+  return { user: await getUser(request) }
+}
 export const meta: MetaFunction = () => {
-  return { title: "Sorted" };
-};
+  return {
+    title: "Sorted",
+    description: "Sort your habits out by tracking them",
+    author: "Sam Johnston",
+    keywords: "Habits, Habit Tracker, Sorted, PWA, Sorted Habits",
+  }
+}
 export default function App() {
-  let transition = useTransition();
-  let location = useLocation();
-  let matches = useMatches();
+  let transition = useTransition()
+  let location = useLocation()
+  let matches = useMatches()
 
   let isLoading =
-    transition.state === "submitting" || transition.state === "loading";
+    transition.state === "submitting" || transition.state === "loading"
 
-  let isMount = true;
+  let isMount = true
   useEffect(() => {
-    let mounted = isMount;
-    isMount = false;
+    let mounted = isMount
+    isMount = false
     if ("serviceWorker" in navigator) {
       if (navigator.serviceWorker.controller) {
         navigator.serviceWorker.controller?.postMessage({
@@ -53,66 +60,66 @@ export default function App() {
           isMount: mounted,
           location,
           matches,
-          manifest: window.__remixManifest
-        });
+          manifest: window.__remixManifest,
+        })
       } else {
         let listener = async () => {
-          await navigator.serviceWorker.ready;
+          await navigator.serviceWorker.ready
           navigator.serviceWorker.controller?.postMessage({
             type: "REMIX_NAVIGATION",
             isMount: mounted,
             location,
             matches,
-            manifest: window.__remixManifest
-          });
-        };
-        navigator.serviceWorker.addEventListener("controllerchange", listener);
+            manifest: window.__remixManifest,
+          })
+        }
+        navigator.serviceWorker.addEventListener("controllerchange", listener)
         return () => {
           navigator.serviceWorker.removeEventListener(
             "controllerchange",
             listener
-          );
-        };
+          )
+        }
       }
     }
-  }, [location]);
+  }, [location])
 
   return (
     <Layout>
       {isLoading && <LoadingIndicator />}
       <Outlet />
     </Layout>
-  );
+  )
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en'>
+    <html lang="en">
       <head>
-        <meta charSet='utf-8' />
-        <meta name='viewport' content='width=device-width,initial-scale=1' />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
-        <link rel='manifest' href='/resources/manifest.json' />
+        <link rel="manifest" href="/resources/manifest.json" />
       </head>
-      <body className='dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-50'>
+      <body className="dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-50">
         <Navbar />
-        <main className='container m-auto lg:px-0 px-1'>{children}</main>
+        <main className="container m-auto lg:px-0 px-1">{children}</main>
         <ScrollRestoration /> <Scripts /> <LiveReload />
       </body>
     </html>
-  );
+  )
 }
 
 export function CatchBoundary() {
-  const { data, status, statusText } = useCatch();
+  const { data, status, statusText } = useCatch()
   return (
     <Layout>
       <p>
         {data} <span>{status}</span> <span>{statusText}</span>
       </p>
     </Layout>
-  );
+  )
 }
 export function ErrorBoundary({ error }: { error: Error }) {
   return (
@@ -129,5 +136,5 @@ export function ErrorBoundary({ error }: { error: Error }) {
         </>
       )}
     </Layout>
-  );
+  )
 }
