@@ -37,14 +37,24 @@
     @apply hover:text-neutral-50 hover:no-underline;
   }
 
-  .btn-primary {
+  .btn-primary,
+  .bg-primary {
     @apply bg-sky-600 hover:bg-sky-700 text-neutral-50;
   }
 
-  .btn-dark {
+  .text-primary {
+    @apply text-sky-500;
+  }
+  .text-muted {
+    @apply text-neutral-400;
+  }
+
+  .btn-dark,
+  .bg-dark {
     @apply bg-neutral-800 hover:bg-neutral-900 text-neutral-50 hover:text-neutral-50;
   }
-  .btn-danger {
+  .btn-danger,
+  .bg-danger {
     @apply bg-red-600 hover:bg-red-700 text-neutral-50;
   }
 
@@ -79,6 +89,27 @@
   .react-calendar-tile.react-calendar__month-view__days__day--neighboringMonth
     abbr {
     @apply opacity-50;
+  }
+
+  .calendar-month {
+    @apply flex flex-col;
+  }
+  .calendar-month-header {
+    @apply text-2xl font-semibold mb-2;
+  }
+  .calendar-month-weekdays-header,
+  .calendar-month-days {
+    @apply grid grid-cols-7 text-center;
+  }
+  .calendar-month-weekdays-header {
+    @apply grid-rows-1;
+  }
+  .calendar-month-days {
+    @apply grid-rows-6;
+  }
+  #calendar-bottom,
+  #calendar-top {
+    @apply h-6;
   }
 }
 
