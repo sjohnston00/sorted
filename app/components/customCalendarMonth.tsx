@@ -65,9 +65,10 @@ export default function customCalendarMonth({ month, year, ref }: Props) {
         })}
       </div>
       <div key={`${monthYearString}`} className='calendar-month-days'>
-        {days.map((week, i) =>
+        {days.map((week) =>
           week.map((day, j) => (
             <CustomCalendarDay
+              key={`${year}-${month}-${day ? day : `empty${j}`}`}
               year={year}
               month={month}
               day={day}

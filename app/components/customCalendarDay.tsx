@@ -21,7 +21,7 @@ export default function customCalendarDay({ year, month, day, today }: Props) {
       <Link
         className={`${isToday ? "bg-primary" : ""} ${
           isWeekend ? "text-muted" : " text-neutral-800 dark:text-neutral-50"
-        } p-1 rounded-sm transition-all hover:no-underline hover:bg-primary ${
+        } p-1.5 transition-all hover:no-underline hover:bg-primary rounded-full ${
           day ? "" : "pointer-events-none"
         }`}
         to={dateLink}>
