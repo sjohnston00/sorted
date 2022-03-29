@@ -17,7 +17,7 @@ export default function customCalendarDay({ year, month, day, today }: Props) {
   const dateLink = day ? `/dashboard/${year}-${month}-${day}` : `#`;
 
   return (
-    <div>
+    <div className='calendar-month-day'>
       <Link
         className={`${isToday ? "bg-primary" : ""} ${
           isWeekend ? "text-muted" : " text-neutral-800 dark:text-neutral-50"
@@ -27,6 +27,7 @@ export default function customCalendarDay({ year, month, day, today }: Props) {
         to={dateLink}>
         {day}
       </Link>
+      <div className='calendar-month-day-habits'></div>
     </div>
   );
 }

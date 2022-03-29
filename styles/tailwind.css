@@ -111,6 +111,10 @@
   #calendar-top {
     @apply h-6;
   }
+
+  .calendar-month-day {
+    @apply flex gap-2 justify-center;
+  }
 }
 
 /* Calendar navigation */
