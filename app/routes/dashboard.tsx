@@ -13,9 +13,11 @@ import { requireUserId } from "~/utils/session.server"
 import { getHabitsForUser } from "~/utils/habits.server"
 import { getMarkedHabitsForUser } from "~/utils/markedHabits.server"
 import useIsMount from "~/utils/hooks/useIsMount"
+import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
+import CustomCalendar from "~/components/customCalendar"
 
 type LoaderData = {
-  dates: any
+  dates: Array<MarkedHabitWithHabit>
 }
 
 export const meta: MetaFunction = () => {
@@ -29,7 +31,7 @@ export const loader: LoaderFunction = async ({
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request)
   const habits = await getHabitsForUser(userId)
-  const dates = await getMarkedHabitsForUser(
+  const dates: any = await getMarkedHabitsForUser(
     userId,
     new Date(0),
     new Date(2100, 0)
@@ -55,7 +57,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="flex md:flex-row sm:flex-col gap-2">
+      {/* <div className="flex md:flex-row sm:flex-col gap-2">
         <CalendarComponent
           markedHabits={dates}
           value={value}
@@ -63,13 +65,13 @@ export default function Dashboard() {
             onChange(newValue)
             return
           }}
-        />
-
-        <Outlet />
-      </div>
+        /> */}
+      <CustomCalendar markedHabits={dates} />
+      <Outlet />
+      {/* </div>
       <button onClick={() => onChange(new Date())} className="btn btn-primary">
         Today
-      </button>
+      </button> */}
     </>
   )
 }

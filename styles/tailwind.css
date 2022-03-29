@@ -113,7 +113,10 @@
   }
 
   .calendar-month-day {
-    @apply flex gap-2 justify-center;
+    @apply flex flex-col gap-2 justify-center;
+  }
+  .calendar-month-day-habits {
+    @apply flex gap-1 flex-1 flex-wrap justify-center;
   }
 }
 

@@ -7,9 +7,5 @@ import CustomCalendar from "~/components/customCalendar"
 // }
 
 export default function Index() {
-  return (
-    <div>
-      <CustomCalendar />
-    </div>
-  )
+  return <div></div>
 }
