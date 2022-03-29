@@ -778,6 +778,7 @@ a.btn:hover {
 
 .calendar-month-days {
   grid-template-rows: repeat(6, minmax(0, 1fr));
+  gap: 0.25rem;
 }
 
 #calendar-bottom, #calendar-top {
@@ -934,6 +935,10 @@ a.btn:hover {
 
 .gap-2 {
   gap: 0.5rem;
+}
+
+.self-center {
+  align-self: center;
 }
 
 .rounded-full {

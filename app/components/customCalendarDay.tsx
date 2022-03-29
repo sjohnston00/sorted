@@ -32,9 +32,9 @@ export default function customCalendarDay({
   return (
     <div className="calendar-month-day">
       <Link
-        className={`${isToday ? "bg-primary" : ""} ${
+        className={`${isToday ? "bg-primary shadow-sm" : ""} ${
           isWeekend ? "text-muted" : " text-neutral-800 dark:text-neutral-50"
-        } p-1.5 transition-all hover:no-underline hover:bg-primary rounded-full ${
+        } p-1.5 transition-all hover:no-underline self-center hover:bg-primary rounded-full ${
           day ? "" : "pointer-events-none"
         }`}
         to={dateLink}
