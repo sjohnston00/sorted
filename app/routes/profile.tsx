@@ -79,7 +79,7 @@ export default function Profile() {
       </small>
       <hr className="my-2" />
       <h3 className="text-xl">Change Password</h3>
-      <Form method="post">
+      <Form method="post" className="mt-2">
         <label htmlFor="new-password">New Password</label>
         <input
           type={"password"}
