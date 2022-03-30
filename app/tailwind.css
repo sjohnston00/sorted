@@ -1027,12 +1027,25 @@ a.btn:hover {
   line-height: 1.75rem;
 }
 
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 .font-bold {
   font-weight: 700;
 }
 
+.font-semibold {
+  font-weight: 600;
+}
+
 .-tracking-wide {
   letter-spacing: -0.025em;
+}
+
+.tracking-wide {
+  letter-spacing: 0.025em;
 }
 
 .text-neutral-800 {
@@ -1220,6 +1233,11 @@ a.btn:hover {
     stroke-dasharray: 90, 150;
     stroke-dashoffset: -124;
   }
+}
+
+.first-letter\:text-4xl::first-letter {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
 .btn-primary, .hover\:bg-primary:hover {
