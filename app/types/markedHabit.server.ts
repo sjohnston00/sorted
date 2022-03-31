@@ -1,5 +1,5 @@
 import { Types } from "mongoose"
-import { Habit } from "./habits.server"
+import { Habit, HabitWithId } from "./habits.server"
 import { User } from "./user.server"
 
 export type MarkedHabit = {
@@ -13,7 +13,7 @@ export type MarkedHabitWithId = MarkedHabit & {
 }
 
 export interface MarkedHabitWithHabit extends Omit<MarkedHabitWithId, "habit"> {
-  habit: Habit
+  habit: HabitWithId
 }
 
 export interface MarkedHabitWithUser extends Omit<MarkedHabitWithId, "user"> {
@@ -23,5 +23,5 @@ export interface MarkedHabitWithUser extends Omit<MarkedHabitWithId, "user"> {
 export interface MarkedHabitWithUserAndHabit
   extends Omit<MarkedHabitWithId, "user" | "habit"> {
   user: User
-  habit: Habit
+  habit: HabitWithId
 }

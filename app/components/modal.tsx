@@ -1,41 +1,47 @@
-import React, { useEffect } from "react";
-import { Form, useFetcher } from "remix";
+import { motion, Variants } from "framer-motion"
+import React from "react"
+import { useLocation } from "remix"
+import Backdrop from "./ModalBackdrop"
+
+const slideInFromBottom: Variants = {
+  hidden: {
+    y: "100vh",
+    opacity: 0,
+  },
+  visible: {
+    y: "0",
+    opacity: 1,
+    transition: {
+      type: "spring",
+      bounce: 0.2,
+    },
+  },
+  exit: {
+    y: "100vh",
+    opacity: 0,
+  },
+}
 
 type Props = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  children: React.ReactNode;
-  title?: string;
-};
+  handleClose: any
+  children: React.ReactNode
+}
 
-export default function Modal({ open, setOpen, children, title }: Props) {
-  const handleShowModal = () => {
-    setOpen((prev) => !prev);
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        handleShowModal();
-      }
-    });
-  }, []);
-
-  //TODO: Add an on click handler to the modal overlay, so a user can click outside the modal to close it
+export default function Modal({ handleClose, children }: Props) {
+  const key = useLocation().key
   return (
-    <div className={`modal ${open ? "show" : ""}`}>
-      <div className='modal-body'>
-        <div className='flex justify-between items-center'>
-          <h2 className='text-2xl font-bold -tracking-wide mb-2'>{title}</h2>
-          <button
-            className='text-2xl hover:scale-125 opacity-60 hover:opacity-100 transition-all p-2'
-            onClick={handleShowModal}
-            aria-label='close button'>
-            &times;
-          </button>
-        </div>
+    <Backdrop onClick={handleClose}>
+      <motion.div
+        layoutId={key}
+        onClick={(e) => e.stopPropagation()}
+        className="fixed bottom-0 left-0 right-0 w-full h-3/4 rounded-t-lg shadow-lg p-2 bg-neutral-200 dark:bg-neutral-800"
+        variants={slideInFromBottom}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+      >
         {children}
-      </div>
-    </div>
-  );
+      </motion.div>
+    </Backdrop>
+  )
 }

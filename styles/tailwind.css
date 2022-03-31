@@ -67,9 +67,6 @@
   .input {
     @apply p-2 rounded-sm block shadow-sm bg-neutral-100 text-neutral-800 placeholder:text-neutral-500 w-full;
   }
-  .modal-body {
-    @apply h-80 bg-neutral-200 dark:bg-neutral-800 overflow-auto p-2 rounded shadow-lg;
-  }
 
   .react-calendar-tile.react-calendar__tile--active abbr {
     @apply bg-sky-600 hover:bg-sky-700  text-neutral-50 shadow-sm no-underline transition-all;
