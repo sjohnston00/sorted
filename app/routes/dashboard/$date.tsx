@@ -14,7 +14,7 @@ import {
   useTransition,
 } from "remix"
 // import Modal from "react-modal"
-import Modal from "~/components/Modal"
+import Modal from "../../components/Modal"
 import { requireUserId } from "~/utils/session.server"
 import { getMarkedHabitsForUser } from "~/utils/markedHabits.server"
 import { getHabitsForUser } from "~/utils/habits.server"
