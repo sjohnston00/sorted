@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
 import CustomCalendarMonth from "./customCalendarMonth"
+import TodayButton from "./TodayButton"
 
 type CalendarMonth = {
   month: number
@@ -9,9 +10,15 @@ type CalendarMonth = {
 
 type Props = {
   markedHabits: Array<MarkedHabitWithHabit>
+  selectedDate: Date
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>
 }
 
-export default function customCalendar({ markedHabits }: Props) {
+export default function customCalendar({
+  markedHabits,
+  selectedDate,
+  setSelectedDate,
+}: Props) {
   const [showMonths, setShowMonths] = useState(10)
   const [priorMonths, setPriorMonths] = useState(2)
   let observer: React.MutableRefObject<IntersectionObserver>
@@ -23,13 +30,15 @@ export default function customCalendar({ markedHabits }: Props) {
           if (entry.target.id === "calendar-top") {
             if (entry.isIntersecting) {
               setPriorMonths((prev) => {
-                return prev + 5
+                // return prev + 5
+                return prev
               })
             }
           }
           if (entry.target.id === "calendar-bottom") {
             if (entry.isIntersecting) {
-              setShowMonths((prev) => prev + 5)
+              // setShowMonths((prev) => prev + 5)
+              setShowMonths((prev) => prev)
             }
           }
         },
@@ -40,6 +49,7 @@ export default function customCalendar({ markedHabits }: Props) {
   const [bottom, setBottom] = useState<HTMLDivElement | null>(null)
   const [top, setTop] = useState<HTMLDivElement | null>(null)
   const date = new Date()
+  const today = new Date()
 
   date.setMonth(date.getMonth() - priorMonths)
   date.setDate(1)
@@ -77,8 +87,12 @@ export default function customCalendar({ markedHabits }: Props) {
           month={month}
           year={year}
           markedHabits={markedHabits}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          today={today}
         />
       ))}
+      <TodayButton setSelectedDate={setSelectedDate} />
       <div ref={setBottom} id="calendar-bottom"></div>
     </div>
   )

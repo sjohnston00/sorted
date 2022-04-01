@@ -3,26 +3,34 @@ import { Link } from "remix"
 import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
 
 type Props = {
-  today: Date
   year: number
   month: number
   day: number | null
   markedHabits: Array<MarkedHabitWithHabit>
+  selectedDate: Date
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>
+  today: Date
 }
 export default function customCalendarDay({
   year,
   month,
   day,
-  today,
   markedHabits,
+  selectedDate,
+  setSelectedDate,
+  today,
 }: Props) {
   const calDate = day ? new Date(year, month, day) : null
+  const isSelected =
+    year === selectedDate.getFullYear() &&
+    month === selectedDate.getMonth() &&
+    day === selectedDate.getDate()
+
   const isToday =
     year === today.getFullYear() &&
     month === today.getMonth() &&
     day === today.getDate()
   const isWeekend = calDate?.getDay() === 6 || calDate?.getDay() === 0
-  const dateLink = day ? `/dashboard/${year}-${month + 1}-${day}` : `#`
   const todaysHabits = markedHabits.filter((markedHabit) => {
     const markedHabitDateString = markedHabit.date.toString().split("T")[0]
     const calendarDateString = calDate?.toISOString().split("T")[0]
@@ -31,16 +39,25 @@ export default function customCalendarDay({
   })
   return (
     <div className="calendar-month-day">
-      <Link
-        className={`${isToday ? "bg-primary shadow-sm" : ""} ${
+      <button
+        id={isToday ? "today" : ""}
+        className={`${
+          isSelected
+            ? "text-neutral-800 dark:text-neutral-50 bg-primary shadow-sm"
+            : ""
+        } ${
           isWeekend ? "text-muted" : " text-neutral-800 dark:text-neutral-50"
-        } p-1.5 transition-all hover:no-underline self-center hover:bg-primary rounded-full ${
+        } p-1.5 transition-all hover:no-underline self-center hover:bg-primary rounded-full scroll-mt-48 ${
           day ? "" : "pointer-events-none"
         }`}
-        to={dateLink}
+        onClick={() => {
+          if (calDate) {
+            setSelectedDate(calDate)
+          }
+        }}
       >
         {day}
-      </Link>
+      </button>
       <div className="calendar-month-day-habits">
         {todaysHabits.map((todayHabit) => (
           <div

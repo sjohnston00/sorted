@@ -7,14 +7,19 @@ type Props = {
   month: number
   year: number
   markedHabits: Array<MarkedHabitWithHabit>
+  selectedDate: Date
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>
+  today: Date
 }
 
 export default function customCalendarMonth({
   month,
   year,
   markedHabits,
+  selectedDate,
+  setSelectedDate,
+  today,
 }: Props) {
-  const today = new Date()
   const date = new Date(year, month, 1)
   const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
@@ -78,8 +83,10 @@ export default function customCalendarMonth({
               year={year}
               month={month}
               day={day}
-              today={today}
+              selectedDate={selectedDate}
               markedHabits={markedHabits}
+              setSelectedDate={setSelectedDate}
+              today={today}
             />
           ))
         )}
