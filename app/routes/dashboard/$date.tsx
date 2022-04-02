@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useState } from "react"
-import { HiOutlineX, HiPlus } from "react-icons/hi"
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { HiOutlineX, HiPlus } from "react-icons/hi";
 import {
   ActionFunction,
   Form,
@@ -11,98 +11,106 @@ import {
   useLoaderData,
   useNavigate,
   useParams,
-  useTransition,
-} from "remix"
-// import Modal from "react-modal"
-import Modal from "~/components/modal"
-import { requireUserId } from "~/utils/session.server"
-import { getMarkedHabitsForUser } from "~/utils/markedHabits.server"
-import { getHabitsForUser } from "~/utils/habits.server"
-import MarkedHabit from "~/models/MarkedHabit.server"
-import mongoose from "mongoose"
-import LoadingIndicator from "~/components/LoadingIndicator"
-import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
-import { Habit } from "~/types/habits.server"
+  useTransition
+} from "remix";
+import Modal from "~/components/modal";
+import { requireUserId } from "~/utils/session.server";
+import { getMarkedHabitsForUser } from "~/utils/markedHabits.server";
+import { getHabitsForUser } from "~/utils/habits.server";
+import MarkedHabit from "~/models/MarkedHabit.server";
+import mongoose from "mongoose";
+import LoadingIndicator from "~/components/LoadingIndicator";
+import { MarkedHabitWithHabit } from "~/types/markedHabit.server";
+import { Habit } from "~/types/habits.server";
 
 type LoaderData = {
-  habits: Array<Habit>
-  markedHabits: Array<MarkedHabitWithHabit>
-}
+  habits: Array<Habit>;
+  markedHabits: Array<MarkedHabitWithHabit>;
+};
 
 type ActionData = {
   errors?: {
-    message?: string
-    habit?: string
-    markedDate?: string
-  }
-}
-
-export const meta: MetaFunction = ({ data }) => {
-  const date = new Date(data.loaderDate)
-  return {
-    title: `Sorted | Dashboard | ${date.toLocaleDateString()}`,
-  }
-}
+    message?: string;
+    habit?: string;
+    markedDate?: string;
+  };
+};
 
 export const loader: LoaderFunction = async ({
   request,
-  params,
+  params
 }): Promise<LoaderData> => {
-  const userId = await requireUserId(request)
+  const userId = await requireUserId(request);
   if (typeof params.date !== "string") {
-    throw redirect("/dashboard")
+    throw redirect("/dashboard");
   }
-  const date = new Date(params.date)
-  const nextDate = new Date(new Date().setDate(date.getDate() + 1))
-  nextDate.setHours(0, 0, 0, 0)
-  const markedHabits = await getMarkedHabitsForUser(userId, date, nextDate)
-  const habits = await getHabitsForUser(userId)
+  const dateStamp = Number(params.date);
+  if (isNaN(dateStamp)) {
+    throw redirect("/dashboard");
+  }
+
+  const date = new Date(dateStamp);
+
+  const nextDate = new Date(
+    Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate() + 1,
+      0,
+      0,
+      0,
+      0
+    )
+  );
+
+  const markedHabits = await getMarkedHabitsForUser(userId, date, nextDate);
+  const habits = await getHabitsForUser(userId);
 
   return {
     habits: habits,
-    markedHabits: markedHabits,
-  }
-}
+    markedHabits: markedHabits
+  };
+};
 
 export const action: ActionFunction = async ({
   request,
-  params,
+  params
 }): Promise<ActionData> => {
-  const userId = await requireUserId(request)
-  const formData = await request.formData()
+  const userId = await requireUserId(request);
+  const formData = await request.formData();
 
   if (request.method === "DELETE") {
-    const markedHabitId = formData.get("markedHabitId")
+    const markedHabitId = formData.get("markedHabitId");
     if (typeof markedHabitId !== "string") {
-      return {}
+      return {};
     }
     await MarkedHabit.deleteOne({
       _id: markedHabitId,
-      user: userId,
-    })
-    return {}
+      user: userId
+    });
+    return {};
   }
-  const habitId = formData.get("selectedHabit")
+  const habitId = formData.get("selectedHabit");
 
-  const date = params.date
+  const date = params.date;
   if (typeof habitId !== "string" || typeof date !== "string") {
     return {
       errors: {
         message: "Please provide a valid Habit",
-        markedDate: "Please provide a valid Date",
-      },
-    }
+        markedDate: "Please provide a valid Date"
+      }
+    };
   }
 
   const newMarkedHabit = new MarkedHabit({
     user: new mongoose.Types.ObjectId(userId),
     habit: new mongoose.Types.ObjectId(habitId),
-    date: new Date(date),
-  })
+    date: new Date(date)
+  });
 
-  await newMarkedHabit.save()
-  return {}
-}
+  await newMarkedHabit.save();
+  return {};
+};
 
 // export default function DashboardDate() {
 //   const { habits, markedHabits } = useLoaderData<LoaderData>()

@@ -1,87 +1,78 @@
-import React from "react"
-import { Link } from "remix"
-import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
-import CustomCalendarDay from "./customCalendarDay"
+import React from "react";
+import { Link } from "remix";
+import { MarkedHabitWithHabit } from "~/types/markedHabit.server";
+import CustomCalendarDay from "./customCalendarDay";
 
 type Props = {
-  month: number
-  year: number
-  markedHabits: Array<MarkedHabitWithHabit>
-  selectedDate: Date
-  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>
-  today: Date
-}
+  month: Date;
+  markedHabits: Array<MarkedHabitWithHabit>;
+  selectedDate: Date;
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>;
+  today: Date;
+};
 
 export default function customCalendarMonth({
   month,
-  year,
   markedHabits,
   selectedDate,
   setSelectedDate,
-  today,
+  today
 }: Props) {
-  const date = new Date(year, month, 1)
-  const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  let loopingDay = new Date(month);
+  const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  const monthDays = (month: number, year: number) => {
-    var d = new Date(year, month + 1, 0)
-    return d.getDate()
-  }
-
-  let days: Array<Array<number | null>> = [
+  let days: Array<Array<Date | null>> = [
     [null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null],
     [null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null],
-  ]
+    [null, null, null, null, null, null, null]
+  ];
 
   for (let i = 0; i < days.length; i++) {
     for (let j = 0; j < days[i].length; j++) {
-      if (date.getMonth() !== month) {
-        break
+      if (loopingDay.getUTCMonth() !== month.getUTCMonth()) {
+        break;
       }
 
-      const firstOfMonthDay = date.toLocaleString("en", {
-        weekday: "short",
-      })
-      const indexOfDay = weekdays.indexOf(firstOfMonthDay)
-      const day = date.getDate()
-      j = indexOfDay
+      const loopingWeekday = loopingDay.toLocaleString("en", {
+        weekday: "short"
+      });
+      const loopingWeekdayIndex = weekdays.indexOf(loopingWeekday);
+      //set the weekday index to index in the loop
+      j = loopingWeekdayIndex;
 
-      days[i][indexOfDay] = day
-      date.setDate(day + 1)
+      days[i][j] = new Date(loopingDay);
+      const nextLoopingDay = loopingDay.setUTCDate(loopingDay.getUTCDate() + 1);
+      loopingDay = new Date(nextLoopingDay);
     }
   }
 
-  const monthYearString = new Date(year, month, 1).toLocaleString("en", {
+  const monthYearString = month.toLocaleString("en", {
     month: "long",
-    year: "numeric",
-  })
+    year: "numeric"
+  });
   return (
-    <div className="calendar-month">
-      <h6 className="calendar-month-header">{monthYearString}</h6>
-      <div className="calendar-month-weekdays-header">
+    <div className='calendar-month'>
+      <h6 className='calendar-month-header'>{monthYearString}</h6>
+      <div className='calendar-month-weekdays-header'>
         {weekdays.map((weekday, index) => {
-          const isWeekend = index === 5 || index === 6
+          const isWeekend = index === 5 || index === 6;
           return (
             <span
               className={`${isWeekend ? "text-muted" : ""}`}
-              key={`${monthYearString}-${weekday}`}
-            >
+              key={`${monthYearString}-${weekday}`}>
               {weekday}
             </span>
-          )
+          );
         })}
       </div>
-      <div key={`${monthYearString}`} className="calendar-month-days">
+      <div key={`${monthYearString}`} className='calendar-month-days'>
         {days.map((week) =>
           week.map((day, j) => (
             <CustomCalendarDay
-              key={`${year}-${month}-${day ? day : `empty${j}`}`}
-              year={year}
-              month={month}
+              key={`${day?.getTime()}`}
               day={day}
               selectedDate={selectedDate}
               markedHabits={markedHabits}
@@ -92,5 +83,5 @@ export default function customCalendarMonth({
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -820,12 +820,12 @@ a.btn:hover {
   right: 1.5rem;
 }
 
-.bottom-3 {
-  bottom: 0.75rem;
+.bottom-5 {
+  bottom: 1.25rem;
 }
 
-.right-3 {
-  right: 0.75rem;
+.right-5 {
+  right: 1.25rem;
 }
 
 .bottom-0 {
@@ -838,14 +838,6 @@ a.btn:hover {
 
 .right-0 {
   right: 0px;
-}
-
-.bottom-5 {
-  bottom: 1.25rem;
-}
-
-.right-5 {
-  right: 1.25rem;
 }
 
 .z-10 {
@@ -1035,16 +1027,16 @@ a.btn:hover {
   stroke: #262626;
 }
 
-.p-2 {
-  padding: 0.5rem;
+.p-1 {
+  padding: 0.25rem;
 }
 
 .p-1\.5 {
   padding: 0.375rem;
 }
 
-.p-1 {
-  padding: 0.25rem;
+.p-2 {
+  padding: 0.5rem;
 }
 
 .p-0 {
