@@ -1,17 +1,17 @@
-import React from "react"
-import { motion, Variants } from "framer-motion"
-import { HiArrowUp, HiCalendar } from "react-icons/hi"
+import React from "react";
+import { motion, Variants } from "framer-motion";
+import { HiArrowUp, HiCalendar } from "react-icons/hi";
 
 type Props = {
-  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>
-}
+  setSelectedDate: React.Dispatch<React.SetStateAction<Date>>;
+};
 
 export default function TodayButton({ setSelectedDate }: Props) {
-  const handleClick = () => setSelectedDate(new Date())
+  const handleClick = () => setSelectedDate(new Date());
   const pulse: Variants = {
     hidden: {
       scale: 0.9,
-      opacity: 0,
+      opacity: 0
     },
     visible: {
       scale: 1,
@@ -20,22 +20,21 @@ export default function TodayButton({ setSelectedDate }: Props) {
         delay: 1,
         type: "spring",
         stiffness: 100,
-        damping: 15,
-      },
-    },
-  }
+        damping: 15
+      }
+    }
+  };
   return (
     <motion.a
       onClick={handleClick}
-      href="#today"
+      href='#today'
       variants={pulse}
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
+      initial='hidden'
+      animate='visible'
+      exit='hidden'
       tabIndex={1}
-      className="fixed bottom-3 bg-primary right-3 p-2 rounded-full h-9 w-9 flex justify-center items-center"
-    >
-      <HiCalendar size={24} />
+      className='fixed bottom-5 right-5 hover:text-neutral-50 bg-primary p-1 rounded-full h-9 w-9 flex justify-center items-center'>
+      <HiCalendar />
     </motion.a>
-  )
+  );
 }
