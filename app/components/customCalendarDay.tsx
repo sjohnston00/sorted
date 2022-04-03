@@ -28,10 +28,11 @@ export default function customCalendarDay({
     calDate.getUTCDate() === today.getUTCDate();
   const isWeekend = calDate?.getDay() === 6 || calDate?.getDay() === 0;
   const todaysHabits = markedHabits.filter((markedHabit) => {
-    const markedHabitDateString = markedHabit.date.toString().split("T")[0];
-    const calendarDateString = calDate?.toISOString().split("T")[0];
+    if (!calDate) return false;
 
-    return markedHabitDateString == calendarDateString;
+    const markedHabitDate = new Date(markedHabit.date);
+    const nextDate = new Date(new Date(calDate).setDate(calDate.getDate() + 1));
+    return markedHabitDate >= calDate && markedHabitDate < nextDate;
   });
   return (
     <div className='calendar-month-day'>

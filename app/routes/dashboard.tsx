@@ -21,7 +21,10 @@ import { requireUserId } from "~/utils/session.server";
 import { getHabitsForUser } from "~/utils/habits.server";
 import { getMarkedHabitsForUser } from "~/utils/markedHabits.server";
 import useIsMount from "~/utils/hooks/useIsMount";
-import { MarkedHabitWithHabit } from "~/types/markedHabit.server";
+import {
+  MarkedHabitWithHabit,
+  MarkedHabitWithId
+} from "~/types/markedHabit.server";
 import CustomCalendar from "~/components/customCalendar";
 import { AnimatePresence, motion } from "framer-motion";
 import Modal from "~/components/modal";
@@ -31,6 +34,7 @@ import { Habit, HabitWithId } from "~/types/habits.server";
 
 type LoaderData = {
   dates: Array<MarkedHabitWithHabit>;
+  habits: Array<HabitWithId>;
 };
 
 type ActionData = {
@@ -61,9 +65,11 @@ export const loader: LoaderFunction = async ({
     new Date(0),
     new Date(2100, 0)
   );
+  const habits = await getHabitsForUser(userId);
 
   return {
-    dates: dates
+    dates: dates,
+    habits: habits
   };
 };
 
@@ -74,11 +80,14 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Dashboard() {
-  const { dates } = useLoaderData<LoaderData>();
+  const { dates, habits } = useLoaderData<LoaderData>();
   const actionData = useActionData<ActionData>();
   const [modalOpen, setModalOpen] = useState(false);
   const isMount = useIsMount();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDateMarkedHabits, setSelectedDateMarkedHabits] = useState<
+    Array<MarkedHabitWithHabit>
+  >([]);
   const fetcher = useFetcher<FetcherData>();
   const transition = useTransition();
   const fetcherIsLoading = fetcher.state === "loading";
@@ -91,7 +100,15 @@ export default function Dashboard() {
     if (isMount) return;
     setModalOpen(true);
     // fetcher.load(`/dashboard/${selectedDate.toISOString().split("T")[0]}`);
-    fetcher.load(`/dashboard/${selectedDate.getTime()}`);
+    // fetcher.load(`/dashboard/${selectedDate.getTime()}`);
+    const nextDate = new Date(
+      new Date(selectedDate).setDate(selectedDate.getDate() + 1)
+    );
+    const selectedMarkedHabits = dates.filter((markedHabit) => {
+      const markedHabitDate = new Date(markedHabit.date);
+      return markedHabitDate >= selectedDate && markedHabitDate < nextDate;
+    });
+    setSelectedDateMarkedHabits(selectedMarkedHabits);
   }, [selectedDate]);
 
   return (
@@ -122,10 +139,10 @@ export default function Dashboard() {
                 <LoadingIndicator className='spinner static h-6 w-6' />
               ) : (
                 <>
-                  {fetcher.data?.habits.length || 0 > 0 ? (
+                  {habits.length || 0 > 0 ? (
                     <>
                       <div className='flex flex-col gap-2'>
-                        {fetcher.data?.markedHabits.map((markedHabit) => (
+                        {selectedDateMarkedHabits.map((markedHabit) => (
                           <div className='flex gap-2 items-center'>
                             <Link
                               key={markedHabit.habit._id}
@@ -164,7 +181,7 @@ export default function Dashboard() {
                           <option defaultValue={undefined} disabled hidden>
                             Select a habit
                           </option>
-                          {fetcher.data?.habits.map((habit) => (
+                          {habits.map((habit) => (
                             <option key={habit._id} value={habit._id}>
                               {habit.name}
                             </option>
