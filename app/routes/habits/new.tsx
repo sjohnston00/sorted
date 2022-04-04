@@ -21,12 +21,12 @@ export const meta: MetaFunction = () => {
 type ActionData = {
   errors: {
     message?: string;
-    name?: string;
-    colour?: string;
   };
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({
+  request
+}): Promise<ActionData | Response> => {
   const userId = await requireUserId(request);
   const formData = await request.formData();
   const name = formData.get("name");
@@ -35,14 +35,14 @@ export const action: ActionFunction = async ({ request }) => {
   if (typeof name !== "string") {
     return {
       errors: {
-        name: "Please provide a valid name"
+        message: "Please provide a valid name"
       }
     };
   }
   if (typeof colour !== "string") {
     return {
       errors: {
-        colour: "Please provide a valid colour"
+        message: "Please provide a valid colour"
       }
     };
   }
@@ -78,18 +78,17 @@ export default function Index() {
           placeholder='e.g Drink 2L Water...'
           required
         />
-        <small className='block text-danger'>
-          {actionData?.errors.name}&nbsp;
-        </small>
       </div>
       <div className='mb-2'>
         <label htmlFor='colour' className='mr-2'>
           Colour
         </label>
-        <input type='color' className='input p-0' name='colour' id='colour' />
-        <small className='block text-danger'>
-          {actionData?.errors.colour}&nbsp;
-        </small>
+        <input
+          type='color'
+          className='input p-0 w-1/2'
+          name='colour'
+          id='colour'
+        />
       </div>
       <div className='flex gap-2'>
         <button type='submit' className='btn btn-primary'>
