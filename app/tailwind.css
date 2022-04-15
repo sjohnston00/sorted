@@ -876,14 +876,14 @@ a.btn:hover {
   margin: 0.25rem;
 }
 
-.my-2 {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
 .my-1 {
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .mt-2 {
@@ -904,10 +904,6 @@ a.btn:hover {
 
 .mb-1 {
   margin-bottom: 0.25rem;
-}
-
-.mb-0 {
-  margin-bottom: 0px;
 }
 
 .block {
