@@ -1,8 +1,9 @@
 export type User = {
-  username: string
-  password: string
-}
+  username: string;
+  email: string;
+  password: string;
+};
 
 export type UserWithId = User & {
-  _id: string
-}
+  _id: string;
+};
