@@ -1,13 +1,13 @@
-import React from "react"
-import { Link, useMatches } from "remix"
+import React from "react";
+import { Link, LoaderFunction, useLoaderData, useMatches } from "remix";
 
 export default function Navbar() {
-  const [{ data }] = useMatches()
+  const [{ data }] = useMatches();
 
   return (
-    <nav className="nav">
-      <ul className="flex items-center justify-between flex-row py-2 gap-2 container m-auto">
-        <div className="flex gap-2">
+    <nav className='nav'>
+      <ul className='flex items-center justify-between flex-row py-2 gap-2 container m-auto'>
+        <div className='flex gap-2'>
           <li>
             <Link to={"/habits"}>Habits</Link>
           </li>
@@ -15,12 +15,13 @@ export default function Navbar() {
             <Link to={"/dashboard"}>Dashboard</Link>
           </li>
         </div>
-        <div className="flex gap-2 ">
+        <div className='flex gap-2 '>
           {data?.user ? (
-            <li>
+            <li className='flex gap-2 items-center'>
+              <img src={data?.gravatarUrl} width={24} height={24} />
               <Link to={"/profile"}>{data?.user?.username}</Link>
-              <form action="/logout" method="post" className="inline">
-                <button className="btn btn-primary ml-2">Logout</button>
+              <form action='/logout' method='post' className='inline'>
+                <button className='btn btn-primary ml-2'>Logout</button>
               </form>
             </li>
           ) : (
@@ -31,8 +32,7 @@ export default function Navbar() {
               <li>
                 <Link
                   to={"/register"}
-                  className="btn btn-primary hover:no-underline"
-                >
+                  className='btn btn-primary hover:no-underline'>
                   Register
                 </Link>
               </li>
@@ -41,5 +41,5 @@ export default function Navbar() {
         </div>
       </ul>
     </nav>
-  )
+  );
 }

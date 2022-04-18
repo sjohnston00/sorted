@@ -1,31 +1,31 @@
-import bcrypt from "bcrypt"
-import { createCookieSessionStorage, redirect } from "remix"
-import User from "~/models/User.server"
+import bcrypt from "bcrypt";
+import { createCookieSessionStorage, redirect } from "remix";
+import User from "~/models/User.server";
 
 export const loginUser = async (
   username: string,
   password: string
 ): Promise<any> => {
-  const user = await User.findOne({ username: username })
+  const user = await User.findOne({ username: username });
   if (!user) {
     return {
-      errors: { message: "Username or password is incorrect" },
-    }
+      errors: { message: "Username or password is incorrect" }
+    };
   }
 
-  const matchedPassword = await bcrypt.compare(password, user.password)
+  const matchedPassword = await bcrypt.compare(password, user.password);
   if (!matchedPassword) {
     return {
-      errors: { message: "Username or password is incorrect" },
-    }
+      errors: { message: "Username or password is incorrect" }
+    };
   }
 
-  return user
-}
+  return user;
+};
 
-const sessionSecret = process.env.SESSION_SECRET
+const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
-  throw new Error("SESSION_SECRET must be set")
+  throw new Error("SESSION_SECRET must be set");
 }
 
 const storage = createCookieSessionStorage({
@@ -39,62 +39,62 @@ const storage = createCookieSessionStorage({
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
-    httpOnly: true,
-  },
-})
+    httpOnly: true
+  }
+});
 
 export async function createUserSession(userId: string, redirectTo: string) {
-  const session = await storage.getSession()
-  session.set("userId", userId)
+  const session = await storage.getSession();
+  session.set("userId", userId);
   return redirect(redirectTo, {
     headers: {
-      "Set-Cookie": await storage.commitSession(session),
-    },
-  })
+      "Set-Cookie": await storage.commitSession(session)
+    }
+  });
 }
 
 function getUserSession(request: Request) {
-  return storage.getSession(request.headers.get("Cookie"))
+  return storage.getSession(request.headers.get("Cookie"));
 }
 
 export async function getUserId(request: Request) {
-  const session = await getUserSession(request)
-  const userId = session.get("userId")
-  if (!userId || typeof userId !== "string") return null
-  return userId
+  const session = await getUserSession(request);
+  const userId = session.get("userId");
+  if (!userId || typeof userId !== "string") return null;
+  return userId;
 }
 
 export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ): Promise<string> {
-  const session = await getUserSession(request)
-  const userId = session.get("userId")
+  const session = await getUserSession(request);
+  const userId = session.get("userId");
   if (!userId || typeof userId !== "string") {
-    const searchParams = new URLSearchParams([["redirectTo", redirectTo]])
-    throw redirect(`/login?${searchParams}`)
+    const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    throw redirect(`/login?${searchParams}`);
   }
-  return userId
+  return userId;
 }
 export async function getUser(request: Request) {
-  const userId = await getUserId(request)
+  const userId = await getUserId(request);
   if (typeof userId !== "string") {
-    return null
+    return null;
   }
 
   try {
-    const user = await User.findById(userId)
-    return user
+    const user = await User.findById(userId);
+    return user;
   } catch {
-    throw logout(request)
+    throw logout(request);
   }
 }
 
 export async function logout(request: Request) {
-  const session = await getUserSession(request)
+  const session = await getUserSession(request);
   return redirect("/", {
     headers: {
-      "Set-Cookie": await storage.destroySession(session),
-    },
-  })
+      "Set-Cookie": await storage.destroySession(session)
+    }
+  });
 }

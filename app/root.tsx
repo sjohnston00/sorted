@@ -19,6 +19,8 @@ import { getUser, getUserId } from "./utils/session.server";
 import React, { useEffect } from "react";
 import { useTransition } from "remix";
 import LoadingIndicator from "./components/LoadingIndicator";
+import crypto from "crypto";
+
 export const links: LinksFunction = () => {
   return [
     { rel: "stylesheet", href: tailwind },
@@ -31,7 +33,15 @@ export const links: LinksFunction = () => {
   ];
 };
 export const loader: LoaderFunction = async ({ request }) => {
-  return { user: await getUser(request) };
+  const user = await getUser(request);
+  const emailHash = crypto
+    .createHash("md5")
+    .update(user?.email || "")
+    .digest("hex");
+  return {
+    user: user,
+    gravatarUrl: `https://www.gravatar.com/avatar/${emailHash}`
+  };
 };
 export const meta: MetaFunction = () => {
   return {
