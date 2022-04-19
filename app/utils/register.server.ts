@@ -1,46 +1,55 @@
-import bcrypt from "bcrypt"
-import User from "~/models/User.server"
+import bcrypt from "bcrypt";
+import User from "~/models/User.server";
 
 export const usernameExists = async (username: string): Promise<boolean> => {
-  const user = await User.findOne({ username: username })
+  const user = await User.findOne({ username: username });
   if (user) {
-    return true
+    return true;
   }
-  return false
-}
+  return false;
+};
+export const emailExists = async (email: string): Promise<boolean> => {
+  const user = await User.findOne({ email: email });
+  if (user) {
+    return true;
+  }
+  return false;
+};
 
 export const registerUser = async (
   username: string,
+  email: string,
   password: string
 ): Promise<any> => {
-  const hashedPassword = await bcrypt.hash(password, 10)
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = new User({
+    email: email,
     username: username,
-    password: hashedPassword,
-  })
+    password: hashedPassword
+  });
 
-  const savedUser = await newUser.save()
-  return savedUser
-}
+  const savedUser = await newUser.save();
+  return savedUser;
+};
 
 export const isValidPassword = (password: string): boolean => {
   if (password.length < 8) {
-    return false
+    return false;
   }
 
-  const containNumbers = /[0-9]/
-  const containUppercase = /[A-Z]/
-  const specialCharacters = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/
+  const containNumbers = /[0-9]/;
+  const containUppercase = /[A-Z]/;
+  const specialCharacters = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
   if (!specialCharacters.test(password)) {
-    return false
+    return false;
   }
   if (!containNumbers.test(password)) {
-    return false
+    return false;
   }
   if (!containUppercase.test(password)) {
-    return false
+    return false;
   }
-  return true
-}
+  return true;
+};

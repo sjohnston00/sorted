@@ -13,6 +13,7 @@ import {
 } from "remix";
 import { AuthActionData } from "~/types/actions";
 import {
+  emailExists,
   isValidPassword,
   registerUser,
   usernameExists
@@ -42,11 +43,17 @@ export const action: ActionFunction = async ({
   request
 }): Promise<AuthActionData | Response> => {
   const formData = await request.formData();
-  const username = formData.get("username")?.toString();
-  const password = formData.get("password")?.toString();
-  const redirectTo = formData.get("redirectTo")?.toString() || "/habits";
+  const email = formData.get("email");
+  const username = formData.get("username");
+  const password = formData.get("password");
+  const redirectTo = formData.get("redirectTo") || "/habits";
 
-  if (!username || !password || !redirectTo) {
+  if (
+    typeof username !== "string" ||
+    typeof password !== "string" ||
+    typeof redirectTo !== "string" ||
+    typeof email !== "string"
+  ) {
     return {
       errors: {
         message: "Please provide a username and password"
@@ -72,8 +79,16 @@ export const action: ActionFunction = async ({
       }
     };
   }
+  const emailTaken = await emailExists(email);
+  if (emailTaken) {
+    return {
+      errors: {
+        message: "This email has already been taken, please try another one"
+      }
+    };
+  }
 
-  const user = await registerUser(username, password);
+  const user = await registerUser(username, email, password);
 
   return createUserSession(user._id, redirectTo);
 };
@@ -91,6 +106,19 @@ export default function Register() {
         <small className='my-1 block text-red-400'>
           {actionData?.errors.message}&nbsp;
         </small>
+        <div className='mb-1'>
+          <label htmlFor='email'>
+            Email <span className='text-red-600'>*</span>
+          </label>
+          <input
+            type='email'
+            name='email'
+            id='email'
+            autoComplete='email'
+            className='input'
+            required
+          />
+        </div>
         <div className='mb-1'>
           <label htmlFor='username'>
             Username <span className='text-red-600'>*</span>
