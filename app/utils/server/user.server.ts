@@ -20,3 +20,10 @@ export async function updateUserPassword(
     }
   )
 }
+
+export async function isCorrectPassword(
+  password: string,
+  passwordHash: string
+): Promise<boolean> {
+  return await bcrypt.compare(password, passwordHash)
+}
