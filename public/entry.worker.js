@@ -1,4 +1,186 @@
-function u(e,t={}){let n=t;typeof t=="number"&&(n={status:t});let s=new Headers(n.headers);return s.has("Content-Type")||s.set("Content-Type","application/json; charset=utf-8"),new Response(JSON.stringify(e),{...n,headers:s})}var T=new Set([301,302,303,307,308]);var E=["/build/","/icons/","/"],p="asset-cache",l="data-cache",m="document-cache";function a(...e){}async function x(e){a("Service worker installed")}async function C(e){a("Service worker activated")}async function k(e){let t=new Map;if(e.data.type==="REMIX_NAVIGATION"){let{isMount:n,location:s,matches:d,manifest:g}=e.data,r=s.pathname+s.search+s.hash,[w,S,y]=await Promise.all([caches.open(l),caches.open(m),caches.match(r)]);if((!y||!n)&&(a("Caching document for",r),t.set(r,S.add(r).catch(c=>{a(`Failed to cache document for ${r}:`,c)}))),n){for(let c of d)if(g.routes[c.id].hasLoader){let f=new URLSearchParams(s.search);f.set("_data",c.id);let i=f.toString();i=i?`?${i}`:"";let o=s.pathname+i+s.hash;t.has(o)||(a("Caching data for",o),t.set(o,w.add(o).catch(R=>{a(`Failed to cache data for ${o}:`,R)})))}}}await Promise.all(t.values())}async function q(e){let t=new URL(e.request.url);if(A(e.request)){let n=await caches.match(e.request,{cacheName:p,ignoreVary:!0,ignoreSearch:!0});if(n)return a("Serving asset from cache",t.pathname),n;a("Serving asset from network",t.pathname);let s=await fetch(e.request);return s.status===200&&await(await caches.open(p)).put(e.request,s.clone()),s}if(L(e.request))try{a("Serving data from network",t.pathname+t.search);let n=await fetch(e.request.clone());return await(await caches.open(l)).put(e.request,n.clone()),n}catch{a("Serving data from network failed, falling back to cache",t.pathname+t.search);let s=await caches.match(e.request);return s?(s.headers.set("X-Remix-Worker","yes"),s):u({message:"Network Error"},{status:500,headers:{"X-Remix-Catch":"yes","X-Remix-Worker":"yes"}})}if(j(e.request))try{a("Serving document from network",t.pathname);let n=await fetch(e.request);return await(await caches.open(m)).put(e.request,n.clone()),n}catch(n){a("Serving document from network failed, falling back to cache",t.pathname);let s=await caches.match(e.request);if(s)return s;throw n}return fetch(e.request.clone())}var b=e=>{var s;let t="App Name",n={body:((s=e==null?void 0:e.data)==null?void 0:s.text())||"Notification Body Text",icon:"/icons/android-icon-192x192.png",badge:"/icons/android-icon-48x48.png"};self.registration.showNotification(t,{...n})};function h(e,t){return t.includes(e.method.toLowerCase())}function A(e){return h(e,["get"])&&E.some(t=>e.url.startsWith(t))}function L(e){let t=new URL(e.url);return h(e,["get"])&&t.searchParams.get("_data")}function j(e){return h(e,["get"])&&e.mode==="navigate"}self.addEventListener("install",e=>{e.waitUntil(x(e).then(()=>self.skipWaiting()))});self.addEventListener("activate",e=>{e.waitUntil(C(e).then(()=>self.clients.claim()))});self.addEventListener("message",e=>{e.waitUntil(k(e))});self.addEventListener("push",e=>{e.waitUntil(b(e))});self.addEventListener("fetch",e=>{e.respondWith((async()=>{let t={};try{t.response=await q(e)}catch(n){t.error=n}return N(e,t)})())});async function N(e,{error:t,response:n}){return n}
+// node_modules/@remix-run/server-runtime/esm/responses.js
+function json(data, init = {}) {
+  let responseInit = init;
+  if (typeof init === "number") {
+    responseInit = {
+      status: init
+    };
+  }
+  let headers = new Headers(responseInit.headers);
+  if (!headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json; charset=utf-8");
+  }
+  return new Response(JSON.stringify(data), {
+    ...responseInit,
+    headers
+  });
+}
+var redirectStatusCodes = new Set([301, 302, 303, 307, 308]);
+
+// app/entry.worker.ts
+var STATIC_ASSETS = ["/build/", "/icons/", "/"];
+var ASSET_CACHE = "asset-cache";
+var DATA_CACHE = "data-cache";
+var DOCUMENT_CACHE = "document-cache";
+function debug(...messages) {
+  if (true) {
+    console.debug(...messages);
+  }
+}
+async function handleInstall(event) {
+  debug("Service worker installed");
+}
+async function handleActivate(event) {
+  debug("Service worker activated");
+}
+async function handleMessage(event) {
+  const cachePromises = new Map();
+  if (event.data.type === "REMIX_NAVIGATION") {
+    const { isMount, location, matches, manifest } = event.data;
+    const documentUrl = location.pathname + location.search + location.hash;
+    const [dataCache, documentCache, existingDocument] = await Promise.all([
+      caches.open(DATA_CACHE),
+      caches.open(DOCUMENT_CACHE),
+      caches.match(documentUrl)
+    ]);
+    if (!existingDocument || !isMount) {
+      debug("Caching document for", documentUrl);
+      cachePromises.set(documentUrl, documentCache.add(documentUrl).catch((error) => {
+        debug(`Failed to cache document for ${documentUrl}:`, error);
+      }));
+    }
+    if (isMount) {
+      for (const match of matches) {
+        if (manifest.routes[match.id].hasLoader) {
+          const params = new URLSearchParams(location.search);
+          params.set("_data", match.id);
+          let search = params.toString();
+          search = search ? `?${search}` : "";
+          const url = location.pathname + search + location.hash;
+          if (!cachePromises.has(url)) {
+            debug("Caching data for", url);
+            cachePromises.set(url, dataCache.add(url).catch((error) => {
+              debug(`Failed to cache data for ${url}:`, error);
+            }));
+          }
+        }
+      }
+    }
+  }
+  await Promise.all(cachePromises.values());
+}
+async function handleFetch(event) {
+  const url = new URL(event.request.url);
+  if (isAssetRequest(event.request)) {
+    const cached = await caches.match(event.request, {
+      cacheName: ASSET_CACHE,
+      ignoreVary: true,
+      ignoreSearch: true
+    });
+    if (cached) {
+      debug("Serving asset from cache", url.pathname);
+      return cached;
+    }
+    debug("Serving asset from network", url.pathname);
+    const response = await fetch(event.request);
+    if (response.status === 200) {
+      const cache = await caches.open(ASSET_CACHE);
+      await cache.put(event.request, response.clone());
+    }
+    return response;
+  }
+  if (isLoaderRequest(event.request)) {
+    try {
+      debug("Serving data from network", url.pathname + url.search);
+      const response = await fetch(event.request.clone());
+      const cache = await caches.open(DATA_CACHE);
+      await cache.put(event.request, response.clone());
+      return response;
+    } catch (error) {
+      debug("Serving data from network failed, falling back to cache", url.pathname + url.search);
+      const response = await caches.match(event.request);
+      if (response) {
+        response.headers.set("X-Remix-Worker", "yes");
+        return response;
+      }
+      return json({ message: "Network Error" }, {
+        status: 500,
+        headers: { "X-Remix-Catch": "yes", "X-Remix-Worker": "yes" }
+      });
+    }
+  }
+  if (isDocumentGetRequest(event.request)) {
+    try {
+      debug("Serving document from network", url.pathname);
+      const response = await fetch(event.request);
+      const cache = await caches.open(DOCUMENT_CACHE);
+      await cache.put(event.request, response.clone());
+      return response;
+    } catch (error) {
+      debug("Serving document from network failed, falling back to cache", url.pathname);
+      const response = await caches.match(event.request);
+      if (response) {
+        return response;
+      }
+      throw error;
+    }
+  }
+  return fetch(event.request.clone());
+}
+var handlePush = (event) => {
+  var _a;
+  const title = "App Name";
+  const options = {
+    body: ((_a = event == null ? void 0 : event.data) == null ? void 0 : _a.text()) || "Notification Body Text",
+    icon: "/icons/android-icon-192x192.png",
+    badge: "/icons/android-icon-48x48.png"
+  };
+  self.registration.showNotification(title, {
+    ...options
+  });
+};
+function isMethod(request, methods) {
+  return methods.includes(request.method.toLowerCase());
+}
+function isAssetRequest(request) {
+  return isMethod(request, ["get"]) && STATIC_ASSETS.some((publicPath) => request.url.startsWith(publicPath));
+}
+function isLoaderRequest(request) {
+  const url = new URL(request.url);
+  return isMethod(request, ["get"]) && url.searchParams.get("_data");
+}
+function isDocumentGetRequest(request) {
+  return isMethod(request, ["get"]) && request.mode === "navigate";
+}
+self.addEventListener("install", (event) => {
+  event.waitUntil(handleInstall(event).then(() => self.skipWaiting()));
+});
+self.addEventListener("activate", (event) => {
+  event.waitUntil(handleActivate(event).then(() => self.clients.claim()));
+});
+self.addEventListener("message", (event) => {
+  event.waitUntil(handleMessage(event));
+});
+self.addEventListener("push", (event) => {
+  event.waitUntil(handlePush(event));
+});
+self.addEventListener("fetch", (event) => {
+  event.respondWith((async () => {
+    const result = {};
+    try {
+      result.response = await handleFetch(event);
+    } catch (error) {
+      result.error = error;
+    }
+    return appHandleFetch(event, result);
+  })());
+});
+async function appHandleFetch(event, {
+  error,
+  response
+}) {
+  return response;
+}
 /**
  * @remix-run/server-runtime v1.2.1
  *
