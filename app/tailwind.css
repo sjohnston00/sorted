@@ -568,11 +568,6 @@ pre {
   color: rgb(38 38 38 / var(--tw-text-opacity));
 }
 
-.nav ul li a:hover {
-  -webkit-text-decoration-line: underline;
-  text-decoration-line: underline;
-}
-
 @media (prefers-color-scheme: dark) {
   .nav ul li a {
     --tw-text-opacity: 1;
@@ -1014,10 +1009,6 @@ a.btn:hover {
   scroll-margin-top: 12rem;
 }
 
-.flex-row {
-  flex-direction: row;
-}
-
 .flex-col {
   flex-direction: column;
 }
@@ -1199,6 +1190,11 @@ a.btn:hover {
 .text-red-600 {
   --tw-text-opacity: 1;
   color: rgb(220 38 38 / var(--tw-text-opacity));
+}
+
+.text-emerald-600 {
+  --tw-text-opacity: 1;
+  color: rgb(5 150 105 / var(--tw-text-opacity));
 }
 
 .underline {
