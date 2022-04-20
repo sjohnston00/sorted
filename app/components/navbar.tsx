@@ -21,7 +21,12 @@ export default function Navbar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to={"/dashboard"}>Dashboard</NavLink>
+            <NavLink
+              to={"/dashboard"}
+              className={({ isActive }) => (isActive ? "underline" : "")}
+            >
+              Dashboard
+            </NavLink>
           </li>
         </div>
         <div className="flex gap-2 items-center">
@@ -41,7 +46,12 @@ export default function Navbar() {
           ) : (
             <>
               <li>
-                <NavLink to={"/login"}>Login</NavLink>
+                <NavLink
+                  to={"/login"}
+                  className={({ isActive }) => (isActive ? "underline" : "")}
+                >
+                  Login
+                </NavLink>
               </li>
               <li>
                 <NavLink
