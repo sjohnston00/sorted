@@ -538,8 +538,21 @@ pre {
 }
 
 .nav {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 10;
+  display: flex;
+  height: 5rem;
+  align-items: center;
+  justify-content: space-between;
   --tw-bg-opacity: 1;
   background-color: rgb(229 229 229 / var(--tw-bg-opacity));
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -550,7 +563,7 @@ pre {
 }
 
 .nav ul li a {
-  padding: 0.25rem;
+  display: block;
   --tw-text-opacity: 1;
   color: rgb(38 38 38 / var(--tw-text-opacity));
 }
@@ -913,12 +926,12 @@ a.btn:hover {
   margin-top: 0.5rem;
 }
 
-.ml-2 {
-  margin-left: 0.5rem;
-}
-
 .mb-2 {
   margin-bottom: 0.5rem;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
 }
 
 .mr-2 {
@@ -1023,6 +1036,10 @@ a.btn:hover {
 
 .justify-between {
   justify-content: space-between;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
 }
 
 .gap-1 {

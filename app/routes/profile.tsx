@@ -55,6 +55,9 @@ export default function Profile() {
       <small className="text-sm text-muted">
         Last Updated: {new Date(user.updatedAt).toLocaleString()}
       </small>
+      <form action="/logout" method="post" className="inline">
+        <button className="btn btn-danger">Logout</button>
+      </form>
       <Outlet />
     </div>
   )
