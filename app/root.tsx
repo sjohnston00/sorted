@@ -20,6 +20,7 @@ import LoadingIndicator from "./components/LoadingIndicator"
 import crypto from "crypto"
 import { User } from "./types/user.server"
 import type { Document, Types } from "mongoose"
+import Header from "./components/Header"
 
 export const links: LinksFunction = () => {
   return [
@@ -62,13 +63,8 @@ export const meta: MetaFunction = () => {
   }
 }
 export default function App() {
-  let transition = useTransition()
-
-  let isLoading =
-    transition.state === "submitting" || transition.state === "loading"
   return (
     <Layout>
-      {isLoading && <LoadingIndicator />}
       <Outlet />
     </Layout>
   )
@@ -76,6 +72,10 @@ export default function App() {
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { user } = useLoaderData<LoaderData>()
+  let transition = useTransition()
+
+  let isLoading =
+    transition.state === "submitting" || transition.state === "loading"
   return (
     <html lang="en">
       <head>
@@ -85,7 +85,8 @@ function Layout({ children }: { children: React.ReactNode }) {
         <Links />
         <link rel="manifest" href="/resources/manifest.json" />
       </head>
-      <body className="dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-50">
+      <Header isLoading={isLoading} />
+      <body className="dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-50 mt-10 mb-20">
         {user && <Navbar />}
         <main className="container m-auto lg:px-0 px-1">{children}</main>
         <Scripts /> <LiveReload />
