@@ -231,10 +231,13 @@ function Layout({ children }: { children: React.ReactNode }) {
           media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
         />
       </head>
-      <body className="min-h-screen dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-50 mt-12 standalone:mt-24 mb-20 pt-4">
+      <body
+        style={{ WebkitTapHighlightColor: "transparent" }}
+        className="dark:bg-neutral-700 dark:text-neutral-50 text-neutral-800 bg-neutral-50 mt-12 standalone:mt-24 mb-20 pt-4"
+      >
         <Header isLoading={isLoading} />
         {user && <Navbar />}
-        <main className="container m-auto lg:px-0 px-1">{children}</main>
+        <main className="lg:px-0 px-1">{children}</main>
         <Scripts /> <LiveReload />
       </body>
     </html>
