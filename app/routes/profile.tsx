@@ -9,7 +9,7 @@ import {
   useMatches,
 } from "remix"
 import { User } from "~/types/user.server"
-import { getUserDetails, updateUserPassword } from "~/utils/server/user.server"
+import { getUserDetails, updateUserPassword } from "~/utils/user.server"
 import type { Document, Types } from "mongoose"
 import { requireUserId } from "~/utils/session.server"
 import { HiUserCircle } from "react-icons/hi"

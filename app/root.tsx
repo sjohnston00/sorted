@@ -7,17 +7,14 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration,
   useCatch,
   useLoaderData,
-  useLocation,
-  useMatches,
 } from "remix"
 import type { MetaFunction } from "remix"
 import tailwind from "./tailwind.css"
 import Navbar from "./components/navbar"
-import { getUser, getUserId } from "./utils/session.server"
-import React, { useEffect } from "react"
+import { getUser } from "./utils/session.server"
+import React from "react"
 import { useTransition } from "remix"
 import LoadingIndicator from "./components/LoadingIndicator"
 import crypto from "crypto"
@@ -66,47 +63,9 @@ export const meta: MetaFunction = () => {
 }
 export default function App() {
   let transition = useTransition()
-  let location = useLocation()
-  let matches = useMatches()
 
   let isLoading =
     transition.state === "submitting" || transition.state === "loading"
-
-  let isMount = true
-  useEffect(() => {
-    let mounted = isMount
-    isMount = false
-    if ("serviceWorker" in navigator) {
-      if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller?.postMessage({
-          type: "REMIX_NAVIGATION",
-          isMount: mounted,
-          location,
-          matches,
-          manifest: window.__remixManifest,
-        })
-      } else {
-        let listener = async () => {
-          await navigator.serviceWorker.ready
-          navigator.serviceWorker.controller?.postMessage({
-            type: "REMIX_NAVIGATION",
-            isMount: mounted,
-            location,
-            matches,
-            manifest: window.__remixManifest,
-          })
-        }
-        navigator.serviceWorker.addEventListener("controllerchange", listener)
-        return () => {
-          navigator.serviceWorker.removeEventListener(
-            "controllerchange",
-            listener
-          )
-        }
-      }
-    }
-  }, [location])
-
   return (
     <Layout>
       {isLoading && <LoadingIndicator />}

@@ -5,7 +5,7 @@ import {
   getUserDetails,
   isCorrectPassword,
   updateUserPassword,
-} from "~/utils/server/user.server"
+} from "~/utils/user.server"
 import { requireUserId } from "~/utils/session.server"
 type ActionData = {
   message?: string
