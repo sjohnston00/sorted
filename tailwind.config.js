@@ -1,8 +1,14 @@
 module.exports = {
   content: ["./app/**/*.{ts,tsx,jsx,js}"],
   theme: {
-    extend: {}
+    extend: {
+      screens: {
+        standalone: {
+          raw: "(display-mode: standalone)",
+        },
+      },
+    },
   },
   variants: {},
-  plugins: []
-};
+  plugins: [],
+}

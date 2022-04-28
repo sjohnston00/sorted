@@ -111,11 +111,6 @@
   .calendar-month-days {
     @apply grid-rows-6 gap-1;
   }
-  #calendar-bottom,
-  #calendar-top {
-    @apply h-6;
-  }
-
   .calendar-month-day {
     @apply flex flex-col gap-2 justify-center;
   }
