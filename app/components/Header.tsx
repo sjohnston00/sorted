@@ -17,8 +17,8 @@ export default function Header({ isLoading }: Props) {
           className="text-neutral-50"
         >
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M21.6 2.4H2.4v19.2h19.2V2.4zM0 0v24h24V0H0z"
             className="fill-current"
           />
