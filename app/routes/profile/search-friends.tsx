@@ -21,8 +21,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     const users = await User.find({
       username: new RegExp(searchedUsername, "i"),
     })
-    console.log(users)
-
     return {
       users,
     }
