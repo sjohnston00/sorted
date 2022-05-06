@@ -10,7 +10,7 @@ import User from "~/models/User.server"
 import type { User as UserType } from "~/types/user.server"
 import { HiCheck, HiPlus } from "react-icons/hi"
 import type { Document, Types } from "mongoose"
-import { getUserId, requireUserId } from "~/utils/session.server"
+import { getUser, getUserId, requireUserId } from "~/utils/session.server"
 
 type LoaderData = {
   users?: Array<
@@ -31,7 +31,8 @@ export const loader: LoaderFunction = async ({ request }) => {
       const users = await User.find({
         username: new RegExp(searchedUsername, "i"),
       })
-      //TODO: remove current user from the list
+
+      //TODO: sort the users by if they are friends first
       return {
         users: users.filter((user) => !user._id.equals(userId)),
       }
@@ -75,6 +76,8 @@ type UserRowProps = {
 
 function UserRow({ user }: UserRowProps) {
   const fetcher = useFetcher()
+  //TODO: If the user is already a friend, show a checkmark instead of a plus
+
   return (
     <div className="flex items-center">
       <p className="py-2">{user.username}</p>
@@ -85,7 +88,7 @@ function UserRow({ user }: UserRowProps) {
           style={{ opacity: fetcher.state === "submitting" ? 0.5 : 1 }}
           className={`transition-all p-2 `}
         >
-          <HiPlus />
+          {false ? <HiCheck /> : <HiPlus />}
         </button>
       </fetcher.Form>
     </div>
