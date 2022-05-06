@@ -5,6 +5,7 @@ import {
   LoaderFunction,
   Outlet,
   useActionData,
+  useFetcher,
   useLoaderData,
   useMatches,
 } from "remix"
@@ -30,6 +31,9 @@ export const loader: LoaderFunction = async ({ request }) => {
   return {
     user: userDetails,
   }
+}
+export const action: ActionFunction = async ({ request }) => {
+  return {}
 }
 
 export default function Profile() {
@@ -58,10 +62,52 @@ export default function Profile() {
       <small className="text-sm text-muted">
         Friends: {user.friends.length}
       </small>
+      <UserProfileVisibility user={user} />
       <form action="/logout" method="post" className="inline">
         <button className="btn btn-danger">Logout</button>
       </form>
       <Outlet />
     </div>
+  )
+}
+
+type UserProfileVisibilityProps = {
+  user: Document<unknown, any, User> &
+    User & {
+      _id: Types.ObjectId
+      createdAt: string
+      updatedAt: string
+    }
+}
+
+export function UserProfileVisibility({ user }: UserProfileVisibilityProps) {
+  const fetcher = useFetcher()
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    //TODO: submit the form when the checkbox is clicked
+    console.log("input onChange", e)
+    fetcher.submit(
+      {
+        visibility: String(e.target.checked),
+      },
+      {
+        action: window.location.href,
+        method: "put",
+        encType: "application/x-www-form-urlencoded",
+      }
+    )
+  }
+  return (
+    <fetcher.Form method="put">
+      <label htmlFor="profile-visibility" className="block">
+        Public Profile {fetcher.state === "submitting" ? "loading..." : ""}
+      </label>
+      <input
+        type="checkbox"
+        defaultChecked={user.visibility === "public"}
+        onChange={handleFormChange}
+        name="profile-visibility"
+        id="profile-visibility"
+      />
+    </fetcher.Form>
   )
 }
