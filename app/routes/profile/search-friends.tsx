@@ -8,7 +8,9 @@ import {
 } from "remix"
 import User from "~/models/User.server"
 import type { User as UserType } from "~/types/user.server"
+import { HiCheck, HiPlus } from "react-icons/hi"
 import type { Document, Types } from "mongoose"
+import { getUserId, requireUserId } from "~/utils/session.server"
 
 type LoaderData = {
   users?: Array<
@@ -19,6 +21,7 @@ type LoaderData = {
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await requireUserId(request)
   const url = new URL(request.url)
   const searchedUsername = url.searchParams.get("username")
 
@@ -28,8 +31,9 @@ export const loader: LoaderFunction = async ({ request }) => {
       const users = await User.find({
         username: new RegExp(searchedUsername, "i"),
       })
+      //TODO: remove current user from the list
       return {
-        users,
+        users: users.filter((user) => !user._id.equals(userId)),
       }
     } else {
       return {}
@@ -41,7 +45,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
-  await new Promise((resolve) => setTimeout(resolve, 3000))
+  await new Promise((resolve) => setTimeout(resolve, 1500))
   return { data }
 }
 
@@ -72,16 +76,16 @@ type UserRowProps = {
 function UserRow({ user }: UserRowProps) {
   const fetcher = useFetcher()
   return (
-    <div>
-      <p>{user.username}</p>
+    <div className="flex items-center">
+      <p className="py-2">{user.username}</p>
       <fetcher.Form method="post">
         <input type="hidden" name="userId" id="userId" value={user._id} />
         <input type="hidden" name="_action" id="_action" value="add-friend" />
         <button
-          style={{ opacity: fetcher.state === "submitting" ? 0.7 : 1 }}
-          className="transition-all"
+          style={{ opacity: fetcher.state === "submitting" ? 0.5 : 1 }}
+          className={`transition-all p-2 `}
         >
-          x
+          <HiPlus />
         </button>
       </fetcher.Form>
     </div>
