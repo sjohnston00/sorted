@@ -1,5 +1,11 @@
 import React from "react"
-import { Form, LoaderFunction, useLoaderData } from "remix"
+import {
+  ActionFunction,
+  Form,
+  LoaderFunction,
+  useFetcher,
+  useLoaderData,
+} from "remix"
 import User from "~/models/User.server"
 import type { User as UserType } from "~/types/user.server"
 import type { Document, Types } from "mongoose"
@@ -32,6 +38,13 @@ export const loader: LoaderFunction = async ({ request }) => {
   return {}
 }
 
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+  await new Promise((resolve) => setTimeout(resolve, 3000))
+  return { data }
+}
+
 export default function SearchFriends() {
   const data = useLoaderData<LoaderData>()
   return (
@@ -45,11 +58,32 @@ export default function SearchFriends() {
       <hr />
       <div>
         {data?.users?.map((user) => (
-          <div key={user._id}>
-            <p>{user.username}</p>
-          </div>
+          <UserRow user={user} key={user._id} />
         ))}
       </div>
+    </div>
+  )
+}
+
+type UserRowProps = {
+  user: UserType & { _id: string }
+}
+
+function UserRow({ user }: UserRowProps) {
+  const fetcher = useFetcher()
+  return (
+    <div>
+      <p>{user.username}</p>
+      <fetcher.Form method="post">
+        <input type="hidden" name="userId" id="userId" value={user._id} />
+        <input type="hidden" name="_action" id="_action" value="add-friend" />
+        <button
+          style={{ opacity: fetcher.state === "submitting" ? 0.7 : 1 }}
+          className="transition-all"
+        >
+          x
+        </button>
+      </fetcher.Form>
     </div>
   )
 }
