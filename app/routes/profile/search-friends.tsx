@@ -18,11 +18,15 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   //search for users if the username params is there
   if (typeof searchedUsername === "string") {
-    const users = await User.find({
-      username: new RegExp(searchedUsername, "i"),
-    })
-    return {
-      users,
+    if (searchedUsername.length > 0) {
+      const users = await User.find({
+        username: new RegExp(searchedUsername, "i"),
+      })
+      return {
+        users,
+      }
+    } else {
+      return {}
     }
   }
   return {}
