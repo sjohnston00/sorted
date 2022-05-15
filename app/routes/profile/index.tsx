@@ -1,4 +1,5 @@
 import React from "react"
+import { HiSearch } from "react-icons/hi"
 import { ActionFunction, Link } from "remix"
 
 export const action: ActionFunction = async ({ request }) => {
@@ -10,9 +11,15 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   return (
-    <div className="my-2">
+    <div className="flex gap-2 my-2">
       <Link to={"change-password"} className="btn btn-primary">
         Change Password
+      </Link>
+      <Link
+        to={"search-friends"}
+        className="btn btn-primary flex items-center gap-2"
+      >
+        Search Friends <HiSearch />
       </Link>
     </div>
   )

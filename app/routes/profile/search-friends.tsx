@@ -2,6 +2,7 @@ import React from "react"
 import {
   ActionFunction,
   Form,
+  Link,
   LoaderFunction,
   useFetcher,
   useLoaderData,
@@ -56,9 +57,14 @@ export default function SearchFriends() {
     <div>
       <Form method="get">
         <input type="text" className="input" name="username" id="username" />
-        <button type="submit" className="btn btn-primary">
-          Search
-        </button>
+        <div className="flex gap-2">
+          <Link className="btn btn-dark" to={"/profile"}>
+            Back
+          </Link>
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
+        </div>
       </Form>
       <hr />
       <div>
@@ -84,6 +90,7 @@ function UserRow({ user }: UserRowProps) {
       <fetcher.Form method="post">
         <input type="hidden" name="userId" id="userId" value={user._id} />
         <input type="hidden" name="_action" id="_action" value="add-friend" />
+
         <button
           style={{ opacity: fetcher.state === "submitting" ? 0.5 : 1 }}
           className={`transition-all p-2 `}
