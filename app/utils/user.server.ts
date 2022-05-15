@@ -27,3 +27,17 @@ export async function isCorrectPassword(
 ): Promise<boolean> {
   return await bcrypt.compare(password, passwordHash)
 }
+
+export async function updateUserVisibility(
+  userId: string,
+  visibility: "public" | "private"
+): Promise<void> {
+  await User.updateOne(
+    { _id: userId },
+    {
+      $set: {
+        visibility: visibility,
+      },
+    }
+  )
+}

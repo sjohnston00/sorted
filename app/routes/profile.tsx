@@ -10,7 +10,11 @@ import {
   useMatches,
 } from "remix"
 import { User } from "~/types/user.server"
-import { getUserDetails, updateUserPassword } from "~/utils/user.server"
+import {
+  getUserDetails,
+  updateUserPassword,
+  updateUserVisibility,
+} from "~/utils/user.server"
 import type { Document, Types } from "mongoose"
 import { requireUserId } from "~/utils/session.server"
 import { HiUserCircle } from "react-icons/hi"
@@ -33,7 +37,17 @@ export const loader: LoaderFunction = async ({ request }) => {
   }
 }
 export const action: ActionFunction = async ({ request }) => {
-  return {}
+  const formData = await request.formData()
+  const userId = await requireUserId(request)
+  const data = Object.fromEntries(formData)
+
+  //TODO: Update the users profile visibility to the data.visibility value
+  updateUserVisibility(
+    userId,
+    data.visibility === "true" ? "public" : "private"
+  )
+
+  return { data }
 }
 
 export default function Profile() {
@@ -99,7 +113,7 @@ export function UserProfileVisibility({ user }: UserProfileVisibilityProps) {
   return (
     <fetcher.Form method="put">
       <label htmlFor="profile-visibility" className="block">
-        Public Profile {fetcher.state === "submitting" ? "loading..." : ""}
+        Public Profile {fetcher.state === "submitting" ? "updating..." : ""}
       </label>
       <input
         type="checkbox"

@@ -8,6 +8,11 @@ const userSchema = new mongoose.Schema<UserType>(
     email: { type: String, unique: true, trim: true, required: true },
     password: { type: String, trim: true, required: true },
     friends: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    visibility: {
+      type: String,
+      enum: ["public", "private"],
+      default: "public",
+    },
   },
   {
     timestamps: true,

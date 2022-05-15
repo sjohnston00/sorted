@@ -956,14 +956,6 @@ a.btn:hover {
   cursor: pointer;
 }
 
-.cursor-wait {
-  cursor: wait;
-}
-
-.cursor-auto {
-  cursor: auto;
-}
-
 .scroll-mt-48 {
   scroll-margin-top: 12rem;
 }
