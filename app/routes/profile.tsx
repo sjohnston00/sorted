@@ -41,7 +41,6 @@ export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
   const data = Object.fromEntries(formData)
 
-  //TODO: Update the users profile visibility to the data.visibility value
   updateUserVisibility(
     userId,
     data.visibility === "true" ? "public" : "private"
@@ -97,7 +96,6 @@ type UserProfileVisibilityProps = {
 export function UserProfileVisibility({ user }: UserProfileVisibilityProps) {
   const fetcher = useFetcher()
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    //TODO: submit the form when the checkbox is clicked
     console.log("input onChange", e)
     fetcher.submit(
       {
