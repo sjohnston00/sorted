@@ -3,7 +3,7 @@ import User from "~/models/User.server"
 import { User as UserType } from "~/types/user.server"
 
 export async function getUserDetails(userId: string) {
-  return await User.findById(userId)
+  return await User.findById(userId).populate("friends")
 }
 
 export async function updateUserPassword(

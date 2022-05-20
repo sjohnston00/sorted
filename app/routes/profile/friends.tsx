@@ -7,7 +7,8 @@ import {
   useMatches,
 } from "remix"
 import FriendRequest from "~/models/FriendRequest.server"
-import { User } from "~/types/user.server"
+import User from "~/models/User.server"
+import { User as UserType } from "~/types/user.server"
 import { requireUserId } from "~/utils/session.server"
 import { getUserDetails } from "~/utils/user.server"
 
@@ -18,6 +19,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   //TODO: get the friend requests that have the current user in
   const friendRequests = await FriendRequest.find({
     $or: [{ from: userId }, { to: userId }],
+    accepted: false,
   })
     .populate("from to")
     .sort({ createdAt: -1 })
@@ -31,9 +33,22 @@ export const action: ActionFunction = async ({ request }) => {
   const data = Object.fromEntries(formData)
 
   if (data._action === "add-friend") {
-    const acceptedFriendRequest = await FriendRequest.updateOne(
+    const acceptedFriendRequest = await FriendRequest.findOneAndUpdate(
       { _id: data.friendRequestId },
       { $set: { accepted: true } }
+    )
+
+    await User.updateOne(
+      { _id: acceptedFriendRequest?.from },
+      {
+        $push: { friends: acceptedFriendRequest?.to },
+      }
+    )
+    await User.updateOne(
+      { _id: acceptedFriendRequest?.to },
+      {
+        $push: { friends: acceptedFriendRequest?.from },
+      }
     )
 
     return { acceptedFriendRequest }
@@ -41,24 +56,26 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 export default function Friends() {
-  const [{ data }] = useMatches()
-  const { user } = data as { user: User }
-  const { friendRequests } = useLoaderData()
+  const { friendRequests, user } = useLoaderData()
 
   return (
     <div>
       Friend Requests
       <div className="flex flex-col gap-2">
-        {friendRequests.map((friendRequest: any) => (
-          <FriendRequestRow
-            friendRequest={friendRequest}
-            key={friendRequest._id}
-          />
-        ))}
+        {friendRequests.length > 0 ? (
+          friendRequests.map((friendRequest: any) => (
+            <FriendRequestRow
+              friendRequest={friendRequest}
+              key={friendRequest._id}
+            />
+          ))
+        ) : (
+          <p className="text-red-500 ">No Friend request yet</p>
+        )}
       </div>
       Friends
-      {user.friends.map((friend) => (
-        <div key={friend.email}>{friend.username}</div>
+      {user.friends.map((friend: any) => (
+        <div key={friend._id}>{friend.username}</div>
       ))}
     </div>
   )
