@@ -16,7 +16,6 @@ export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request)
   const user = await getUserDetails(userId)
 
-  //TODO: get the friend requests that have the current user in
   const friendRequests = await FriendRequest.find({
     $or: [{ from: userId }, { to: userId }],
     accepted: false,

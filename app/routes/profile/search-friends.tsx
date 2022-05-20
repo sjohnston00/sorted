@@ -53,7 +53,6 @@ export const action: ActionFunction = async ({ request }) => {
   const data = Object.fromEntries(formData)
 
   if (data._action === "add-friend") {
-    //TODO: create a friend request
     const friendRequest = await createFriendRequest(
       userId,
       data.userId.toString()
