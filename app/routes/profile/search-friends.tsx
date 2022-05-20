@@ -34,6 +34,7 @@ export const loader: LoaderFunction = async ({ request }) => {
     if (searchedUsername.length > 0) {
       const users = await User.find({
         username: new RegExp(searchedUsername, "i"),
+        visibility: "public",
       })
 
       //TODO: sort the users by if they are friends first
