@@ -12,6 +12,8 @@ import type { User as UserType } from "~/types/user.server"
 import { HiCheck, HiPlus } from "react-icons/hi"
 import type { Document, Types } from "mongoose"
 import { getUser, getUserId, requireUserId } from "~/utils/session.server"
+import { getUserDetails } from "~/utils/user.server"
+import { createFriendRequest } from "~/utils/friends.server"
 
 type LoaderData = {
   users?: Array<
@@ -23,6 +25,7 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request)
+  const user = await getUserDetails(userId)
   const url = new URL(request.url)
   const searchedUsername = url.searchParams.get("username")
 
@@ -45,8 +48,18 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 export const action: ActionFunction = async ({ request }) => {
+  const userId = await requireUserId(request)
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
+
+  if (data._action === "add-friend") {
+    //TODO: create a friend request
+    const friendRequest = await createFriendRequest(
+      userId,
+      data.userId.toString()
+    )
+    return { friendRequest }
+  }
   await new Promise((resolve) => setTimeout(resolve, 1500))
   return { data }
 }

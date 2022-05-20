@@ -4,8 +4,8 @@ import mongoose from "../mongoose.server"
 
 const friendRequestSchema = new mongoose.Schema<FriendRequestType>(
   {
-    from: { type: mongoose.Schema.Types.ObjectId, required: true },
-    to: { type: mongoose.Schema.Types.ObjectId, required: true },
+    from: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+    to: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
     accepted: { type: Boolean, default: false },
   },
   {
