@@ -1,4 +1,5 @@
 import React from "react"
+import { HiCheck, HiX } from "react-icons/hi"
 import {
   ActionFunction,
   LoaderFunction,
@@ -32,6 +33,13 @@ export const action: ActionFunction = async ({ request }) => {
   const data = Object.fromEntries(formData)
 
   if (data._action === "add-friend") {
+    if (data.friendRequestAction === "0") {
+      await FriendRequest.updateOne(
+        { _id: data.friendRequestId },
+        { $set: { accepted: true } }
+      )
+      return {}
+    }
     const acceptedFriendRequest = await FriendRequest.findOneAndUpdate(
       { _id: data.friendRequestId },
       { $set: { accepted: true } }
@@ -79,9 +87,13 @@ export default function Friends() {
         )}
       </div>
       Friends
-      {user.friends.map((friend: any) => (
-        <FriendRow friend={friend} key={friend._id} />
-      ))}
+      {user.friends.length > 0 ? (
+        user.friends.map((friend: any) => (
+          <FriendRow friend={friend} key={friend._id} />
+        ))
+      ) : (
+        <p className="text-red-500 ">No Friends yet</p>
+      )}
     </div>
   )
 }
@@ -90,11 +102,19 @@ function FriendRow({ friend }: any) {
   const fetcher = useFetcher()
   return (
     <div
-      className={`flex gap-2 items-center transition-all ${
-        fetcher.submission ? "opacity-70" : ""
+      className={`flex gap-2 items-end transition-all ${
+        fetcher.submission ? "opacity-50" : ""
       }`}
     >
-      {friend.username}{" "}
+      <div className="flex gap-2 flex-col">
+        <img
+          src={friend.gravatarURL}
+          className="rounded-full"
+          width={48}
+          height={48}
+        />
+        <span>{friend.username}</span>
+      </div>
       <fetcher.Form method="post">
         <input type="hidden" name="friendId" id="friendId" value={friend._id} />
         <input
@@ -103,7 +123,9 @@ function FriendRow({ friend }: any) {
           id="_action"
           value="remove-friend"
         />
-        <button type="submit">&times;</button>
+        <button type="submit">
+          <HiX className="h-8 w-8" />
+        </button>
       </fetcher.Form>
     </div>
   )
@@ -112,7 +134,11 @@ function FriendRow({ friend }: any) {
 function FriendRequestRow({ friendRequest }: any) {
   const fetcher = useFetcher()
   return (
-    <div className="flex gap-2 ">
+    <div
+      className={`transition-all flex gap-2 items-center ${
+        fetcher.submission ? "opacity-50" : ""
+      }`}
+    >
       From: {friendRequest.from?.username} To: {friendRequest.to?.username}{" "}
       <fetcher.Form method="post">
         <input
@@ -122,9 +148,26 @@ function FriendRequestRow({ friendRequest }: any) {
           value={friendRequest._id}
         />
         <input type="hidden" name="_action" id="_action" value="add-friend" />
-        <button type="submit" disabled={friendRequest.accepted}>
-          {friendRequest.accepted ? "✔" : "❌"}
-        </button>
+        <div className="flex gap-2 items-center">
+          <button
+            className="p-0.5"
+            type="submit"
+            name="friendRequestAction"
+            id="friendRequestAction"
+            value="1"
+          >
+            <HiCheck className="h-8 w-8" />
+          </button>
+          <button
+            className="p-0.5"
+            type="submit"
+            name="friendRequestAction"
+            id="friendRequestAction"
+            value="0"
+          >
+            <HiX className="h-8 w-8" />
+          </button>
+        </div>
       </fetcher.Form>
     </div>
   )
