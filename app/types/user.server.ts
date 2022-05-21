@@ -3,6 +3,7 @@ export type User = {
   email: string
   password: string
   visibility: "public" | "private"
+  gravatarURL: string
   friends: Array<User>
 }
 
