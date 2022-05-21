@@ -80,7 +80,7 @@ export default function SearchFriends() {
         </div>
       </Form>
       <hr />
-      <div>
+      <div className="flex flex-col gap-4">
         {data?.users?.map((user) => (
           <UserRow user={user} key={user._id} />
         ))}
@@ -99,7 +99,15 @@ function UserRow({ user }: UserRowProps) {
 
   return (
     <div className="flex items-center">
-      <p className="py-2">{user.username}</p>
+      <div className="flex gap-2">
+        <img
+          src={user.gravatarURL}
+          className="rounded-full"
+          width={48}
+          height={48}
+        />
+        <p className="py-2">{user.username}</p>
+      </div>
       <fetcher.Form method="post">
         <input type="hidden" name="userId" id="userId" value={user._id} />
         <input type="hidden" name="_action" id="_action" value="add-friend" />
