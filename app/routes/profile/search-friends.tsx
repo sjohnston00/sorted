@@ -6,6 +6,7 @@ import {
   LoaderFunction,
   useFetcher,
   useLoaderData,
+  useMatches,
 } from "remix"
 import User from "~/models/User.server"
 import type { User as UserType } from "~/types/user.server"
@@ -14,6 +15,7 @@ import type { Document, Types } from "mongoose"
 import { getUser, getUserId, requireUserId } from "~/utils/session.server"
 import { getUserDetails } from "~/utils/user.server"
 import { createFriendRequest } from "~/utils/friends.server"
+import FriendRequest from "~/models/FriendRequest.server"
 
 type LoaderData = {
   users?: Array<
@@ -54,6 +56,9 @@ export const action: ActionFunction = async ({ request }) => {
   const data = Object.fromEntries(formData)
 
   if (data._action === "add-friend") {
+    //TODO: Validate that the user is not already friends with the user
+    //TODO: Validate that the user has not already sent a friend request
+
     const friendRequest = await createFriendRequest(
       userId,
       data.userId.toString()
@@ -70,7 +75,7 @@ export default function SearchFriends() {
     <div>
       <Form method="get">
         <input type="text" className="input" name="username" id="username" />
-        <div className="flex gap-2">
+        <div className="flex gap-2 py-2">
           <Link className="btn btn-dark" to={"/profile"}>
             Back
           </Link>
@@ -79,8 +84,7 @@ export default function SearchFriends() {
           </button>
         </div>
       </Form>
-      <hr />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 p-2">
         {data?.users?.map((user) => (
           <UserRow user={user} key={user._id} />
         ))}
@@ -94,15 +98,25 @@ type UserRowProps = {
 }
 
 function UserRow({ user }: UserRowProps) {
+  const [rootLoader] = useMatches()
+  const loggedInUser = rootLoader.data.user
   const fetcher = useFetcher()
-  //TODO: If the user is already a friend, show a checkmark instead of a plus
+  const isFriend = loggedInUser?.friends?.includes(user._id)
 
   return (
-    <div className="flex items-center">
+    <div
+      className={`transition-all flex items-center ${
+        fetcher.submission ? "opacity-50" : ""
+      }`}
+    >
       <div className="flex gap-2">
         <img
           src={user.gravatarURL}
-          className="rounded-full"
+          className={`rounded-full ${
+            isFriend
+              ? "outline outline-2 outline-offset-2 outline-green-500"
+              : ""
+          }`}
           width={48}
           height={48}
         />
@@ -115,8 +129,9 @@ function UserRow({ user }: UserRowProps) {
         <button
           style={{ opacity: fetcher.state === "submitting" ? 0.5 : 1 }}
           className={`transition-all p-2 `}
+          disabled={isFriend}
         >
-          {false ? <HiCheck /> : <HiPlus />}
+          {isFriend ? <HiCheck /> : <HiPlus />}
         </button>
       </fetcher.Form>
     </div>
