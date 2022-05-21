@@ -52,6 +52,12 @@ export const action: ActionFunction = async ({ request }) => {
 
     return { acceptedFriendRequest }
   }
+
+  if (data._action === "remove-friend") {
+    await User.updateOne({ _id: userId }, { $pull: { friends: data.friendId } })
+    await User.updateOne({ _id: data.friendId }, { $pull: { friends: userId } })
+    return {}
+  }
 }
 
 export default function Friends() {
@@ -74,8 +80,31 @@ export default function Friends() {
       </div>
       Friends
       {user.friends.map((friend: any) => (
-        <div key={friend._id}>{friend.username}</div>
+        <FriendRow friend={friend} key={friend._id} />
       ))}
+    </div>
+  )
+}
+
+function FriendRow({ friend }: any) {
+  const fetcher = useFetcher()
+  return (
+    <div
+      className={`flex gap-2 items-center transition-all ${
+        fetcher.submission ? "opacity-70" : ""
+      }`}
+    >
+      {friend.username}{" "}
+      <fetcher.Form method="post">
+        <input type="hidden" name="friendId" id="friendId" value={friend._id} />
+        <input
+          type="hidden"
+          name="_action"
+          id="_action"
+          value="remove-friend"
+        />
+        <button type="submit">&times;</button>
+      </fetcher.Form>
     </div>
   )
 }
