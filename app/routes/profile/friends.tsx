@@ -17,7 +17,7 @@ export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUserDetails(userId)
 
   const friendRequests = await FriendRequest.find({
-    $or: [{ from: userId }, { to: userId }],
+    to: userId,
     accepted: false,
   })
     .populate("from to")
