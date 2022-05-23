@@ -95,7 +95,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
   if (data._action === "accept-friend-request") {
     const friendRequest = await FriendRequest.updateOne(
-      { from: userId, to: data.userId },
+      { from: data.userId, to: userId },
       { $set: { accepted: true } }
     )
     await User.updateOne(
@@ -114,7 +114,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
   if (data._action === "decline-friend-request") {
     const friendRequest = await FriendRequest.updateOne(
-      { from: userId, to: data.userId },
+      { from: data.userId, to: userId },
       { $set: { accepted: true } }
     )
     return { friendRequest }
