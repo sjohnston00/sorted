@@ -75,7 +75,6 @@ export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
-  //TODO: Get the friend request ID
   //TODO: Validate that the user is not already friends with the user
   //TODO: Validate that the user has not already sent a friend request
   if (data._action === "send-friend-request") {
@@ -88,14 +87,14 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (data._action === "cancel-friend-request") {
     const friendRequest = await FriendRequest.updateOne(
-      { from: userId, to: data.userId },
+      { _id: data.friendRequestId },
       { $set: { accepted: true } }
     )
     return { friendRequest }
   }
   if (data._action === "accept-friend-request") {
     const friendRequest = await FriendRequest.updateOne(
-      { from: data.userId, to: userId },
+      { _id: data.friendRequestId },
       { $set: { accepted: true } }
     )
     await User.updateOne(
@@ -114,7 +113,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
   if (data._action === "decline-friend-request") {
     const friendRequest = await FriendRequest.updateOne(
-      { from: data.userId, to: userId },
+      { _id: data.friendRequestId },
       { $set: { accepted: true } }
     )
     return { friendRequest }
@@ -173,6 +172,12 @@ function UserRow({ user, myFriendRequests }: UserRowProps) {
   const fetcher = useFetcher()
   const isFriend = loggedInUser?.friends?.includes(user._id)
 
+  const friendRequest = myFriendRequests.find(
+    (friendRequest) =>
+      (friendRequest.from as any) === user._id ||
+      (friendRequest.to as any) === user._id
+  )
+
   const myFriendRequestPending = myFriendRequests.some(
     (friendRequest) =>
       friendRequest.from === loggedInUser._id &&
@@ -205,6 +210,12 @@ function UserRow({ user, myFriendRequests }: UserRowProps) {
       </div>
       <fetcher.Form method="post">
         <input type="hidden" name="userId" id="userId" value={user._id} />
+        <input
+          type="hidden"
+          name="friendRequestId"
+          id="friendRequestId"
+          value={friendRequest?._id}
+        />
         {incomingFriendRequestPending ? (
           <>
             <button
