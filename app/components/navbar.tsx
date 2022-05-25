@@ -24,13 +24,14 @@ export default function Navbar() {
               isActive ? (
                 <div className="flex flex-col items-center">
                   <HiHome size={"1.25em"} />
-                  <span className="dark:text-neutral-50 text-neutral-800 text-xs">
-                    Home
-                  </span>
+                  <span className="text-xs font-semibold">Home</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center opacity-80">
-                  <HiOutlineHome size={"1.25em"} />
+                  <HiOutlineHome
+                    size={"1.25em"}
+                    className="dark:stroke-neutral-50 stroke-neutral-800"
+                  />
                   <span className="dark:text-neutral-50 text-neutral-800 text-xs">
                     Home
                   </span>
@@ -44,14 +45,18 @@ export default function Navbar() {
             {({ isActive }) =>
               isActive ? (
                 <div className="flex flex-col items-center">
-                  <HiClipboardList size={"1.25em"} />
-                  <span className="dark:text-neutral-50 text-neutral-800 text-xs">
-                    Habits
-                  </span>
+                  <HiClipboardList
+                    size={"1.25em"}
+                    className="dark:stroke-neutral-50 stroke-neutral-800"
+                  />
+                  <span className="text-xs font-semibold">Habits</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center opacity-80">
-                  <HiOutlineClipboardList size={"1.25em"} />
+                  <HiOutlineClipboardList
+                    size={"1.25em"}
+                    className="dark:stroke-neutral-50 stroke-neutral-800"
+                  />
                   <span className="dark:text-neutral-50 text-neutral-800 text-xs">
                     Habits
                   </span>
@@ -71,13 +76,14 @@ export default function Navbar() {
               isActive ? (
                 <div className="flex flex-col items-center">
                   <HiCalendar size={"1.25em"} />
-                  <span className="dark:text-neutral-50 text-neutral-800 text-xs">
-                    Calendar
-                  </span>
+                  <span className="text-xs font-semibold">Calendar</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center opacity-80">
-                  <HiOutlineCalendar size={"1.25em"} />
+                  <HiOutlineCalendar
+                    size={"1.25em"}
+                    className="dark:stroke-neutral-50 stroke-neutral-800"
+                  />
                   <span className="dark:text-neutral-50 text-neutral-800 text-xs">
                     Calendar
                   </span>
@@ -99,13 +105,14 @@ export default function Navbar() {
               isActive ? (
                 <div className="flex flex-col items-center">
                   <HiUserCircle size={"1.25em"} />
-                  <span className="dark:text-neutral-50 text-neutral-800 text-xs">
-                    Profile
-                  </span>
+                  <span className="text-xs font-semibold">Profile</span>
                 </div>
               ) : (
                 <div className="flex flex-col items-center opacity-80">
-                  <HiOutlineUserCircle size={"1.25em"} />
+                  <HiOutlineUserCircle
+                    size={"1.25em"}
+                    className="dark:stroke-neutral-50 stroke-neutral-800"
+                  />
                   <span className="dark:text-neutral-50 text-neutral-800 text-xs">
                     Profile
                   </span>
