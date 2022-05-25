@@ -31,7 +31,7 @@ export const registerUser = async (
     password: hashedPassword,
     friends: [],
     visibility: "public",
-    gravatarURL: `https://www.gravatar.com/avatar/${emailHash}`,
+    gravatarURL: `https://www.gravatar.com/avatar/${emailHash}?d=https%3A%2F%2Fsbcf.fr%2Fwp-content%2Fuploads%2F2018%2F03%2Fsbcf-default-avatar.png`,
   })
 
   const savedUser = await newUser.save()
