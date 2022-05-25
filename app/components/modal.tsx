@@ -6,16 +6,14 @@ const slideInFromBottom: Variants = {
   modalOut: {
     y: "100vh",
     transition: {
-      duration: 0.3,
+      type: "just",
     },
   },
   modalIn: {
     y: "0",
     opacity: 1,
     transition: {
-      type: "spring",
-      duration: 0.65,
-      delay: 0.2,
+      type: "just",
     },
   },
 }

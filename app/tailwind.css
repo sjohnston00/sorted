@@ -498,22 +498,9 @@ pre {
   right: 0px;
   z-index: 10;
   display: flex;
-  height: 5rem;
-  align-items: center;
-  justify-content: space-between;
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 229 229 / var(--tw-bg-opacity));
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-}
-
-@media (prefers-color-scheme: dark) {
-  .nav {
-    --tw-bg-opacity: 1;
-    background-color: rgb(38 38 38 / var(--tw-bg-opacity));
-  }
+  height: 4rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .nav ul li a {
@@ -838,8 +825,24 @@ a.btn:hover {
   right: 1.25rem;
 }
 
+.bottom-10 {
+  bottom: 2.5rem;
+}
+
+.bottom-16 {
+  bottom: 4rem;
+}
+
+.bottom-20 {
+  bottom: 5rem;
+}
+
 .z-10 {
   z-index: 10;
+}
+
+.z-20 {
+  z-index: 20;
 }
 
 .m-auto {
@@ -1121,6 +1124,11 @@ a.btn:hover {
   line-height: 2.25rem;
 }
 
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -1199,6 +1207,10 @@ a.btn:hover {
 
 .opacity-0 {
   opacity: 0;
+}
+
+.opacity-80 {
+  opacity: 0.8;
 }
 
 .opacity-70 {
@@ -1391,6 +1403,17 @@ html {
     stroke-dasharray: 90, 150;
     stroke-dashoffset: -124;
   }
+}
+
+.nav {
+  background: linear-gradient(
+    91.38deg,
+    #17171760 0%,
+    #17171760 100%,
+    #17171740 100%
+  );
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
 }
 
 .btn-primary, .hover\:bg-primary:hover {

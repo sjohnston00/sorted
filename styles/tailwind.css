@@ -21,7 +21,7 @@
 
 @layer components {
   .nav {
-    @apply bg-neutral-200 dark:bg-neutral-800 fixed bottom-0 left-0 right-0 h-20 px-4 py-2 z-10 flex items-center justify-between;
+    @apply fixed bottom-0 left-0 right-0 h-16 px-6 z-10 flex;
   }
   .nav ul li a {
     @apply block dark:text-neutral-50 text-neutral-800;
@@ -215,4 +215,14 @@ html {
     stroke-dasharray: 90, 150;
     stroke-dashoffset: -124;
   }
+}
+
+.nav {
+  background: linear-gradient(
+    91.38deg,
+    #17171760 0%,
+    #17171760 100%,
+    #17171740 100%
+  );
+  backdrop-filter: blur(6px);
 }

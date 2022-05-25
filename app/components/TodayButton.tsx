@@ -47,7 +47,7 @@ export default function TodayButton({ setSelectedDate }: Props) {
       animate="visible"
       exit="hidden"
       tabIndex={1}
-      className="fixed bottom-5 right-5 hover:text-neutral-50 bg-primary p-1 rounded-full h-9 w-9 flex justify-center items-center"
+      className="fixed bottom-20 right-5 hover:text-neutral-50 bg-primary p-1 rounded-full h-9 w-9 flex justify-center items-center"
     >
       <HiCalendar />
     </motion.a>
