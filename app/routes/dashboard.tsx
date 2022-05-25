@@ -6,6 +6,7 @@ import {
   LoaderFunction,
   MetaFunction,
   Outlet,
+  redirect,
   useActionData,
   useFetcher,
   useLoaderData,
@@ -59,7 +60,7 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({
   request,
-}): Promise<LoaderData> => {
+}): Promise<LoaderData | Response> => {
   const userId = await requireUserId(request)
   const user = await getUserDetails(userId)
   const url = new URL(request.url)
@@ -70,6 +71,9 @@ export const loader: LoaderFunction = async ({
     isFriend =
       user?.friends.some((friend: any) => friend._id.toString() === friendId) ||
       false
+    if (!isFriend) {
+      return redirect("/dashboard")
+    }
   }
   const markedHabits = await getMarkedHabitsForUser(
     isFriend ? friendId || "" : userId,
