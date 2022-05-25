@@ -9,10 +9,12 @@ import {
   useActionData,
   useFetcher,
   useLoaderData,
+  useMatches,
+  useSearchParams,
   useTransition,
 } from "remix"
 import CalendarComponent from "~/components/calendar"
-import { requireUserId } from "~/utils/session.server"
+import { getUser, requireUserId } from "~/utils/session.server"
 import { getHabitsForUser } from "~/utils/habits.server"
 import { getMarkedHabitsForUser } from "~/utils/markedHabits.server"
 import useIsMount from "~/utils/hooks/useIsMount"
@@ -28,6 +30,8 @@ import { HiOutlineX, HiPlus } from "react-icons/hi"
 import { Habit, HabitWithId } from "~/types/habits.server"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import mongoose from "mongoose"
+import { User } from "~/types/user.server"
+import { getUserDetails } from "~/utils/user.server"
 
 type LoaderData = {
   markedHabits: Array<MarkedHabitWithHabit>
@@ -57,8 +61,18 @@ export const loader: LoaderFunction = async ({
   request,
 }): Promise<LoaderData> => {
   const userId = await requireUserId(request)
+  const user = await getUserDetails(userId)
+  const url = new URL(request.url)
+  const friendId = url.searchParams.get("friend")
+  let isFriend = false
+  if (friendId) {
+    //TODO: check user is friends with url friend
+    isFriend =
+      user?.friends.some((friend: any) => friend._id.toString() === friendId) ||
+      false
+  }
   const markedHabits = await getMarkedHabitsForUser(
-    userId,
+    isFriend ? friendId || "" : userId,
     new Date(0),
     new Date(2100, 0)
   )
@@ -109,7 +123,11 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 export default function Dashboard() {
+  const [{ data }] = useMatches()
+  const { user } = data
   const { markedHabits, habits } = useLoaderData<LoaderData>()
+  const [searchParams] = useSearchParams()
+  const friendId = searchParams.get("friend")
   const actionData = useActionData<ActionData>()
   const [modalOpen, setModalOpen] = useState(false)
   const isMount = useIsMount()
@@ -138,6 +156,38 @@ export default function Dashboard() {
 
   return (
     <>
+      <div className="flex gap-2 p-2 overflow-auto">
+        {/* If the user is looking at anther users habits, then give a button to go back */}
+        {friendId ? (
+          <Link
+            to={`/dashboard`}
+            className="flex flex-col gap-1 dark:text-neutral-50 text-neutral-800 hover:dark:text-neutral-50 hover:text-neutral-800 hover:no-underline"
+          >
+            <img
+              className="rounded-full outline outline-green-400 outline-offset-1"
+              src={user?.gravatarURL}
+              width={48}
+              height={48}
+            />
+            {user.username}
+          </Link>
+        ) : null}
+        {user.friends.map((friend: User & { _id: string }) => (
+          <Link
+            to={`/dashboard?friend=${friend._id}`}
+            key={`friend=${friend._id}`}
+            className="flex flex-col gap-1 dark:text-neutral-50 text-neutral-800 hover:dark:text-neutral-50 hover:text-neutral-800 hover:no-underline"
+          >
+            <img
+              src={friend.gravatarURL}
+              className="rounded-full outline outline-green-400 outline-offset-1"
+              width={48}
+              height={48}
+            />
+            {friend.username}
+          </Link>
+        ))}
+      </div>
       <CustomCalendar
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}

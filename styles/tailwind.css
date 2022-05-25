@@ -218,9 +218,9 @@ html {
 .translucent-blur {
   background: linear-gradient(
     91.38deg,
-    #17171760 0%,
-    #17171760 100%,
-    #17171740 100%
+    #17171790 0%,
+    #17171790 100%,
+    #17171750 100%
   );
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(4px);
 }
