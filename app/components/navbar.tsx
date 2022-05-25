@@ -16,8 +16,8 @@ export default function Navbar() {
 
   const a = { textDecoration: "underline" }
   return (
-    <nav className="nav">
-      <ul className="flex items-center justify-between gap-2 w-full">
+    <nav className="nav translucent-blur">
+      <ul className="flex items-center lg:justify-evenly md:justify-around justify-between  gap-2 w-full">
         <li>
           <NavLink to="home" title="Home" className="hover:no-underline">
             {({ isActive }) =>

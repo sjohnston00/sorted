@@ -7,8 +7,8 @@ type Props = {
 
 export default function Header({ isLoading }: Props) {
   return (
-    <header className="bg-neutral-200 dark:bg-neutral-800 font-bold text-neutral-800 dark:text-neutral-50 fixed top-0 left-0 right-0 text-3xl flex items-end pb-4 justify-center gap-2 standalone:h-24">
-      <div className="flex items-center gap-2 justify-self-center">
+    <header className="translucent-blur font-bold text-neutral-50 fixed top-0 left-0 right-0 flex items-center justify-center gap-2 h-16 standalone:items-end standalone:pb-4  standalone:h-24 ">
+      <div className="flex items-center gap-2">
         <svg
           width="24"
           height="24"
@@ -27,7 +27,7 @@ export default function Header({ isLoading }: Props) {
             className="fill-current"
           />
         </svg>
-        <span>Sorted</span>
+        <span className="text-3xl">Sorted</span>
       </div>
       <div
         className={`${

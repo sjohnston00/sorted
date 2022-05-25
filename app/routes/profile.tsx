@@ -57,7 +57,7 @@ export default function Profile() {
     <div className="flex flex-col">
       <div className="flex gap-2 items-center my-2 font-semibold">
         <img
-          src={data?.user.gravatarURL}
+          src={data.user.gravatarURL}
           className="rounded-full"
           width={48}
           height={48}
