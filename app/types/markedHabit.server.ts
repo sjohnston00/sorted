@@ -6,6 +6,8 @@ export type MarkedHabit = {
   date: Date | string
   habit: Types.ObjectId
   user: Types.ObjectId
+  visibility: "public" | "private"
+  note: string
 }
 
 export type MarkedHabitWithId = MarkedHabit & {

@@ -4,6 +4,8 @@ export type Habit = {
   name: string
   colour: string
   user: Types.ObjectId
+  visibility: "public" | "private"
+  note: string
 }
 export type HabitWithId = Habit & {
   _id: string
