@@ -17,7 +17,10 @@ import {
 import CalendarComponent from "~/components/calendar"
 import { getUser, requireUserId } from "~/utils/session.server"
 import { getHabitsForUser } from "~/utils/habits.server"
-import { getMarkedHabitsForUser } from "~/utils/markedHabits.server"
+import {
+  getMarkedHabitsForFriend,
+  getMarkedHabitsForUser,
+} from "~/utils/markedHabits.server"
 import useIsMount from "~/utils/hooks/useIsMount"
 import {
   MarkedHabitWithHabit,
@@ -68,16 +71,24 @@ export const loader: LoaderFunction = async ({
   const friendId = url.searchParams.get("friend")
   let isFriend = false
   if (friendId) {
-    //TODO: check user is friends with url friend
     isFriend =
       user?.friends.some((friend: any) => friend._id.toString() === friendId) ||
       false
     if (!isFriend) {
       return redirect("/dashboard")
     }
+    const markedHabits = await getMarkedHabitsForFriend(
+      friendId,
+      new Date(0),
+      new Date(2100, 0)
+    )
+    return {
+      markedHabits,
+      habits: [],
+    }
   }
   const markedHabits = await getMarkedHabitsForUser(
-    isFriend ? friendId || "" : userId,
+    userId,
     new Date(0),
     new Date(2100, 0)
   )
