@@ -60,12 +60,21 @@ export const action: ActionFunction = async ({ request, params }) => {
         },
       }
     }
-    const updated = await Habit.updateOne(
+    await Habit.updateOne(
       { _id: id },
       {
         $set: {
           name: name,
           colour: colour,
+          visibility: visibility ? "private" : "public",
+        },
+      }
+    )
+
+    await MarkedHabit.updateMany(
+      { habit: id },
+      {
+        $set: {
           visibility: visibility ? "private" : "public",
         },
       }
