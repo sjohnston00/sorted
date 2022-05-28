@@ -28,11 +28,12 @@ import { AnimatePresence, motion, Variants } from "framer-motion"
 import Modal from "~/components/modal"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { HiOutlineX, HiPlus } from "react-icons/hi"
-import { Habit, HabitWithId } from "~/types/habits.server"
+import { HabitWithId } from "~/types/habits.server"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import mongoose from "mongoose"
 import { User } from "~/types/user.server"
 import { getUserDetails } from "~/utils/user.server"
+import Habit from "~/models/Habit.server"
 
 type LoaderData = {
   markedHabits: Array<MarkedHabitWithHabit>
@@ -116,10 +117,20 @@ export const action: ActionFunction = async ({ request }) => {
     }
   }
 
+  const habit = await Habit.findById(habitId)
+  if (!habit) {
+    return {
+      errors: {
+        message: "Please provide a valid Habit",
+      },
+    }
+  }
+
   const newMarkedHabit = new MarkedHabit({
     user: new mongoose.Types.ObjectId(userId),
     habit: new mongoose.Types.ObjectId(habitId),
     date: new Date(selectedDate),
+    visibility: habit.visibility,
   })
 
   await newMarkedHabit.save()
