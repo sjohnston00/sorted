@@ -32,6 +32,7 @@ export const action: ActionFunction = async ({
   const name = formData.get("name")
   const colour = formData.get("colour")
   const visibility = formData.get("visibility")
+  const note = formData.get("note")
 
   if (typeof name !== "string") {
     return {
@@ -53,6 +54,7 @@ export const action: ActionFunction = async ({
     colour: colour,
     user: new mongoose.Types.ObjectId(userId),
     visibility: visibility ? "private" : "public",
+    note: note,
   })
   return redirect("/habits")
 }
@@ -90,6 +92,18 @@ export default function Index() {
           className="input p-0 w-1/2"
           name="colour"
           id="colour"
+        />
+      </div>
+      <div className="mb-2">
+        <label htmlFor="note" className="mr-2">
+          Note (Optional)
+        </label>
+        <textarea
+          className="input"
+          name="note"
+          id="note"
+          maxLength={500}
+          placeholder="Note for your habit"
         />
       </div>
       <div className="mb-2">

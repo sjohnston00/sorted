@@ -51,6 +51,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const name = formData.get("name")
     const colour = formData.get("colour")
     const visibility = formData.get("visibility")
+    const note = formData.get("note")
 
     if (typeof name !== "string" || typeof colour !== "string") {
       return {
@@ -67,6 +68,7 @@ export const action: ActionFunction = async ({ request, params }) => {
           name: name,
           colour: colour,
           visibility: visibility ? "private" : "public",
+          note: note,
         },
       }
     )
@@ -125,6 +127,19 @@ export default function Index() {
           />
         </div>
         <div className="mb-2">
+          <label htmlFor="note" className="mr-2">
+            Note (Optional)
+          </label>
+          <textarea
+            className="input"
+            name="note"
+            id="note"
+            maxLength={500}
+            defaultValue={habit.note}
+            placeholder="Note for your habit"
+          />
+        </div>
+        <div className="mb-2">
           <label htmlFor="visibility">
             <input
               type="checkbox"
@@ -135,6 +150,7 @@ export default function Index() {
             Private Habit
           </label>
         </div>
+
         <div className="flex gap-2 text-lg">
           <Link to={"/habits"} className="btn btn-dark hover:no-underline">
             Back
