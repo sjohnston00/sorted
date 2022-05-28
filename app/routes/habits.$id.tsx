@@ -50,6 +50,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (method === "put") {
     const name = formData.get("name")
     const colour = formData.get("colour")
+    const visibility = formData.get("visibility")
 
     if (typeof name !== "string" || typeof colour !== "string") {
       return {
@@ -65,6 +66,7 @@ export const action: ActionFunction = async ({ request, params }) => {
         $set: {
           name: name,
           colour: colour,
+          visibility: visibility ? "private" : "public",
         },
       }
     )
@@ -112,6 +114,17 @@ export default function Index() {
             id="colour"
             defaultValue={habit.colour}
           />
+        </div>
+        <div className="mb-2">
+          <label htmlFor="visibility">
+            <input
+              type="checkbox"
+              name="visibility"
+              id="visibility"
+              defaultChecked={habit.visibility === "private"}
+            />
+            Private Habit
+          </label>
         </div>
         <div className="flex gap-2 text-lg">
           <Link to={"/habits"} className="btn btn-dark hover:no-underline">
