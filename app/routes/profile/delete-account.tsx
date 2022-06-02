@@ -30,10 +30,12 @@ export default function Index() {
   return (
     <>
       <Form method="post">
-        <label>Are you sure you want to delete your account?</label>
-        <small>
-          This will also delete all your data associated with your account
-        </small>
+        <div className="flex flex-col mb-2">
+          <label>Are you sure you want to delete your account?</label>
+          <small>
+            This will also delete all your data associated with your account
+          </small>
+        </div>
         <div className="flex gap-2">
           <Link to="/profile" className="btn btn-dark">
             No

@@ -2,6 +2,7 @@ import React from "react"
 import { HiCheck, HiX } from "react-icons/hi"
 import {
   ActionFunction,
+  Link,
   LoaderFunction,
   useFetcher,
   useLoaderData,
@@ -72,8 +73,11 @@ export default function Friends() {
   const { friendRequests, user } = useLoaderData()
 
   return (
-    <div>
-      Friend Requests
+    <div className="my-2">
+      <Link to="/profile" className="btn btn-dark mb-2">
+        Back
+      </Link>
+      <h2>Friend Requests</h2>
       <div className="flex flex-col gap-2">
         {friendRequests.length > 0 ? (
           friendRequests.map((friendRequest: any) => (

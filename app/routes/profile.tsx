@@ -36,18 +36,6 @@ export const loader: LoaderFunction = async ({ request }) => {
     user: userDetails,
   }
 }
-export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData()
-  const userId = await requireUserId(request)
-  const data = Object.fromEntries(formData)
-
-  updateUserVisibility(
-    userId,
-    data.visibility === "true" ? "public" : "private"
-  )
-
-  return { data }
-}
 
 export default function Profile() {
   const [{ data }] = useMatches()
@@ -75,51 +63,7 @@ export default function Profile() {
       <small className="text-sm text-muted">
         Friends: {user.friends.length}
       </small>
-      <UserProfileVisibility user={user} />
-      <form action="/logout" method="post" className="inline">
-        <button className="btn btn-danger">Logout</button>
-      </form>
       <Outlet />
     </div>
-  )
-}
-
-type UserProfileVisibilityProps = {
-  user: Document<unknown, any, User> &
-    User & {
-      _id: Types.ObjectId
-      createdAt: string
-      updatedAt: string
-    }
-}
-
-export function UserProfileVisibility({ user }: UserProfileVisibilityProps) {
-  const fetcher = useFetcher()
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log("input onChange", e)
-    fetcher.submit(
-      {
-        visibility: String(e.target.checked),
-      },
-      {
-        action: window.location.href,
-        method: "put",
-        encType: "application/x-www-form-urlencoded",
-      }
-    )
-  }
-  return (
-    <fetcher.Form method="put">
-      <label htmlFor="profile-visibility" className="block">
-        Public Profile {fetcher.state === "submitting" ? "updating..." : ""}
-      </label>
-      <input
-        type="checkbox"
-        defaultChecked={user.visibility === "public"}
-        onChange={handleFormChange}
-        name="profile-visibility"
-        id="profile-visibility"
-      />
-    </fetcher.Form>
   )
 }
