@@ -1,19 +1,29 @@
 import React from "react"
 import { HiHeart, HiSearch } from "react-icons/hi"
 import { ActionFunction, Form, Link } from "remix"
+import { declineAllFriendRequestForUser } from "~/utils/friendRequests.server"
+import { deleteHabitsForUser } from "~/utils/habits.server"
+import { deleteMarkedHabitsForUser } from "~/utils/markedHabits.server"
+import { logout, requireUserId } from "~/utils/session.server"
+import { deleteUser, updateAllUsersFriendList } from "~/utils/user.server"
 
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData()
-  const data = Object.fromEntries(formData)
+  const userId = await requireUserId(request)
 
-  if (data._action === "delete-account") {
-    console.log("delete account")
-    return {}
-  }
+  await Promise.all([
+    //Delete habits for user
+    deleteHabitsForUser(userId),
+    //Delete marked habits for user
+    deleteMarkedHabitsForUser(userId),
+    // //Delete friendRequests for user
+    declineAllFriendRequestForUser(userId),
+    // //Remove friend Id from all users who this user as a friend
+    updateAllUsersFriendList(userId),
+    // //Delete the user from DB
+    deleteUser(userId),
+  ])
 
-  return {
-    data,
-  }
+  return logout(request)
 }
 
 export default function Index() {
@@ -28,13 +38,7 @@ export default function Index() {
           <Link to="/profile" className="btn btn-dark">
             No
           </Link>
-          <button
-            type="submit"
-            name="_action"
-            id="_action"
-            value="delete-account"
-            className="btn btn-danger"
-          >
+          <button type="submit" className="btn btn-danger">
             Yes
           </button>
         </div>

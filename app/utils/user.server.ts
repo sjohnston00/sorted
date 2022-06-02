@@ -41,3 +41,19 @@ export async function updateUserVisibility(
     }
   )
 }
+
+export async function updateAllUsersFriendList(userId: string) {
+  //Remove the user from all users with have userId as a friend
+  return await User.updateMany(
+    { friends: userId },
+    {
+      $pull: {
+        friends: userId,
+      },
+    }
+  )
+}
+
+export async function deleteUser(userId: string) {
+  await User.deleteOne({ _id: userId })
+}

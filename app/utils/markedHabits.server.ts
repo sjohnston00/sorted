@@ -38,3 +38,7 @@ export async function getMarkedHabitsForFriend(
     .sort({ date: 1 })
   return markedHabits
 }
+
+export async function deleteMarkedHabitsForUser(userId: string) {
+  return await MarkedHabit.deleteMany({ user: userId })
+}
