@@ -1,11 +1,13 @@
 import React from "react"
 import { HiHeart, HiSearch } from "react-icons/hi"
-import { ActionFunction, Link } from "remix"
+import { ActionFunction, Form, Link } from "remix"
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+
   return {
-    data: Object.fromEntries(formData),
+    data,
   }
 }
 
@@ -23,6 +25,9 @@ export default function Index() {
         className="btn btn-primary flex items-center gap-2"
       >
         Search Friends <HiSearch />
+      </Link>
+      <Link to={"delete-account"} className="btn btn-danger ">
+        Delete Account
       </Link>
     </div>
   )
