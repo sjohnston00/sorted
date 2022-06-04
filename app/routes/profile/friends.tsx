@@ -6,13 +6,19 @@ import {
   LoaderFunction,
   useFetcher,
   useLoaderData,
-  useMatches,
 } from "remix"
 import FriendRequest from "~/models/FriendRequest.server"
-import User from "~/models/User.server"
+import { FriendRequest as FriendRequestType } from "~/types/friends.server"
 import { User as UserType } from "~/types/user.server"
+import User from "~/models/User.server"
+import { MongoDocument } from "~/types"
 import { requireUserId } from "~/utils/session.server"
 import { getUserDetails } from "~/utils/user.server"
+
+type LoaderData = {
+  user: MongoDocument<UserType>
+  friendRequests: MongoDocument<FriendRequestType>[]
+}
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request)
@@ -46,31 +52,35 @@ export const action: ActionFunction = async ({ request }) => {
       { $set: { accepted: true } }
     )
 
-    await User.updateOne(
-      { _id: acceptedFriendRequest?.from },
-      {
-        $push: { friends: acceptedFriendRequest?.to },
-      }
-    )
-    await User.updateOne(
-      { _id: acceptedFriendRequest?.to },
-      {
-        $push: { friends: acceptedFriendRequest?.from },
-      }
-    )
+    await Promise.all([
+      User.updateOne(
+        { _id: acceptedFriendRequest?.from },
+        {
+          $push: { friends: acceptedFriendRequest?.to },
+        }
+      ),
+      User.updateOne(
+        { _id: acceptedFriendRequest?.to },
+        {
+          $push: { friends: acceptedFriendRequest?.from },
+        }
+      ),
+    ])
 
     return { acceptedFriendRequest }
   }
 
   if (data._action === "remove-friend") {
-    await User.updateOne({ _id: userId }, { $pull: { friends: data.friendId } })
-    await User.updateOne({ _id: data.friendId }, { $pull: { friends: userId } })
+    await Promise.all([
+      User.updateOne({ _id: userId }, { $pull: { friends: data.friendId } }),
+      User.updateOne({ _id: data.friendId }, { $pull: { friends: userId } }),
+    ])
     return {}
   }
 }
 
 export default function Friends() {
-  const { friendRequests, user } = useLoaderData()
+  const { friendRequests, user } = useLoaderData<LoaderData>()
 
   return (
     <div className="my-2">
@@ -80,7 +90,7 @@ export default function Friends() {
       <h2>Friend Requests</h2>
       <div className="flex flex-col gap-2">
         {friendRequests.length > 0 ? (
-          friendRequests.map((friendRequest: any) => (
+          friendRequests.map((friendRequest) => (
             <FriendRequestRow
               friendRequest={friendRequest}
               key={friendRequest._id}
@@ -92,7 +102,7 @@ export default function Friends() {
       </div>
       Friends
       {user.friends.length > 0 ? (
-        user.friends.map((friend: any) => (
+        user.friends.map((friend) => (
           <FriendRow friend={friend} key={friend._id} />
         ))
       ) : (
@@ -102,7 +112,11 @@ export default function Friends() {
   )
 }
 
-function FriendRow({ friend }: any) {
+type FriendRowProps = {
+  friend: MongoDocument<UserType>
+}
+
+function FriendRow({ friend }: FriendRowProps) {
   const fetcher = useFetcher()
   return (
     <div
@@ -135,7 +149,11 @@ function FriendRow({ friend }: any) {
   )
 }
 
-function FriendRequestRow({ friendRequest }: any) {
+type FriendRequestRowProps = {
+  friendRequest: MongoDocument<FriendRequestType>
+}
+
+function FriendRequestRow({ friendRequest }: FriendRequestRowProps) {
   const fetcher = useFetcher()
   return (
     <div

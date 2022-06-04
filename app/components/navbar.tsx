@@ -1,5 +1,5 @@
 import React from "react"
-import { Link, LoaderFunction, NavLink, useLoaderData, useMatches } from "remix"
+import { NavLink } from "remix"
 import {
   HiCalendar,
   HiOutlineCalendar,
@@ -12,9 +12,6 @@ import {
 } from "react-icons/hi"
 
 export default function Navbar() {
-  const [{ data }] = useMatches()
-
-  const a = { textDecoration: "underline" }
   return (
     <nav className="nav translucent-blur">
       <ul className="flex items-center lg:justify-evenly md:justify-around justify-between  gap-2 w-full">

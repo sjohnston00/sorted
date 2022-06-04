@@ -1,17 +1,9 @@
-import { Types, Document } from "mongoose"
+import { User } from "./user.server"
 
 export type Habit = {
   name: string
   colour: string
-  user: Types.ObjectId
+  user: User
   visibility: "public" | "private"
   note: string
 }
-export type HabitWithId = Habit & {
-  _id: string
-}
-
-export type MongooseHabits = (Document<unknown, any, Habit> &
-  Habit & {
-    _id: Types.ObjectId
-  })[]

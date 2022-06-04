@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt"
 import User from "~/models/User.server"
 import crypto from "crypto"
+import { MongoDocument } from "~/types"
+import { User as UserType } from "~/types/user.server"
 
 export const usernameExists = async (username: string): Promise<boolean> => {
   const user = await User.findOne({ username: username })
@@ -21,7 +23,7 @@ export const registerUser = async (
   username: string,
   email: string,
   password: string
-): Promise<any> => {
+): Promise<MongoDocument<UserType>> => {
   const hashedPassword = await bcrypt.hash(password, 10)
   const emailHash = crypto.createHash("md5").update(email).digest("hex")
 

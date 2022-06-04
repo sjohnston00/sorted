@@ -1,5 +1,4 @@
 import React from "react"
-import { HiHeart, HiSearch } from "react-icons/hi"
 import { ActionFunction, Form, Link } from "remix"
 import { declineAllFriendRequestForUser } from "~/utils/friendRequests.server"
 import { deleteHabitsForUser } from "~/utils/habits.server"

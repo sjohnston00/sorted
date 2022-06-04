@@ -12,38 +12,25 @@ import {
 import User from "~/models/User.server"
 import type { User as UserType } from "~/types/user.server"
 import {
-  HiCheck,
-  HiOutlineRefresh,
-  HiOutlineUser,
   HiOutlineUserAdd,
   HiOutlineUserRemove,
-  HiPlus,
   HiUser,
   HiX,
 } from "react-icons/hi"
-import type { Document, Types } from "mongoose"
-import { getUser, getUserId, requireUserId } from "~/utils/session.server"
+import { requireUserId } from "~/utils/session.server"
 import { getUserDetails } from "~/utils/user.server"
 import { createFriendRequest } from "~/utils/friends.server"
 import FriendRequest from "~/models/FriendRequest.server"
 import { FriendRequest as FriendRequestType } from "~/types/friends.server"
+import { MongoDocument } from "~/types"
 
 type LoaderData = {
-  users?: Array<
-    UserType & {
-      _id: string
-    }
-  >
-  myFriendRequests: Array<
-    FriendRequestType & {
-      _id: string
-    }
-  >
+  users?: MongoDocument<UserType>[]
+  myFriendRequests: MongoDocument<FriendRequestType>[]
 }
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request)
-  const user = await getUserDetails(userId)
   const url = new URL(request.url)
   const searchedUsername = url.searchParams.get("username")
 
@@ -78,45 +65,44 @@ export const action: ActionFunction = async ({ request }) => {
   //TODO: Validate that the user is not already friends with the user
   //TODO: Validate that the user has not already sent a friend request
   if (data._action === "send-friend-request") {
-    const friendRequest = await createFriendRequest(
-      userId,
-      data.userId.toString()
-    )
-    return { friendRequest }
+    await createFriendRequest(userId, data.userId.toString())
+    return {}
   }
 
   if (data._action === "cancel-friend-request") {
-    const friendRequest = await FriendRequest.updateOne(
+    await FriendRequest.updateOne(
       { _id: data.friendRequestId },
       { $set: { accepted: true } }
     )
-    return { friendRequest }
+    return {}
   }
   if (data._action === "accept-friend-request") {
-    const friendRequest = await FriendRequest.updateOne(
-      { _id: data.friendRequestId },
-      { $set: { accepted: true } }
-    )
-    await User.updateOne(
-      { _id: userId },
-      {
-        $push: { friends: data.userId },
-      }
-    )
-    await User.updateOne(
-      { _id: data.userId },
-      {
-        $push: { friends: userId },
-      }
-    )
-    return { friendRequest }
+    await Promise.all([
+      FriendRequest.updateOne(
+        { _id: data.friendRequestId },
+        { $set: { accepted: true } }
+      ),
+      User.updateOne(
+        { _id: userId },
+        {
+          $push: { friends: data.userId },
+        }
+      ),
+      User.updateOne(
+        { _id: data.userId },
+        {
+          $push: { friends: userId },
+        }
+      ),
+    ])
+    return {}
   }
   if (data._action === "decline-friend-request") {
-    const friendRequest = await FriendRequest.updateOne(
+    await FriendRequest.updateOne(
       { _id: data.friendRequestId },
       { $set: { accepted: true } }
     )
-    return { friendRequest }
+    return {}
   }
 
   return { data }
@@ -167,26 +153,23 @@ type UserRowProps = {
 }
 
 function UserRow({ user, myFriendRequests }: UserRowProps) {
-  const [rootLoader] = useMatches()
-  const loggedInUser = rootLoader.data.user
+  const [{ data }] = useMatches()
+  const loggedInUser: MongoDocument<UserType> = data.user
   const fetcher = useFetcher()
   const isFriend = loggedInUser?.friends?.includes(user._id)
 
   const friendRequest = myFriendRequests.find(
     (friendRequest) =>
-      (friendRequest.from as any) === user._id ||
-      (friendRequest.to as any) === user._id
+      friendRequest.from === user._id || friendRequest.to === user._id
   )
 
   const myFriendRequestPending = myFriendRequests.some(
     (friendRequest) =>
-      friendRequest.from === loggedInUser._id &&
-      friendRequest.to === (user._id as any)
+      friendRequest.from === loggedInUser._id && friendRequest.to === user._id
   )
   const incomingFriendRequestPending = myFriendRequests.some(
     (friendRequest) =>
-      friendRequest.from === (user._id as any) &&
-      friendRequest.to === loggedInUser._id
+      friendRequest.from === user._id && friendRequest.to === loggedInUser._id
   )
 
   return (

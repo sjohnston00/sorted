@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React from "react"
 import Calendar from "react-calendar"
 
 type Props = {
@@ -12,7 +12,6 @@ export default function CalendarComponent({
   value,
   onChange,
 }: Props) {
-  const today = new Date()
   return (
     <>
       <Calendar
@@ -22,7 +21,7 @@ export default function CalendarComponent({
         minDetail={"month"}
         next2Label={null}
         prev2Label={null}
-        tileContent={({ activeStartDate, date, view }) => {
+        tileContent={({ date }) => {
           const todaysHabits = markedHabits.filter(
             (markedHabit: any) =>
               new Date(markedHabit.date).getDate() === date.getDate() &&
@@ -35,6 +34,7 @@ export default function CalendarComponent({
               {todaysHabits.length > 0 ? (
                 todaysHabits.map((todayHabit: any) => (
                   <div
+                    key={todayHabit._id}
                     className="h-4 w-4 rounded-full shadow-sm"
                     style={{ backgroundColor: todayHabit.habit.colour }}
                     title={todayHabit.habit.name}

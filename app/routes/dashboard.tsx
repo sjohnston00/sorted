@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   ActionFunction,
   Form,
@@ -14,20 +14,16 @@ import {
   useSearchParams,
   useTransition,
 } from "remix"
-import CalendarComponent from "~/components/calendar"
-import { getUser, requireUserId } from "~/utils/session.server"
+import { requireUserId } from "~/utils/session.server"
 import { getHabitsForUser } from "~/utils/habits.server"
 import {
   getMarkedHabitsForFriend,
   getMarkedHabitsForUser,
 } from "~/utils/markedHabits.server"
 import useIsMount from "~/utils/hooks/useIsMount"
-import {
-  MarkedHabitWithHabit,
-  MarkedHabitWithId,
-} from "~/types/markedHabit.server"
+import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
 import CustomCalendar from "~/components/customCalendar"
-import { AnimatePresence, motion, Variants } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
 import Modal from "~/components/modal"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { HiOutlineX, HiPlus } from "react-icons/hi"
@@ -51,11 +47,6 @@ type ActionData = {
   }
 }
 
-type FetcherData = {
-  habits: Array<HabitWithId>
-  markedHabits: Array<MarkedHabitWithHabit>
-}
-
 export const meta: MetaFunction = () => {
   return {
     title: `Sorted | Dashboard`,
@@ -71,9 +62,7 @@ export const loader: LoaderFunction = async ({
   const friendId = url.searchParams.get("friend")
   let isFriend = false
   if (friendId) {
-    isFriend =
-      user?.friends.some((friend: any) => friend._id.toString() === friendId) ||
-      false
+    isFriend = user?.friends.some((friend) => friend._id === friendId) || false
     if (!isFriend) {
       return redirect("/dashboard")
     }
@@ -242,7 +231,10 @@ export default function Dashboard() {
                 <>
                   <div className="flex flex-col gap-2">
                     {selectedDateMarkedHabits.map((markedHabit) => (
-                      <ModalMarkedHabit markedHabit={markedHabit} />
+                      <ModalMarkedHabit
+                        key={markedHabit._id}
+                        markedHabit={markedHabit}
+                      />
                     ))}
                   </div>
                   <Form method="post">
@@ -286,7 +278,7 @@ export default function Dashboard() {
               ) : (
                 <>
                   <p className="py-2 text-red-500">
-                    You don't have any habits to add.{" "}
+                    You do not have any habits to add
                   </p>
                   <Link
                     to={"/habits/new"}

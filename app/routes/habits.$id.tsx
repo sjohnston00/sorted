@@ -41,8 +41,10 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   if (method === "delete") {
-    const deletedHabit = await Habit.deleteOne({ _id: id })
-    const deletedMarkedHabits = await MarkedHabit.deleteMany({ habit: id })
+    await Promise.all([
+      Habit.deleteOne({ _id: id }),
+      MarkedHabit.deleteMany({ habit: id }),
+    ])
 
     return redirect("/habits")
   }

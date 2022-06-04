@@ -1,5 +1,4 @@
 import React from "react"
-import { Link } from "remix"
 import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
 
 type Props = {

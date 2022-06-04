@@ -1,6 +1,5 @@
 import React from "react"
-import Habit from "~/models/Habit.server"
-import { Link, LoaderFunction, Outlet, useLoaderData } from "remix"
+import { Link } from "remix"
 
 export default function Index() {
   return (

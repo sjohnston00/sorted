@@ -55,6 +55,7 @@
     "build:remix": "cross-env NODE_ENV=production remix build",
     "dev:remix": "cross-env NODE_ENV=development remix dev",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "lint": "eslint app/"
   }
 }

@@ -2,10 +2,7 @@ import bcrypt from "bcrypt"
 import { createCookieSessionStorage, redirect } from "remix"
 import User from "~/models/User.server"
 
-export const loginUser = async (
-  username: string,
-  password: string
-): Promise<any> => {
+export const loginUser = async (username: string, password: string) => {
   const user = await User.findOne({ username: username })
   if (!user) {
     return {

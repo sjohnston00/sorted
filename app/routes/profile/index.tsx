@@ -1,11 +1,11 @@
 import React from "react"
 import { HiHeart, HiSearch } from "react-icons/hi"
-import { ActionFunction, Form, Link, useFetcher, useMatches } from "remix"
+import { ActionFunction, Link, useFetcher, useMatches } from "remix"
 import { User } from "~/types/user.server"
-import { Document, Types } from "mongoose"
 import { requireUserId } from "~/utils/session.server"
 import { updateUserVisibility } from "~/utils/user.server"
 import LoadingIndicator from "~/components/LoadingIndicator"
+import { MongoDocument } from "~/types"
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
@@ -24,7 +24,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   const [{ data }] = useMatches()
-  const user = data.user
+  const user: MongoDocument<User> = data.user
   return (
     <>
       <UserProfileVisibility user={user} />
@@ -56,11 +56,7 @@ export default function Index() {
 }
 
 type UserProfileVisibilityProps = {
-  user: User & {
-    _id: Types.ObjectId
-    createdAt: string
-    updatedAt: string
-  }
+  user: MongoDocument<User>
 }
 
 export function UserProfileVisibility({ user }: UserProfileVisibilityProps) {

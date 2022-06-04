@@ -1,6 +1,6 @@
 import React from "react"
 import { motion, Variants } from "framer-motion"
-import { HiArrowUp, HiCalendar } from "react-icons/hi"
+import { HiCalendar } from "react-icons/hi"
 
 type Props = {
   setSelectedDate: React.Dispatch<React.SetStateAction<Date>>

@@ -16,11 +16,9 @@ import Navbar from "./components/navbar"
 import { getUser } from "./utils/session.server"
 import React from "react"
 import { useTransition } from "remix"
-import LoadingIndicator from "./components/LoadingIndicator"
-import crypto from "crypto"
 import { User } from "./types/user.server"
-import type { Document, Types } from "mongoose"
 import Header from "./components/Header"
+import { MongoDocument } from "./types"
 
 export const links: LinksFunction = () => {
   return [
@@ -35,23 +33,12 @@ export const links: LinksFunction = () => {
 }
 
 type LoaderData = {
-  user:
-    | (Document<unknown, any, User> &
-        User & {
-          _id: Types.ObjectId
-        })
-    | null
-  gravatarUrl: string
+  user: MongoDocument<User>
 }
 export const loader: LoaderFunction = async ({ request }) => {
   const user = await getUser(request)
-  const emailHash = crypto
-    .createHash("md5")
-    .update(user?.email || "")
-    .digest("hex")
   return {
     user: user,
-    gravatarUrl: `https://www.gravatar.com/avatar/${emailHash}`,
   }
 }
 export const meta: MetaFunction = () => {
@@ -72,9 +59,9 @@ export default function App() {
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { user } = useLoaderData<LoaderData>()
-  let transition = useTransition()
+  const transition = useTransition()
 
-  let isLoading =
+  const isLoading =
     transition.state === "submitting" || transition.state === "loading"
   return (
     <html lang="en">

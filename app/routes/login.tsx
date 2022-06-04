@@ -11,12 +11,7 @@ import {
   Link,
   MetaFunction,
 } from "remix"
-import {
-  createUserSession,
-  getUserId,
-  loginUser,
-  requireUserId,
-} from "~/utils/session.server"
+import { createUserSession, getUserId, loginUser } from "~/utils/session.server"
 import { AuthActionData } from "../types/actions"
 
 export const meta: MetaFunction = () => {
@@ -114,7 +109,7 @@ export default function Login() {
           >
             {submitting ? "Loging in... " : "Login"}
           </button>
-          <Link to={"/register"}>Don't have an account? Create one</Link>
+          <Link to={"/register"}>Don&apos;t have an account? Create one</Link>
         </div>
       </Form>
     </>
