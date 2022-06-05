@@ -19,7 +19,7 @@ const slideInFromBottom: Variants = {
 }
 
 type Props = {
-  handleClose: any
+  handleClose: () => void
   children: React.ReactNode
 }
 

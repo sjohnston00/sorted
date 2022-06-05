@@ -18,7 +18,6 @@ import {
   HiX,
 } from "react-icons/hi"
 import { requireUserId } from "~/utils/session.server"
-import { getUserDetails } from "~/utils/user.server"
 import { createFriendRequest } from "~/utils/friends.server"
 import FriendRequest from "~/models/FriendRequest.server"
 import { FriendRequest as FriendRequestType } from "~/types/friends.server"

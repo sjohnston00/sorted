@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 
 type Props = {
   children: React.ReactNode
-  onClick: any
+  onClick: () => void
 }
 
 export default function Backdrop({ children, onClick }: Props) {

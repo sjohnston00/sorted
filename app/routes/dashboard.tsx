@@ -21,22 +21,23 @@ import {
   getMarkedHabitsForUser,
 } from "~/utils/markedHabits.server"
 import useIsMount from "~/utils/hooks/useIsMount"
-import { MarkedHabitWithHabit } from "~/types/markedHabit.server"
 import CustomCalendar from "~/components/customCalendar"
 import { AnimatePresence } from "framer-motion"
 import Modal from "~/components/modal"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { HiOutlineX, HiPlus } from "react-icons/hi"
-import { HabitWithId } from "~/types/habits.server"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import mongoose from "mongoose"
 import { User } from "~/types/user.server"
 import { getUserDetails } from "~/utils/user.server"
 import Habit from "~/models/Habit.server"
+import { Habit as HabitType } from "~/types/habits.server"
+import { MongoDocument } from "~/types"
+import { MarkedHabit as MarkedHabitType } from "~/types/markedHabit.server"
 
 type LoaderData = {
-  markedHabits: Array<MarkedHabitWithHabit>
-  habits: Array<HabitWithId>
+  markedHabits: MongoDocument<MarkedHabitType>[]
+  habits: MongoDocument<HabitType>[]
 }
 
 type ActionData = {
@@ -148,7 +149,7 @@ export default function Dashboard() {
   const isMount = useIsMount()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedDateMarkedHabits, setSelectedDateMarkedHabits] = useState<
-    Array<MarkedHabitWithHabit>
+    MongoDocument<MarkedHabitType>[]
   >([])
   const transition = useTransition()
   const transitionIsSubmitting = transition.submission?.method === "POST"
@@ -298,7 +299,7 @@ export default function Dashboard() {
 function ModalMarkedHabit({
   markedHabit,
 }: {
-  markedHabit: MarkedHabitWithHabit
+  markedHabit: MongoDocument<MarkedHabitType>
 }) {
   const fetcher = useFetcher()
   return (
