@@ -63,8 +63,8 @@ export default function Login() {
     <>
       <h1 className="text-4xl">Login</h1>
       <Form method="post" className="auth-form">
-        <small className="my-1 block text-red-400">
-          {actionData?.errors.message}&nbsp;
+        <small data-testid="error-message" className="my-1 block text-red-400">
+          {actionData?.errors.message || String.fromCharCode(160)}
         </small>
         <div className="mb-1">
           <label htmlFor="username">
@@ -106,6 +106,7 @@ export default function Login() {
             type="submit"
             className="btn btn-primary"
             disabled={submitting}
+            data-testid="login-button"
           >
             {submitting ? "Loging in... " : "Login"}
           </button>
