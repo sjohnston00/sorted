@@ -17,6 +17,10 @@
   pre {
     @apply overflow-auto;
   }
+
+  body {
+    @apply min-h-min !important;
+  }
 }
 
 @layer components {
