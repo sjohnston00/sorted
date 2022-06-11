@@ -1,7 +1,12 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-mongoose.connect(process.env.MONGO_URI || "", (err) => {
-  if (err) console.error(err);
-});
+const CONNECTION =
+  process.env.NODE_ENV === "production"
+    ? process.env.MONGO_URI || ""
+    : process.env.MONGO_TEST_URI || ""
 
-export default mongoose;
+mongoose.connect(CONNECTION, (err) => {
+  if (err) console.error(err)
+})
+
+export default mongoose
