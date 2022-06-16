@@ -25,8 +25,29 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const [{ data }] = useMatches()
   const user: MongoDocument<User> = data.user
+  const imageSize = 144
   return (
     <>
+      <div className="flex justify-around pt-4 mb-4">
+        <div className="flex items-center flex-col gap-4">
+          <img
+            src={user.gravatarURL}
+            className="rounded-full"
+            alt="users profile image"
+            width={imageSize}
+            height={imageSize}
+          />
+          <span className="text-lg tracking-wide text-neutral-200">
+            {user.username}
+          </span>
+        </div>
+        <div className="self-center py-8 border-l-2 border-l-neutral-600 flex flex-col gap-1 justify-center items-center pl-6">
+          <h2 className="text-3xl font-medium tracking-wide">Joined</h2>
+          <span className="font-light text-neutral-400">
+            {new Date(user.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
       <UserProfileVisibility user={user} />
       <div className="flex gap-2 my-2">
         <Link to={"change-password"} className="btn btn-primary">
