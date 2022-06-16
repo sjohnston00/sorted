@@ -1,12 +1,38 @@
 import React from "react"
 import { HiHeart, HiSearch } from "react-icons/hi"
-import { ActionFunction, Link, useFetcher, useMatches } from "remix"
-import { User } from "~/types/user.server"
+import {
+  ActionFunction,
+  Link,
+  LoaderFunction,
+  useFetcher,
+  useLoaderData,
+  useMatches,
+} from "remix"
+import { User as UserType } from "~/types/user.server"
 import { requireUserId } from "~/utils/session.server"
 import { updateUserVisibility } from "~/utils/user.server"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { MongoDocument } from "~/types"
 import { FriendRequestRow, FriendRow } from "./friends"
+import { FriendRequest as FriendRequestType } from "~/types/friends.server"
+import FriendRequest from "~/models/FriendRequest.server"
+import User from "~/models/User.server"
+
+type LoaderData = {
+  friendRequests: MongoDocument<FriendRequestType>[]
+}
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await requireUserId(request)
+  const friendRequests = await FriendRequest.find({
+    to: userId,
+    accepted: false,
+  })
+    .populate("from to")
+    .sort({ createdAt: -1 })
+
+  return { friendRequests }
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
@@ -20,12 +46,52 @@ export const action: ActionFunction = async ({ request }) => {
     )
   }
 
+  if (data._action === "add-friend") {
+    if (data.friendRequestAction === "0") {
+      await FriendRequest.updateOne(
+        { _id: data.friendRequestId },
+        { $set: { accepted: true } }
+      )
+      return {}
+    }
+    const acceptedFriendRequest = await FriendRequest.findOneAndUpdate(
+      { _id: data.friendRequestId },
+      { $set: { accepted: true } }
+    )
+
+    await Promise.all([
+      User.updateOne(
+        { _id: acceptedFriendRequest?.from },
+        {
+          $push: { friends: acceptedFriendRequest?.to },
+        }
+      ),
+      User.updateOne(
+        { _id: acceptedFriendRequest?.to },
+        {
+          $push: { friends: acceptedFriendRequest?.from },
+        }
+      ),
+    ])
+
+    return { acceptedFriendRequest }
+  }
+
+  if (data._action === "remove-friend") {
+    await Promise.all([
+      User.updateOne({ _id: userId }, { $pull: { friends: data.friendId } }),
+      User.updateOne({ _id: data.friendId }, { $pull: { friends: userId } }),
+    ])
+    return {}
+  }
+
   return { data }
 }
 
 export default function Index() {
+  const { friendRequests } = useLoaderData<LoaderData>()
   const [{ data }] = useMatches()
-  const user: MongoDocument<User> = data.user
+  const user: MongoDocument<UserType> = data.user
   const imageSize = 144
   return (
     <>
@@ -51,15 +117,15 @@ export default function Index() {
       </div>
       {/* <UserProfileVisibility user={user} /> */}
       {/* The top 3 users friend requests*/}
-      {[0].length > 0 ? (
+      {friendRequests.length > 0 ? (
         <>
           <div className="flex items-start gap-2">
             <h1 className="text-3xl tracking-wide font-medium">
               Friend Requests
             </h1>
-            <span className="text-sm">{[0].length}</span>
+            <span className="text-sm">{friendRequests.length}</span>
           </div>
-          {[].map((friendRequest: any) => (
+          {friendRequests.map((friendRequest) => (
             <FriendRequestRow
               friendRequest={friendRequest}
               key={friendRequest._id}
@@ -106,7 +172,7 @@ export default function Index() {
 }
 
 type UserProfileVisibilityProps = {
-  user: MongoDocument<User>
+  user: MongoDocument<UserType>
 }
 
 export function UserProfileVisibility({ user }: UserProfileVisibilityProps) {
