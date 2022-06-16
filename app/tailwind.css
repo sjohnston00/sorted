@@ -783,10 +783,6 @@ a.btn:hover {
   margin: 0.25rem;
 }
 
-.m-4 {
-  margin: 1rem;
-}
-
 .my-1 {
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
@@ -823,18 +819,6 @@ a.btn:hover {
 
 .mt-2 {
   margin-top: 0.5rem;
-}
-
-.mt-4 {
-  margin-top: 1rem;
-}
-
-.mt-10 {
-  margin-top: 2.5rem;
-}
-
-.mb-10 {
-  margin-bottom: 2.5rem;
 }
 
 .mb-4 {
@@ -913,14 +897,6 @@ a.btn:hover {
   width: 2rem;
 }
 
-.w-0\.5 {
-  width: 0.125rem;
-}
-
-.w-0 {
-  width: 0px;
-}
-
 .cursor-pointer {
   cursor: pointer;
 }
@@ -931,6 +907,10 @@ a.btn:hover {
 
 .flex-col {
   flex-direction: column;
+}
+
+.items-start {
+  align-items: flex-start;
 }
 
 .items-end {
@@ -951,10 +931,6 @@ a.btn:hover {
 
 .justify-around {
   justify-content: space-around;
-}
-
-.justify-evenly {
-  justify-content: space-evenly;
 }
 
 .gap-2 {
@@ -1007,11 +983,6 @@ a.btn:hover {
   border-color: rgb(15 23 42 / var(--tw-border-opacity));
 }
 
-.border-l-neutral-300 {
-  --tw-border-opacity: 1;
-  border-left-color: rgb(212 212 212 / var(--tw-border-opacity));
-}
-
 .border-l-neutral-600 {
   --tw-border-opacity: 1;
   border-left-color: rgb(82 82 82 / var(--tw-border-opacity));
@@ -1035,11 +1006,6 @@ a.btn:hover {
 .bg-neutral-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(82 82 82 / var(--tw-bg-opacity));
-}
-
-.bg-neutral-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(212 212 212 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-40 {
@@ -1084,22 +1050,17 @@ a.btn:hover {
   padding-bottom: 0.5rem;
 }
 
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
 
-.pl-6 {
-  padding-left: 1.5rem;
-}
-
 .pt-4 {
   padding-top: 1rem;
+}
+
+.pl-6 {
+  padding-left: 1.5rem;
 }
 
 .align-middle {
@@ -1149,24 +1110,16 @@ a.btn:hover {
   font-weight: 600;
 }
 
-.font-light {
-  font-weight: 300;
-}
-
 .font-medium {
   font-weight: 500;
 }
 
+.font-light {
+  font-weight: 300;
+}
+
 .tracking-wide {
   letter-spacing: 0.025em;
-}
-
-.tracking-wider {
-  letter-spacing: 0.05em;
-}
-
-.tracking-widest {
-  letter-spacing: 0.1em;
 }
 
 .text-neutral-800 {
@@ -1199,14 +1152,14 @@ a.btn:hover {
   color: rgb(5 150 105 / var(--tw-text-opacity));
 }
 
-.text-neutral-400 {
-  --tw-text-opacity: 1;
-  color: rgb(163 163 163 / var(--tw-text-opacity));
-}
-
 .text-neutral-200 {
   --tw-text-opacity: 1;
   color: rgb(229 229 229 / var(--tw-text-opacity));
+}
+
+.text-neutral-400 {
+  --tw-text-opacity: 1;
+  color: rgb(163 163 163 / var(--tw-text-opacity));
 }
 
 .opacity-100 {
@@ -1517,10 +1470,6 @@ html {
 }
 
 @media (min-width: 768px) {
-  .md\:justify-around {
-    justify-content: space-around;
-  }
-
   .md\:px-20 {
     padding-left: 5rem;
     padding-right: 5rem;
@@ -1528,10 +1477,6 @@ html {
 }
 
 @media (min-width: 1024px) {
-  .lg\:justify-evenly {
-    justify-content: space-evenly;
-  }
-
   .lg\:px-40 {
     padding-left: 10rem;
     padding-right: 10rem;

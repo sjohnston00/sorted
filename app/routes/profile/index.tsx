@@ -6,6 +6,7 @@ import { requireUserId } from "~/utils/session.server"
 import { updateUserVisibility } from "~/utils/user.server"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { MongoDocument } from "~/types"
+import { FriendRequestRow, FriendRow } from "./friends"
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
@@ -31,7 +32,7 @@ export default function Index() {
       <div className="flex justify-around pt-4 mb-4">
         <div className="flex items-center flex-col gap-4">
           <img
-            src={user.gravatarURL}
+            src={`${user.gravatarURL}&s=200`}
             className="rounded-full"
             alt="users profile image"
             width={imageSize}
@@ -48,7 +49,35 @@ export default function Index() {
           </span>
         </div>
       </div>
-      <UserProfileVisibility user={user} />
+      {/* <UserProfileVisibility user={user} /> */}
+      {/* The top 3 users friend requests*/}
+      {[0].length > 0 ? (
+        <>
+          <div className="flex items-start gap-2">
+            <h1 className="text-3xl tracking-wide font-medium">
+              Friend Requests
+            </h1>
+            <span className="text-sm">{[0].length}</span>
+          </div>
+          {[].map((friendRequest: any) => (
+            <FriendRequestRow
+              friendRequest={friendRequest}
+              key={friendRequest._id}
+            />
+          ))}
+        </>
+      ) : null}
+      {user.friends.length > 0 ? (
+        <>
+          <div className="flex items-start gap-2">
+            <h1 className="text-3xl tracking-wide font-medium">Friends</h1>
+            <span className="text-sm">{user.friends.length}</span>
+          </div>
+          {user.friends.map((friend) => (
+            <FriendRow friend={friend} key={friend._id} />
+          ))}
+        </>
+      ) : null}
       <div className="flex gap-2 my-2">
         <Link to={"change-password"} className="btn btn-primary">
           Change Password

@@ -116,7 +116,7 @@ type FriendRowProps = {
   friend: MongoDocument<UserType>
 }
 
-function FriendRow({ friend }: FriendRowProps) {
+export function FriendRow({ friend }: FriendRowProps) {
   const fetcher = useFetcher()
   return (
     <div
@@ -153,7 +153,7 @@ type FriendRequestRowProps = {
   friendRequest: MongoDocument<FriendRequestType>
 }
 
-function FriendRequestRow({ friendRequest }: FriendRequestRowProps) {
+export function FriendRequestRow({ friendRequest }: FriendRequestRowProps) {
   const fetcher = useFetcher()
   return (
     <div
