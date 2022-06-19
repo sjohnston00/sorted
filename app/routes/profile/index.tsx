@@ -119,29 +119,43 @@ export default function Index() {
       {/* The top 3 users friend requests*/}
       {friendRequests.length > 0 ? (
         <>
-          <div className="flex items-start gap-2">
-            <h1 className="text-3xl tracking-wide font-medium">
-              Friend Requests
-            </h1>
+          <Link
+            to={"friend-requets"}
+            className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50"
+          >
+            Friend Requests
             <span className="text-sm">{friendRequests.length}</span>
-          </div>
+          </Link>
           {friendRequests.map((friendRequest) => (
             <FriendRequestRow
               friendRequest={friendRequest}
               key={friendRequest._id}
             />
           ))}
+          {friendRequests.length > 3 ? (
+            <Link to={"friend-requests"} className="block text-center">
+              See All
+            </Link>
+          ) : null}
         </>
       ) : null}
       {user.friends.length > 0 ? (
         <>
-          <div className="flex items-start gap-2">
-            <h1 className="text-3xl tracking-wide font-medium">Friends</h1>
+          <Link
+            to={"friends"}
+            className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50"
+          >
+            Friends
             <span className="text-sm">{user.friends.length}</span>
-          </div>
+          </Link>
           {user.friends.map((friend) => (
             <FriendRow friend={friend} key={friend._id} />
           ))}
+          {user.friends.length > 3 ? (
+            <Link to={"friends"} className="block text-center">
+              See All
+            </Link>
+          ) : null}
         </>
       ) : null}
       <div className="flex gap-2 my-2">
