@@ -124,12 +124,12 @@ export function FriendRow({ friend }: FriendRowProps) {
         fetcher.submission ? "opacity-50" : ""
       }`}
     >
-      <div className="flex gap-2 flex-col">
+      <div className="flex gap-2 items-center">
         <img
           src={friend.gravatarURL}
           className="rounded-full"
-          width={48}
-          height={48}
+          width={36}
+          height={36}
         />
         <span>{friend.username}</span>
       </div>
