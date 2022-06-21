@@ -122,7 +122,7 @@ export default function Index() {
         <>
           <Link
             to={"friend-requets"}
-            className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50"
+            className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50 mb-4"
           >
             Friend Requests
             <span className="text-sm">{friendRequests.length}</span>
@@ -144,7 +144,7 @@ export default function Index() {
         <>
           <Link
             to={"friends"}
-            className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50"
+            className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50 mb-4"
           >
             Friends
             <span className="text-sm">{user.friends.length}</span>
