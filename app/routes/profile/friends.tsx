@@ -14,6 +14,8 @@ import User from "~/models/User.server"
 import { MongoDocument } from "~/types"
 import { requireUserId } from "~/utils/session.server"
 import { getUserDetails } from "~/utils/user.server"
+import { FriendRow } from "~/components/FriendRow"
+import { FriendRequestRow } from "~/components/FriendRequestRow"
 
 type LoaderData = {
   user: MongoDocument<UserType>
@@ -108,89 +110,6 @@ export default function Friends() {
       ) : (
         <p className="text-red-500 ">No Friends yet</p>
       )}
-    </div>
-  )
-}
-
-type FriendRowProps = {
-  friend: MongoDocument<UserType>
-}
-
-export function FriendRow({ friend }: FriendRowProps) {
-  const fetcher = useFetcher()
-  return (
-    <div
-      className={`flex gap-2 items-end transition-all ${
-        fetcher.submission ? "opacity-50" : ""
-      }`}
-    >
-      <div className="flex gap-2 items-center">
-        <img
-          src={friend.gravatarURL}
-          className="rounded-full"
-          width={36}
-          height={36}
-        />
-        <span>{friend.username}</span>
-      </div>
-      <fetcher.Form method="post">
-        <input type="hidden" name="friendId" id="friendId" value={friend._id} />
-        <input
-          type="hidden"
-          name="_action"
-          id="_action"
-          value="remove-friend"
-        />
-        <button type="submit">
-          <HiX className="h-8 w-8" />
-        </button>
-      </fetcher.Form>
-    </div>
-  )
-}
-
-type FriendRequestRowProps = {
-  friendRequest: MongoDocument<FriendRequestType>
-}
-
-export function FriendRequestRow({ friendRequest }: FriendRequestRowProps) {
-  const fetcher = useFetcher()
-  return (
-    <div
-      className={`transition-all flex gap-2 items-center ${
-        fetcher.submission ? "opacity-50" : ""
-      }`}
-    >
-      From: {friendRequest.from?.username} To: {friendRequest.to?.username}{" "}
-      <fetcher.Form method="post">
-        <input
-          type="hidden"
-          name="friendRequestId"
-          id="friendRequestId"
-          value={friendRequest._id}
-        />
-        <input type="hidden" name="_action" id="_action" value="add-friend" />
-        <div className="flex gap-2 items-center">
-          <button
-            className="p-0.5"
-            type="submit"
-            name="friendRequestAction"
-            id="friendRequestAction"
-            value="1"
-          >
-            <HiCheck className="h-8 w-8" />
-          </button>
-          <button
-            className="p-0.5"
-            type="submit"
-            name="friendRequestAction"
-            id="friendRequestAction"
-            value="0"
-          >
-            <HiX className="h-8 w-8" />
-          </button>
-        </div>
-      </fetcher.Form>
     </div>
   )
 }

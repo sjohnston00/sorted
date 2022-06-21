@@ -13,7 +13,8 @@ import { requireUserId } from "~/utils/session.server"
 import { updateUserVisibility } from "~/utils/user.server"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { MongoDocument } from "~/types"
-import { FriendRequestRow, FriendRow } from "./friends"
+import { FriendRequestRow } from "~/components/FriendRequestRow"
+import { FriendRow } from "~/components/FriendRow"
 import { FriendRequest as FriendRequestType } from "~/types/friends.server"
 import FriendRequest from "~/models/FriendRequest.server"
 import User from "~/models/User.server"
@@ -158,26 +159,20 @@ export default function Index() {
           ) : null}
         </>
       ) : null}
-      <div className="flex gap-2 my-2">
-        <Link to={"change-password"} className="btn btn-primary">
+      <div className="flex flex-col gap-2 my-2">
+        <Link to={"change-password"} className="btn btn-primary text-center">
           Change Password
         </Link>
         <Link
-          to={"friends"}
-          className="btn btn-primary flex items-center gap-2"
-        >
-          My Friends <HiHeart />
-        </Link>
-        <Link
           to={"search-friends"}
-          className="btn btn-primary flex items-center gap-2"
+          className="btn btn-primary justify-center flex items-center gap-2"
         >
           Search Friends <HiSearch />
         </Link>
-        <form action="/logout" method="post" className="inline">
-          <button className="btn btn-danger">Logout</button>
+        <form action="/logout" method="post">
+          <button className="btn btn-danger w-full">Logout</button>
         </form>
-        <Link to={"delete-account"} className="btn btn-danger ">
+        <Link to={"delete-account"} className="btn btn-danger text-center">
           Delete Account
         </Link>
       </div>
