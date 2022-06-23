@@ -34,7 +34,7 @@ export function FriendRow({ friend }: FriendRowProps) {
           id="_action"
           value="remove-friend"
         />
-        <button type="submit" className={``}>
+        <button type="submit" title="Remove Friend">
           <HiX
             className={`h-8 w-8 transition-all ${
               submitting ? "" : "opacity-70"
