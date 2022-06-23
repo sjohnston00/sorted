@@ -1,7 +1,7 @@
 import React from "react"
-import { LoaderFunction, Outlet, useLoaderData } from "remix"
+import { ActionFunction, LoaderFunction, Outlet, useLoaderData } from "remix"
 import { User } from "~/types/user.server"
-import { getUserDetails } from "~/utils/user.server"
+import { getUserDetails, updateUserVisibility } from "~/utils/user.server"
 import { requireUserId } from "~/utils/session.server"
 import { MongoDocument } from "~/types"
 
@@ -15,6 +15,20 @@ export const loader: LoaderFunction = async ({ request }) => {
   return {
     user: userDetails,
   }
+}
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData()
+  const userId = await requireUserId(request)
+  const data = Object.fromEntries(formData)
+
+  if (data._action === "update-visibility") {
+    await updateUserVisibility(
+      userId,
+      data.visibility === "public" ? "public" : "private"
+    )
+  }
+  return {}
 }
 
 export default function Profile() {

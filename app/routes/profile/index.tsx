@@ -1,7 +1,8 @@
-import React from "react"
+import React, { useRef } from "react"
 import { HiHeart, HiSearch } from "react-icons/hi"
 import {
   ActionFunction,
+  Form,
   Link,
   LoaderFunction,
   useFetcher,
@@ -18,6 +19,7 @@ import { FriendRow } from "~/components/FriendRow"
 import { FriendRequest as FriendRequestType } from "~/types/friends.server"
 import FriendRequest from "~/models/FriendRequest.server"
 import User from "~/models/User.server"
+import ProfileVisibility from "~/components/ProfileVisibility"
 
 type LoaderData = {
   friendRequests: MongoDocument<FriendRequestType>[]
@@ -43,7 +45,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (data._action === "update-visibility") {
     await updateUserVisibility(
       userId,
-      data.visibility === "true" ? "public" : "private"
+      data.visibility === "public" ? "public" : "private"
     )
   }
 
@@ -92,6 +94,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const { friendRequests } = useLoaderData<LoaderData>()
   const [{ data }] = useMatches()
+  const ref = useRef<HTMLFormElement>(null)
   const user: MongoDocument<UserType> = data.user
   const imageSize = 144
   return (
@@ -159,18 +162,72 @@ export default function Index() {
           ) : null}
         </>
       ) : null}
-      <div className="flex flex-col gap-2 my-2">
-        <Link to={"change-password"} className="btn btn-primary text-center">
+      <h1 className="text-3xl tracking-wide font-medium mt-4">Settings</h1>
+      <h2 className="text-2xl tracking-wide font-medium ">
+        Profile Visibility
+      </h2>
+      <p className="mb-4 text-neutral-200">
+        Public profiles allow users to be able to add you as a friend. Private
+        profiles do not allow you to be searchable but you can still keep your
+        current friends.
+      </p>
+      {/* <Form
+        className="flex justify-around"
+        ref={ref}
+        onChange={(e) => ref.current?.submit()}
+        method="put"
+      >
+        <label
+          className="flex gap-2 items-center"
+          htmlFor="profile-visibility-public"
+        >
+          <input
+            type={"radio"}
+            name="profile-visibility"
+            defaultChecked={user.visibility === "public"}
+            id="profile-visibility-public"
+            value={"public"}
+          />
+          Public
+        </label>
+        <label
+          className="flex gap-2 items-center"
+          htmlFor="profile-visibility-private"
+        >
+          <input
+            type={"radio"}
+            name="profile-visibility"
+            defaultChecked={user.visibility === "private"}
+            id="profile-visibility-private"
+            value={"private"}
+          />
+          Private
+        </label>
+      </Form> */}
+      <ProfileVisibility visibility={user.visibility} />
+      <h2 className="text-2xl tracking-wide font-medium ">Profile Picture</h2>
+      <p className="text-neutral-200">
+        Your profile picture comes from gravatar, simply use the same email here
+        as your gravatar account.
+      </p>
+      <h1 className="text-3xl tracking-wide font-medium my-4">Account</h1>
+      <div className="flex flex-col gap-2">
+        <Link
+          to={"change-password"}
+          className="btn border-2 text-sky-500 border-sky-600 bg-sky-600 bg-opacity-40 hover:bg-opacity-80 hover:bg-sky-600 text-center"
+        >
           Change Password
         </Link>
         <Link
           to={"search-friends"}
-          className="btn btn-primary justify-center flex items-center gap-2"
+          className="btn border-2 text-sky-500 border-sky-600 bg-sky-600 bg-opacity-40 hover:bg-opacity-80 hover:bg-sky-600 justify-center flex items-center gap-1"
         >
           Search Friends <HiSearch />
         </Link>
         <form action="/logout" method="post">
-          <button className="btn btn-danger w-full">Logout</button>
+          <button className="btn border-2 text-red-500 hover:text-neutral-100 border-red-600 bg-red-600 bg-opacity-40 hover:bg-opacity-80 hover:bg-red-600 w-full">
+            Logout
+          </button>
         </form>
         <Link to={"delete-account"} className="btn btn-danger text-center">
           Delete Account
