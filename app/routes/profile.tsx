@@ -1,13 +1,11 @@
 import React from "react"
-import { ActionFunction, LoaderFunction, Outlet, useLoaderData } from "remix"
-import { User } from "~/types/user.server"
-import { getUserDetails, updateUserVisibility } from "~/utils/user.server"
+import { ActionFunction, LoaderFunction, Outlet } from "remix"
 import { requireUserId } from "~/utils/session.server"
-import { MongoDocument } from "~/types"
+import { getUserDetails, updateUserVisibility } from "~/utils/user.server"
 
-type LoaderData = {
-  user: MongoDocument<User>
-}
+// type LoaderData = {
+//   user: MongoDocument<User>
+// }
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request)
@@ -32,7 +30,7 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 export default function Profile() {
-  const { user } = useLoaderData<LoaderData>()
+  // const { user } = useLoaderData<LoaderData>()
 
   return (
     // <div className="flex flex-col">

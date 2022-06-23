@@ -1,25 +1,24 @@
-import React, { useRef } from "react"
-import { HiHeart, HiSearch } from "react-icons/hi"
+import React from "react"
+import { HiSearch } from "react-icons/hi"
 import {
   ActionFunction,
-  Form,
   Link,
   LoaderFunction,
   useFetcher,
   useLoaderData,
   useMatches,
 } from "remix"
+import { FriendRequestRow } from "~/components/FriendRequestRow"
+import { FriendRow } from "~/components/FriendRow"
+import LoadingIndicator from "~/components/LoadingIndicator"
+import ProfileVisibility from "~/components/ProfileVisibility"
+import FriendRequest from "~/models/FriendRequest.server"
+import User from "~/models/User.server"
+import { MongoDocument } from "~/types"
+import { FriendRequest as FriendRequestType } from "~/types/friends.server"
 import { User as UserType } from "~/types/user.server"
 import { requireUserId } from "~/utils/session.server"
 import { updateUserVisibility } from "~/utils/user.server"
-import LoadingIndicator from "~/components/LoadingIndicator"
-import { MongoDocument } from "~/types"
-import { FriendRequestRow } from "~/components/FriendRequestRow"
-import { FriendRow } from "~/components/FriendRow"
-import { FriendRequest as FriendRequestType } from "~/types/friends.server"
-import FriendRequest from "~/models/FriendRequest.server"
-import User from "~/models/User.server"
-import ProfileVisibility from "~/components/ProfileVisibility"
 
 type LoaderData = {
   friendRequests: MongoDocument<FriendRequestType>[]
@@ -94,7 +93,6 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const { friendRequests } = useLoaderData<LoaderData>()
   const [{ data }] = useMatches()
-  const ref = useRef<HTMLFormElement>(null)
   const user: MongoDocument<UserType> = data.user
   const imageSize = 144
   return (
