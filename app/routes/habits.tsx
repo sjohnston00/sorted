@@ -1,5 +1,6 @@
 import React from "react"
-import Habit from "~/models/Habit.server"
+import { default as DBHabit } from "~/models/Habit.server"
+import Habit from "~/components/Habit"
 import {
   Link,
   LoaderFunction,
@@ -19,7 +20,7 @@ export const meta: MetaFunction = () => {
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request)
-  const habits = await Habit.find({ user: userId }).populate("user")
+  const habits = await DBHabit.find({ user: userId }).populate("user")
   return habits
 }
 
@@ -28,20 +29,9 @@ export default function Index() {
   return (
     <>
       <h1 className="text-3xl">Habits</h1>
-      <ul>
+      <ul className="flex flex-wrap py-4 gap-10 justify-center">
         {data.length > 0 ? (
-          data.map((habit) => (
-            <li key={habit._id} className="hover:underline cursor-pointer mb-2">
-              <Link to={habit._id} title={`${habit.name}`}>
-                {habit.name}
-              </Link>
-              <div
-                className="h-6 w-6 ml-2 inline-block shadow-sm rounded-full align-middle"
-                style={{ backgroundColor: habit.colour }}
-                title={`Colour: ${habit.colour}`}
-              ></div>
-            </li>
-          ))
+          data.map((habit) => <Habit key={habit._id} habit={habit} />)
         ) : (
           <p className="py-2 text-red-500">You do not have any habits.</p>
         )}
