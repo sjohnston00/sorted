@@ -10,6 +10,7 @@ import {
   useLoaderData,
 } from "remix"
 import MarkedHabit from "~/models/MarkedHabit.server"
+import HabitBox from "~/components/HabitBox"
 
 export const meta: MetaFunction = ({ data }) => {
   return {
@@ -92,16 +93,25 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function Index() {
   const habit = useLoaderData()
+  const habitBox =
+    typeof window !== "undefined"
+      ? document.querySelector(`#habit-${habit._id}`)
+      : null
 
+  const handleColourChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (!habitBox) return
+    habitBox.style.backgroundColor = `${e.target.value}20`
+    habitBox.style.color = `${e.target.value}`
+    habitBox.style.borderColor = `${e.target.value}`
+  }
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (!habitBox) return
+    habitBox.textContent = e.target.value
+  }
   return (
-    <div>
-      <dl className="font-bold">Name:</dl>
-      <dd>{habit.name}</dd>
-      <dl className="font-bold">Colour:</dl>
-      <div
-        className="h-6 w-6 inline-block border-2 border-slate-900"
-        style={{ backgroundColor: habit.colour }}
-      ></div>
+    <div className="pt-4">
+      <HabitBox habit={habit} />
       <Form method="post" className="m-1">
         <div className="mb-2">
           <label htmlFor="name" className="mr-2 block">
@@ -114,6 +124,7 @@ export default function Index() {
             placeholder="Habit name"
             className="input"
             defaultValue={habit.name}
+            onChange={handleTextChange}
             required
           />
         </div>
@@ -125,6 +136,7 @@ export default function Index() {
             type="color"
             name="colour"
             id="colour"
+            onChange={handleColourChange}
             defaultValue={habit.colour}
           />
         </div>

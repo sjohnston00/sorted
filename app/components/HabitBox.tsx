@@ -7,10 +7,10 @@ type HabitProps = {
   habit: MongoDocument<Habit>
 }
 
-export default function Habit({ habit }: HabitProps) {
+export default function HabitBox({ habit }: HabitProps) {
   return (
     <Link
-      className="h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
+      className="p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
       style={{
         backgroundColor: `${habit.colour}20`,
         borderColor: habit.colour,
@@ -18,6 +18,8 @@ export default function Habit({ habit }: HabitProps) {
       }}
       to={habit._id}
       title={`${habit.name}`}
+      id={`habit-${habit._id}`}
+      reloadDocument
     >
       {habit.name}
     </Link>

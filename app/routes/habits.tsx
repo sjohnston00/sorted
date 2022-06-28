@@ -1,6 +1,6 @@
 import React from "react"
 import { default as DBHabit } from "~/models/Habit.server"
-import Habit from "~/components/Habit"
+import HabitBox from "~/components/HabitBox"
 import {
   Link,
   LoaderFunction,
@@ -31,7 +31,7 @@ export default function Index() {
       <h1 className="text-3xl">Habits</h1>
       <ul className="flex flex-wrap py-4 gap-10 justify-center">
         {data.length > 0 ? (
-          data.map((habit) => <Habit key={habit._id} habit={habit} />)
+          data.map((habit) => <HabitBox key={habit._id} habit={habit} />)
         ) : (
           <p className="py-2 text-red-500">You do not have any habits.</p>
         )}
