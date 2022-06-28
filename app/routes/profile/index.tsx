@@ -212,7 +212,7 @@ export default function Index() {
       <div className="flex flex-col gap-2">
         <Link
           to={"change-password"}
-          className="btn border-2 text-sky-500 border-sky-600 bg-sky-600 bg-opacity-40 hover:bg-opacity-80 hover:bg-sky-600 text-center"
+          className="btn border-2 text-neutral-50 border-neutral-50 bg-neutral-50 bg-opacity-40 hover:bg-opacity-80 hover:bg-neutral-50 hover:text-neutral-800 text-center"
         >
           Change Password
         </Link>
