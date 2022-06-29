@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   ActionFunction,
   Form,
@@ -12,6 +12,7 @@ import Habit from "~/models/Habit.server"
 import { requireUserId } from "~/utils/session.server"
 import mongoose from "mongoose"
 import LoadingIndicator from "~/components/LoadingIndicator"
+import { Habit as HabitType } from "~/types/habits.server"
 
 export const meta: MetaFunction = () => {
   return {
@@ -66,8 +67,45 @@ export default function Index() {
   const isLoading =
     transition.state === "loading" || transition.state === "submitting"
 
+  const [habit, setHabit] = useState<Pick<HabitType, "name" | "colour">>({
+    name: "...",
+    colour: "#ffffff",
+  })
+
+  const habitBox =
+    typeof window !== "undefined" ? document.getElementById("habit-new") : null
+
+  const handleColourChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setHabit({ ...habit, colour: `${e.target.value}` })
+    // if (!habitBox) return
+    // habitBox.style.backgroundColor = `${e.target.value}20`
+    // habitBox.style.color = `${e.target.value}`
+    // habitBox.style.borderColor = `${e.target.value}`
+  }
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (!habitBox) return
+    habitBox.textContent = e.target.value || "..."
+  }
+
+  const handleRandomColour = () => {
+    const randomColour = Math.floor(Math.random() * 16777215).toString(16)
+    setHabit({ ...habit, colour: `#${randomColour}` })
+  }
+
   return (
     <Form method="post" className="m-1">
+      <div
+        className="mx-auto p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
+        style={{
+          backgroundColor: `${habit.colour}20`,
+          borderColor: habit.colour,
+          color: habit.colour,
+        }}
+        id="habit-new"
+      >
+        {habit.name}
+      </div>
       <small className="block text-danger">
         {actionData?.errors.message}&nbsp;
       </small>
@@ -81,6 +119,7 @@ export default function Index() {
           id="name"
           className="input"
           placeholder="e.g Drink 2L Water..."
+          onChange={handleTextChange}
           required
         />
       </div>
@@ -93,8 +132,13 @@ export default function Index() {
           className="input p-0 w-1/2"
           name="colour"
           id="colour"
+          value={habit.colour}
+          onChange={handleColourChange}
         />
       </div>
+      <button onClick={handleRandomColour} type={"button"}>
+        Random
+      </button>
       <div className="mb-2">
         <label htmlFor="note" className="mr-2">
           Note (Optional)
