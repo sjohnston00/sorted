@@ -126,7 +126,9 @@ export default function Index() {
             className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50 mb-4"
           >
             Friend Requests
-            <span className="text-sm">{friendRequests.length}</span>
+            <span className="text-sm text-neutral-400">
+              {friendRequests.length}
+            </span>
           </Link>
           {friendRequests.map((friendRequest) => (
             <FriendRequestRow
@@ -148,7 +150,9 @@ export default function Index() {
             className="flex items-start gap-2 text-3xl tracking-wide font-medium hover:no-underline text-neutral-50 hover:text-neutral-50 mb-4"
           >
             Friends
-            <span className="text-sm">{user.friends.length}</span>
+            <span className="text-sm text-neutral-400">
+              {user.friends.length}
+            </span>
           </Link>
           {user.friends.map((friend) => (
             <FriendRow friend={friend} key={friend._id} />
@@ -169,41 +173,10 @@ export default function Index() {
         profiles do not allow you to be searchable but you can still keep your
         current friends.
       </p>
-      {/* <Form
-        className="flex justify-around"
-        ref={ref}
-        onChange={(e) => ref.current?.submit()}
-        method="put"
-      >
-        <label
-          className="flex gap-2 items-center"
-          htmlFor="profile-visibility-public"
-        >
-          <input
-            type={"radio"}
-            name="profile-visibility"
-            defaultChecked={user.visibility === "public"}
-            id="profile-visibility-public"
-            value={"public"}
-          />
-          Public
-        </label>
-        <label
-          className="flex gap-2 items-center"
-          htmlFor="profile-visibility-private"
-        >
-          <input
-            type={"radio"}
-            name="profile-visibility"
-            defaultChecked={user.visibility === "private"}
-            id="profile-visibility-private"
-            value={"private"}
-          />
-          Private
-        </label>
-      </Form> */}
       <ProfileVisibility visibility={user.visibility} />
-      <h2 className="text-2xl tracking-wide font-medium ">Profile Picture</h2>
+      <h2 className="text-2xl tracking-wide font-medium mt-4">
+        Profile Picture
+      </h2>
       <p className="text-neutral-200">
         Your profile picture comes from gravatar, simply use the same email here
         as your gravatar account.

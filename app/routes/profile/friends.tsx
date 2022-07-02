@@ -16,6 +16,7 @@ import { requireUserId } from "~/utils/session.server"
 import { getUserDetails } from "~/utils/user.server"
 import { FriendRow } from "~/components/FriendRow"
 import { FriendRequestRow } from "~/components/FriendRequestRow"
+import BackButton from "~/components/BackButton"
 
 type LoaderData = {
   user: MongoDocument<UserType>
@@ -86,29 +87,19 @@ export default function Friends() {
 
   return (
     <div className="my-2">
-      <Link to="/profile" className="btn btn-dark mb-2">
-        Back
-      </Link>
-      <h2>Friend Requests</h2>
-      <div className="flex flex-col gap-2">
-        {friendRequests.length > 0 ? (
-          friendRequests.map((friendRequest) => (
-            <FriendRequestRow
-              friendRequest={friendRequest}
-              key={friendRequest._id}
-            />
-          ))
-        ) : (
-          <p className="text-red-500 ">No Friend request yet</p>
-        )}
-      </div>
-      Friends
+      <BackButton to="/profile">Profile</BackButton>
+      <h2 className="flex items-start gap-2 text-3xl tracking-wide font-medium mb-2">
+        Friends
+        <span className="text-sm text-neutral-400">
+          {friendRequests.length}
+        </span>
+      </h2>
       {user.friends.length > 0 ? (
         user.friends.map((friend) => (
           <FriendRow friend={friend} key={friend._id} />
         ))
       ) : (
-        <p className="text-red-500 ">No Friends yet</p>
+        <p className="text-neutral-400 text-sm font-light">No friends</p>
       )}
     </div>
   )
