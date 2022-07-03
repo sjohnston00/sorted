@@ -14,6 +14,7 @@ import mongoose from "mongoose"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { Habit as HabitType } from "~/types/habits.server"
 import BackButton from "~/components/BackButton"
+import { IoIosShuffle } from "react-icons/io"
 
 export const meta: MetaFunction = () => {
   return {
@@ -85,8 +86,9 @@ export default function Index() {
   }
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!habitBox) return
-    habitBox.textContent = e.target.value || "..."
+    // if (!habitBox) return
+    // habitBox.textContent = e.target.value || "..."
+    setHabit({ ...habit, name: e.target.value })
   }
 
   const handleRandomColour = () => {
@@ -116,6 +118,7 @@ export default function Index() {
         <div className="mb-2">
           <label htmlFor="name" className="mr-2">
             Name
+            <span className="text-red-500 ml-1 text-sm">*</span>
           </label>
           <input
             type="text"
@@ -131,18 +134,24 @@ export default function Index() {
           <label htmlFor="colour" className="mr-2">
             Colour
           </label>
-          <input
-            type="color"
-            className="input p-0 w-1/2"
-            name="colour"
-            id="colour"
-            value={habit.colour}
-            onChange={handleColourChange}
-          />
+          <div className="flex gap-2 items-center">
+            <input
+              type="color"
+              className="input p-0"
+              name="colour"
+              id="colour"
+              value={habit.colour}
+              onChange={handleColourChange}
+            />
+            <button
+              onClick={handleRandomColour}
+              className="bg-neutral-50 rounded p-1 active:opacity-70"
+              type={"button"}
+            >
+              <IoIosShuffle size={"1.5em"} className="text-neutral-900" />
+            </button>
+          </div>
         </div>
-        <button onClick={handleRandomColour} type={"button"}>
-          Random
-        </button>
         <div className="mb-2">
           <label htmlFor="note" className="mr-2">
             Note (Optional)

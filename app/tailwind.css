@@ -839,6 +839,10 @@ a.btn:hover {
   margin-top: 1rem;
 }
 
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
 .block {
   display: block;
 }
@@ -991,6 +995,10 @@ a.btn:hover {
   border-radius: 0.125rem;
 }
 
+.rounded {
+  border-radius: 0.25rem;
+}
+
 .rounded-t-lg {
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
@@ -1126,6 +1134,10 @@ a.btn:hover {
   padding-left: 1.5rem;
 }
 
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -1241,6 +1253,11 @@ a.btn:hover {
 .text-neutral-300 {
   --tw-text-opacity: 1;
   color: rgb(212 212 212 / var(--tw-text-opacity));
+}
+
+.text-neutral-900 {
+  --tw-text-opacity: 1;
+  color: rgb(23 23 23 / var(--tw-text-opacity));
 }
 
 .opacity-50 {
@@ -1551,6 +1568,10 @@ html {
 .focus\:bg-neutral-700:focus {
   --tw-bg-opacity: 1;
   background-color: rgb(64 64 64 / var(--tw-bg-opacity));
+}
+
+.active\:opacity-70:active {
+  opacity: 0.7;
 }
 
 @media (prefers-color-scheme: dark) {
