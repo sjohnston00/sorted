@@ -33,12 +33,12 @@ export default function FriendRequests() {
   return (
     <div className="my-2">
       <BackButton to="/profile">Profile</BackButton>
-      <h2 className="flex items-start gap-2 text-3xl tracking-wide font-medium mb-2">
+      <h1 className="flex items-start gap-2 text-3xl tracking-wide font-medium mb-2">
         Friend Requests
         <span className="text-sm text-neutral-400">
           {friendRequests.length}
         </span>
-      </h2>
+      </h1>
       <div className="flex flex-col gap-2">
         {friendRequests.length > 0 ? (
           friendRequests.map((friendRequest) => (

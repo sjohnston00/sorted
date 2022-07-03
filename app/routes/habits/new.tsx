@@ -13,6 +13,7 @@ import { requireUserId } from "~/utils/session.server"
 import mongoose from "mongoose"
 import LoadingIndicator from "~/components/LoadingIndicator"
 import { Habit as HabitType } from "~/types/habits.server"
+import BackButton from "~/components/BackButton"
 
 export const meta: MetaFunction = () => {
   return {
@@ -94,84 +95,88 @@ export default function Index() {
   }
 
   return (
-    <Form method="post" className="m-1">
-      <div
-        className="mx-auto p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
-        style={{
-          backgroundColor: `${habit.colour}20`,
-          borderColor: habit.colour,
-          color: habit.colour,
-        }}
-        id="habit-new"
-      >
-        {habit.name}
-      </div>
-      <small className="block text-danger">
-        {actionData?.errors.message}&nbsp;
-      </small>
-      <div className="mb-2">
-        <label htmlFor="name" className="mr-2">
-          Name
-        </label>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          className="input"
-          placeholder="e.g Drink 2L Water..."
-          onChange={handleTextChange}
-          required
-        />
-      </div>
-      <div className="mb-2">
-        <label htmlFor="colour" className="mr-2">
-          Colour
-        </label>
-        <input
-          type="color"
-          className="input p-0 w-1/2"
-          name="colour"
-          id="colour"
-          value={habit.colour}
-          onChange={handleColourChange}
-        />
-      </div>
-      <button onClick={handleRandomColour} type={"button"}>
-        Random
-      </button>
-      <div className="mb-2">
-        <label htmlFor="note" className="mr-2">
-          Note (Optional)
-        </label>
-        <textarea
-          className="input"
-          name="note"
-          id="note"
-          maxLength={500}
-          placeholder="Note for your habit"
-        />
-      </div>
-      <div className="mb-2">
-        <label htmlFor="visibility">
-          <input type="checkbox" name="visibility" id="visibility" />
-          Private Habit
-        </label>
-      </div>
-      <div className="flex gap-2">
-        <button type="submit" className="btn btn-primary">
-          {isLoading ? (
-            <span className="flex gap-2">
-              Creating...{" "}
-              <LoadingIndicator className="spinner static h-6 w-6" />
-            </span>
-          ) : (
-            "Create"
-          )}
+    <>
+      <BackButton to="/Habits">Habits</BackButton>
+      <h1 className="text-3xl tracking-wide font-medium">New Habit</h1>
+      <Form method="post" className="mt-2">
+        <div
+          className="mx-auto p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
+          style={{
+            backgroundColor: `${habit.colour}20`,
+            borderColor: habit.colour,
+            color: habit.colour,
+          }}
+          id="habit-new"
+        >
+          {habit.name}
+        </div>
+        <small className="block text-danger">
+          {actionData?.errors.message}&nbsp;
+        </small>
+        <div className="mb-2">
+          <label htmlFor="name" className="mr-2">
+            Name
+          </label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            className="input"
+            placeholder="e.g Drink 2L Water..."
+            onChange={handleTextChange}
+            required
+          />
+        </div>
+        <div className="mb-2">
+          <label htmlFor="colour" className="mr-2">
+            Colour
+          </label>
+          <input
+            type="color"
+            className="input p-0 w-1/2"
+            name="colour"
+            id="colour"
+            value={habit.colour}
+            onChange={handleColourChange}
+          />
+        </div>
+        <button onClick={handleRandomColour} type={"button"}>
+          Random
         </button>
-        <Link to={"/habits"} className="btn btn-dark hover:no-underline">
-          Back
-        </Link>
-      </div>
-    </Form>
+        <div className="mb-2">
+          <label htmlFor="note" className="mr-2">
+            Note (Optional)
+          </label>
+          <textarea
+            className="input"
+            name="note"
+            id="note"
+            maxLength={500}
+            placeholder="Note for your habit"
+          />
+        </div>
+        <div className="mb-2">
+          <label htmlFor="visibility">
+            <input type="checkbox" name="visibility" id="visibility" />
+            Private Habit
+          </label>
+        </div>
+        <div className="flex gap-2">
+          <button type="submit" className="btn btn-primary">
+            {isLoading ? (
+              <span className="flex gap-2">
+                Creating...{" "}
+                <LoadingIndicator className="spinner static h-6 w-6" />
+              </span>
+            ) : (
+              "Create"
+            )}
+          </button>
+          <Link to={"/habits"} className="btn btn-dark hover:no-underline">
+            Back
+          </Link>
+        </div>
+      </Form>
+    </>
   )
 }
