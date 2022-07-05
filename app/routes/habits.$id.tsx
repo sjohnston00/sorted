@@ -139,7 +139,7 @@ export default function Index() {
       <BackButton to="/habits">Habits</BackButton>
       <h1 className="text-3xl tracking-wide font-medium mb-2">Update Habit</h1>
       <div
-        className="p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
+        className="mx-auto p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
         style={{
           backgroundColor: `${habitStyle.colour}20`,
           borderColor: habitStyle.colour,
