@@ -303,38 +303,40 @@ function ModalMarkedHabit({
 }) {
   const fetcher = useFetcher()
   return (
-    <div
-      className={`flex gap-2 items-center ${
-        fetcher.submission?.formData.get("markedHabitId") === markedHabit._id
-          ? "opacity-30"
-          : ""
-      } transition-all`}
+    <fetcher.Form
+      method="delete"
+      onClick={(e) => {
+        confirm(
+          `Are you sure you want to remove ${markedHabit.habit.name} for this day?`
+        )
+          ? true
+          : e.preventDefault()
+      }}
+      className="flex items-center"
     >
-      <Link
-        className="flex items-center text-reset"
-        key={markedHabit.habit._id}
-        to={`/habits/${markedHabit.habit._id}`}
-        title={`${markedHabit.habit.name} - Colour: ${markedHabit.habit.colour}`}
+      <button
+        className={`p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide ${
+          fetcher.submission?.formData.get("markedHabitId") === markedHabit._id
+            ? "opacity-30"
+            : ""
+        } transition-all`}
+        style={{
+          backgroundColor: `${markedHabit.habit.colour}20`,
+          borderColor: markedHabit.habit.colour,
+          color: markedHabit.habit.colour,
+        }}
       >
         {markedHabit.habit.name}
-        <div
-          className="h-6 w-6 ml-2 inline-block shadow-sm rounded-full align-middle"
-          style={{
-            backgroundColor: markedHabit.habit.colour,
-          }}
-        ></div>
-      </Link>
-      <fetcher.Form method="delete" className="flex items-center">
         <input
           type={"hidden"}
           name="markedHabitId"
           id="markedHabitId"
           value={markedHabit._id}
         />
-        <button type="submit" className="p-1">
+        {/* <button type="submit" className="p-1">
           <HiOutlineX className="hover:scale-125 transition-all opacity-70 hover:opacity-100" />
-        </button>
-      </fetcher.Form>
-    </div>
+        </button> */}
+      </button>
+    </fetcher.Form>
   )
 }
