@@ -19,7 +19,7 @@ export default function HabitBox({ habit }: HabitProps) {
       to={habit._id}
       title={`${habit.name}`}
       id={`habit-${habit._id}`}
-      reloadDocument
+      // reloadDocument
     >
       {habit.name}
     </Link>

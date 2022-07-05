@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 import Habit from "~/models/Habit.server"
+import { Habit as HabitType } from "~/types/habits.server"
 import {
   ActionFunction,
   Form,
@@ -11,10 +12,15 @@ import {
 } from "remix"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import HabitBox from "~/components/HabitBox"
+import { MongoDocument } from "~/types"
+
+type LoaderData = {
+  habit: MongoDocument<HabitType>
+}
 
 export const meta: MetaFunction = ({ data }) => {
   return {
-    title: `Sorted | Habits | ${data.name}`,
+    title: `Sorted | Habits | ${data.habit.name}`,
   }
 }
 
@@ -25,7 +31,7 @@ export const loader: LoaderFunction = async ({ params }) => {
       status: 404,
     })
   }
-  return habit
+  return { habit }
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -92,26 +98,46 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export default function Index() {
-  const habit = useLoaderData()
+  const { habit } = useLoaderData<LoaderData>()
   const habitBox =
     typeof window !== "undefined"
       ? document.querySelector(`#habit-${habit._id}`)
       : null
 
+  const [habitStyle, setHabitStyle] = useState<
+    Pick<HabitType, "name" | "colour">
+  >({
+    name: habit.name,
+    colour: habit.colour,
+  })
+
   const handleColourChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!habitBox) return
-    habitBox.style.backgroundColor = `${e.target.value}20`
-    habitBox.style.color = `${e.target.value}`
-    habitBox.style.borderColor = `${e.target.value}`
+    // if (!habitBox) return
+    // habitBox.style.backgroundColor = `${e.target.value}20`
+    // habitBox.style.color = `${e.target.value}`
+    // habitBox.style.borderColor = `${e.target.value}`
+    setHabitStyle({ ...habitStyle, colour: `${e.target.value}` })
   }
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    if (!habitBox) return
-    habitBox.textContent = e.target.value
+    // if (!habitBox) return
+    // habitBox.textContent = e.target.value
+    setHabitStyle({ ...habitStyle, name: e.target.value || "..." })
   }
   return (
     <div className="pt-4">
-      <HabitBox habit={habit} />
+      {/* <HabitBox habit={habit} /> */}
+      <div
+        className="p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
+        style={{
+          backgroundColor: `${habitStyle.colour}20`,
+          borderColor: habitStyle.colour,
+          color: habitStyle.colour,
+        }}
+        title={habitStyle.name}
+      >
+        {habitStyle.name}
+      </div>
       <Form method="post" className="m-1">
         <div className="mb-2">
           <label htmlFor="name" className="mr-2 block">
