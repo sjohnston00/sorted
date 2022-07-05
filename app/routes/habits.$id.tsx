@@ -13,6 +13,7 @@ import {
 import MarkedHabit from "~/models/MarkedHabit.server"
 import HabitBox from "~/components/HabitBox"
 import { MongoDocument } from "~/types"
+import BackButton from "~/components/BackButton"
 
 type LoaderData = {
   habit: MongoDocument<HabitType>
@@ -127,6 +128,8 @@ export default function Index() {
   return (
     <div className="pt-4">
       {/* <HabitBox habit={habit} /> */}
+      <BackButton to="/habits">Habits</BackButton>
+      <h1 className="text-3xl tracking-wide font-medium mb-2">Update Habit</h1>
       <div
         className="p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide"
         style={{

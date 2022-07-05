@@ -98,7 +98,7 @@ export default function Index() {
 
   return (
     <>
-      <BackButton to="/Habits">Habits</BackButton>
+      <BackButton to="/habits">Habits</BackButton>
       <h1 className="text-3xl tracking-wide font-medium">New Habit</h1>
       <Form method="post" className="mt-2">
         <div
