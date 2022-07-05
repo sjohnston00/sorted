@@ -15,6 +15,7 @@ import LoadingIndicator from "~/components/LoadingIndicator"
 import { Habit as HabitType } from "~/types/habits.server"
 import BackButton from "~/components/BackButton"
 import { IoIosShuffle } from "react-icons/io"
+import ShuffleColourButton from "~/components/ShuffleColourButton"
 
 export const meta: MetaFunction = () => {
   return {
@@ -143,13 +144,7 @@ export default function Index() {
               value={habit.colour}
               onChange={handleColourChange}
             />
-            <button
-              onClick={handleRandomColour}
-              className="bg-neutral-50 rounded p-1 active:opacity-70"
-              type={"button"}
-            >
-              <IoIosShuffle size={"1.5em"} className="text-neutral-900" />
-            </button>
+            <ShuffleColourButton handleRandomColour={handleRandomColour} />
           </div>
         </div>
         <div className="mb-2">

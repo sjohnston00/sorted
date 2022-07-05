@@ -14,6 +14,8 @@ import MarkedHabit from "~/models/MarkedHabit.server"
 import HabitBox from "~/components/HabitBox"
 import { MongoDocument } from "~/types"
 import BackButton from "~/components/BackButton"
+import { IoIosShuffle } from "react-icons/io"
+import ShuffleColourButton from "~/components/ShuffleColourButton"
 
 type LoaderData = {
   habit: MongoDocument<HabitType>
@@ -125,6 +127,12 @@ export default function Index() {
     // habitBox.textContent = e.target.value
     setHabitStyle({ ...habitStyle, name: e.target.value || "..." })
   }
+
+  const handleRandomColour = () => {
+    const randomColour = Math.floor(Math.random() * 16777215).toString(16)
+    setHabitStyle({ ...habitStyle, colour: `#${randomColour}` })
+  }
+
   return (
     <div className="pt-4">
       {/* <HabitBox habit={habit} /> */}
@@ -161,14 +169,19 @@ export default function Index() {
           <label htmlFor="colour" className="mr-2">
             Colour
           </label>
-          <input
-            type="color"
-            name="colour"
-            id="colour"
-            onChange={handleColourChange}
-            defaultValue={habit.colour}
-          />
+          <div className="flex gap-2 items-center">
+            <input
+              type="color"
+              className="input p-0"
+              name="colour"
+              id="colour"
+              value={habitStyle.colour}
+              onChange={handleColourChange}
+            />
+            <ShuffleColourButton handleRandomColour={handleRandomColour} />
+          </div>
         </div>
+
         <div className="mb-2">
           <label htmlFor="note" className="mr-2">
             Note (Optional)
