@@ -219,7 +219,9 @@ export default function Dashboard() {
           <Modal handleClose={handleClose}>
             <div className="modal-body">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl">{selectedDate.toDateString()}</h2>
+                <h2 className="text-2xl font-medium tracking-wide">
+                  {selectedDate.toDateString()}
+                </h2>
                 <button
                   className="p-2 rounded-sm hover:scale-110 hover:opacity-100 opacity-70 transition-all text-xl"
                   onClick={handleClose}
@@ -231,13 +233,28 @@ export default function Dashboard() {
               {habits.length || 0 > 0 ? (
                 <>
                   <div className="flex flex-col gap-2">
-                    {selectedDateMarkedHabits.map((markedHabit) => (
-                      <ModalMarkedHabit
-                        key={markedHabit._id}
-                        markedHabit={markedHabit}
-                      />
-                    ))}
+                    {selectedDateMarkedHabits.length > 0 ? (
+                      <>
+                        <h2>Marked</h2>
+                        {selectedDateMarkedHabits.map((markedHabit) => (
+                          <ModalMarkedHabit
+                            key={markedHabit._id}
+                            markedHabit={markedHabit}
+                          />
+                        ))}
+                      </>
+                    ) : null}
                   </div>
+                  <h2 className="text-2xl font-medium tracking-wide">
+                    My Habits
+                  </h2>
+                  {habits.map((habit, index) => (
+                    <ModalHabit
+                      key={`${habit._id}-modal-habit-${index}`}
+                      selectedDate={selectedDate}
+                      habit={habit}
+                    />
+                  ))}
                   <Form method="post">
                     <small className="block text-danger p-2">
                       {actionData && actionData.errors?.message}&nbsp;
@@ -336,6 +353,44 @@ function ModalMarkedHabit({
         {/* <button type="submit" className="p-1">
           <HiOutlineX className="hover:scale-125 transition-all opacity-70 hover:opacity-100" />
         </button> */}
+      </button>
+    </fetcher.Form>
+  )
+}
+
+type ModalHabitProps = {
+  habit: MongoDocument<HabitType>
+  selectedDate: Date
+}
+
+function ModalHabit({ habit, selectedDate }: ModalHabitProps) {
+  const fetcher = useFetcher()
+  return (
+    <fetcher.Form method="post" className="flex items-center">
+      <button
+        className={`p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide ${
+          fetcher.submission?.formData.get("habitId") === habit._id
+            ? "opacity-30"
+            : ""
+        } transition-all`}
+        style={{
+          backgroundColor: `${habit.colour}20`,
+          borderColor: habit.colour,
+          color: habit.colour,
+        }}
+      >
+        {habit.name}
+        <input type={"hidden"} name="habitId" id="habitId" value={habit._id} />
+        <input
+          type={"hidden"}
+          name="selectedDate"
+          id="selectedDate"
+          value={selectedDate.toISOString()}
+        />
+        <input type="hidden" name="_action" id="_action" value="mark-habit" />
+        {/* <button type="submit" className="p-1">
+      <HiOutlineX className="hover:scale-125 transition-all opacity-70 hover:opacity-100" />
+    </button> */}
       </button>
     </fetcher.Form>
   )
