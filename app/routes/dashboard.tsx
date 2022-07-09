@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react"
 import {
   ActionFunction,
-  Form,
   Link,
   LoaderFunction,
   MetaFunction,
   Outlet,
   redirect,
-  useActionData,
   useFetcher,
   useLoaderData,
   useMatches,
   useSearchParams,
-  useTransition,
 } from "remix"
 import { requireUserId } from "~/utils/session.server"
 import { getHabitsForUser } from "~/utils/habits.server"
@@ -24,8 +21,7 @@ import useIsMount from "~/utils/hooks/useIsMount"
 import CustomCalendar from "~/components/customCalendar"
 import { AnimatePresence } from "framer-motion"
 import Modal from "~/components/modal"
-import LoadingIndicator from "~/components/LoadingIndicator"
-import { HiOutlineX, HiPlus } from "react-icons/hi"
+import { HiPlus } from "react-icons/hi"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import mongoose from "mongoose"
 import { User } from "~/types/user.server"
@@ -40,13 +36,13 @@ type LoaderData = {
   habits: MongoDocument<HabitType>[]
 }
 
-type ActionData = {
-  errors?: {
-    message?: string
-    habit?: string
-    markedDate?: string
-  }
-}
+// type ActionData = {
+//   errors?: {
+//     message?: string
+//     habit?: string
+//     markedDate?: string
+//   }
+// }
 
 export const meta: MetaFunction = () => {
   return {
@@ -93,8 +89,39 @@ export const loader: LoaderFunction = async ({
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
   const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+  if (data._action === "mark-habit") {
+    const { habitId, selectedDate } = data
+    if (typeof habitId !== "string" || typeof selectedDate !== "string") {
+      return {
+        errors: {
+          message: "Please provide a valid Habit",
+          markedDate: "Please provide a valid Date",
+        },
+      }
+    }
 
-  if (request.method === "DELETE") {
+    const habit = await Habit.findById(habitId)
+    if (!habit) {
+      return {
+        errors: {
+          message: "Please provide a valid Habit",
+        },
+      }
+    }
+
+    const newMarkedHabit = new MarkedHabit({
+      user: new mongoose.Types.ObjectId(userId),
+      habit: new mongoose.Types.ObjectId(habitId),
+      date: new Date(selectedDate),
+      visibility: habit.visibility,
+    })
+
+    await newMarkedHabit.save()
+    return {}
+  }
+
+  if (data._action === "unmark-habit") {
     const markedHabitId = formData.get("markedHabitId")
     console.log(markedHabitId)
     console.log(userId)
@@ -107,34 +134,6 @@ export const action: ActionFunction = async ({ request }) => {
     })
     return {}
   }
-  const habitId = formData.get("selectedHabit")
-  const selectedDate = formData.get("selectedDate")
-  if (typeof habitId !== "string" || typeof selectedDate !== "string") {
-    return {
-      errors: {
-        message: "Please provide a valid Habit",
-        markedDate: "Please provide a valid Date",
-      },
-    }
-  }
-
-  const habit = await Habit.findById(habitId)
-  if (!habit) {
-    return {
-      errors: {
-        message: "Please provide a valid Habit",
-      },
-    }
-  }
-
-  const newMarkedHabit = new MarkedHabit({
-    user: new mongoose.Types.ObjectId(userId),
-    habit: new mongoose.Types.ObjectId(habitId),
-    date: new Date(selectedDate),
-    visibility: habit.visibility,
-  })
-
-  await newMarkedHabit.save()
   return {}
 }
 
@@ -144,15 +143,12 @@ export default function Dashboard() {
   const { markedHabits, habits } = useLoaderData<LoaderData>()
   const [searchParams] = useSearchParams()
   const friendId = searchParams.get("friend")
-  const actionData = useActionData<ActionData>()
   const [modalOpen, setModalOpen] = useState(false)
   const isMount = useIsMount()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [selectedDateMarkedHabits, setSelectedDateMarkedHabits] = useState<
     MongoDocument<MarkedHabitType>[]
   >([])
-  const transition = useTransition()
-  const transitionIsSubmitting = transition.submission?.method === "POST"
   const handleClose = () => {
     setModalOpen(false)
   }
@@ -255,7 +251,7 @@ export default function Dashboard() {
                       habit={habit}
                     />
                   ))}
-                  <Form method="post">
+                  {/* <Form method="post">
                     <small className="block text-danger p-2">
                       {actionData && actionData.errors?.message}&nbsp;
                     </small>
@@ -291,7 +287,7 @@ export default function Dashboard() {
                         <LoadingIndicator className="spinner static h-6 w-6" />
                       ) : null}
                     </button>
-                  </Form>
+                  </Form> */}
                 </>
               ) : (
                 <>
@@ -321,7 +317,7 @@ function ModalMarkedHabit({
   const fetcher = useFetcher()
   return (
     <fetcher.Form
-      method="delete"
+      method="post"
       onClick={(e) => {
         confirm(
           `Are you sure you want to remove ${markedHabit.habit.name} for this day?`
@@ -349,6 +345,12 @@ function ModalMarkedHabit({
           name="markedHabitId"
           id="markedHabitId"
           value={markedHabit._id}
+        />
+        <input
+          type={"hidden"}
+          name="_action"
+          id="_action"
+          value={"unmark-habit"}
         />
         {/* <button type="submit" className="p-1">
           <HiOutlineX className="hover:scale-125 transition-all opacity-70 hover:opacity-100" />
