@@ -231,26 +231,39 @@ export default function Dashboard() {
                   <div className="flex flex-col gap-2">
                     {selectedDateMarkedHabits.length > 0 ? (
                       <>
-                        <h2>Marked</h2>
-                        {selectedDateMarkedHabits.map((markedHabit) => (
-                          <ModalMarkedHabit
-                            key={markedHabit._id}
-                            markedHabit={markedHabit}
-                          />
-                        ))}
+                        <h2 className="text-2xl font-medium tracking-wide mb-2">
+                          Marked
+                        </h2>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedDateMarkedHabits.map((markedHabit) => (
+                            <ModalMarkedHabit
+                              key={markedHabit._id}
+                              markedHabit={markedHabit}
+                            />
+                          ))}
+                        </div>
                       </>
                     ) : null}
                   </div>
-                  <h2 className="text-2xl font-medium tracking-wide">
+                  <h2 className="text-2xl font-medium tracking-wide mt-4 mb-2">
                     My Habits
                   </h2>
-                  {habits.map((habit, index) => (
-                    <ModalHabit
-                      key={`${habit._id}-modal-habit-${index}`}
-                      selectedDate={selectedDate}
-                      habit={habit}
-                    />
-                  ))}
+                  <div className="flex flex-wrap gap-2">
+                    {habits.map((habit, index) => (
+                      <ModalHabit
+                        key={`${habit._id}-modal-habit-${index}`}
+                        selectedDate={selectedDate}
+                        habit={habit}
+                      />
+                    ))}
+                    <Link
+                      className="p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide bg-neutral-50 text-neutral-50 hover:text-neutral-50"
+                      title="Create a new habit"
+                      to={"/habits/new"}
+                    >
+                      <HiPlus />
+                    </Link>
+                  </div>
                   {/* <Form method="post">
                     <small className="block text-danger p-2">
                       {actionData && actionData.errors?.message}&nbsp;
