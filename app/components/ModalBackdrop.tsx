@@ -6,14 +6,41 @@ type Props = {
   onClick: () => void
 }
 
+const TRANSITIONS = {
+  DURATION: 0.5,
+  EASE: [0.32, 0.72, 0, 1],
+}
+
 export default function Backdrop({ children, onClick }: Props) {
   return (
     <motion.div
       onClick={onClick}
-      className="fixed inset-0 bg-neutral-800 bg-opacity-40"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.2, delay: 0.1 } }}
+      className="fixed inset-0 bg-black/40"
+      variants={{
+        open: {
+          opacity: 1,
+          transition: {
+            ease: TRANSITIONS.EASE,
+            duration: TRANSITIONS.DURATION,
+          },
+        },
+        closed: {
+          opacity: 0,
+          transition: {
+            ease: TRANSITIONS.EASE,
+            duration: TRANSITIONS.DURATION,
+          },
+        },
+      }}
+      initial="closed"
+      animate="open"
+      exit="closed"
+      onAnimationStart={(variant) => {
+        variant
+      }}
+      onAnimationComplete={(variant) => {
+        console.log(variant)
+      }}
     >
       {children}
     </motion.div>
