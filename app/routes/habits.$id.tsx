@@ -11,14 +11,13 @@ import {
   useLoaderData,
 } from "remix"
 import MarkedHabit from "~/models/MarkedHabit.server"
-import HabitBox from "~/components/HabitBox"
 import { MongoDocument } from "~/types"
 import BackButton from "~/components/BackButton"
-import { IoIosShuffle } from "react-icons/io"
 import ShuffleColourButton from "~/components/ShuffleColourButton"
 
 type LoaderData = {
   habit: MongoDocument<HabitType>
+  markedHabits: number
 }
 
 export const meta: MetaFunction = ({ data }) => {
@@ -34,7 +33,8 @@ export const loader: LoaderFunction = async ({ params }) => {
       status: 404,
     })
   }
-  return { habit }
+  const markedHabits = await MarkedHabit.countDocuments({ habit: habit._id })
+  return { habit, markedHabits }
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
@@ -101,7 +101,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export default function Index() {
-  const { habit } = useLoaderData<LoaderData>()
+  const { habit, markedHabits } = useLoaderData<LoaderData>()
   const habitBox =
     typeof window !== "undefined"
       ? document.querySelector(`#habit-${habit._id}`)
@@ -206,6 +206,12 @@ export default function Index() {
             Private Habit
           </label>
         </div>
+        {markedHabits ? (
+          <p className="text-xs mb-2 text-neutral-300">
+            This habit has been marked {markedHabits}{" "}
+            {markedHabits > 1 ? "times" : "time"}
+          </p>
+        ) : null}
 
         <div className="flex gap-2 text-lg">
           <Link to={"/habits"} className="btn btn-dark hover:no-underline">

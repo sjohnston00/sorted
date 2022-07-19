@@ -60,7 +60,7 @@
 
   .btn-dark,
   .bg-dark {
-    @apply bg-neutral-900 text-neutral-50 hover:text-neutral-50;
+    @apply bg-neutral-900 hover:bg-neutral-900 text-neutral-50 hover:text-neutral-50;
   }
   .btn-danger,
   .bg-danger {
