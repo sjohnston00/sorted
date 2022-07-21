@@ -1,6 +1,4 @@
-import { Dialog } from "@headlessui/react"
-import { AnimatePresence, motion } from "framer-motion"
-import React, { useState } from "react"
+import React from "react"
 import {
   ActionFunction,
   Form,
@@ -13,7 +11,6 @@ import {
   Link,
   MetaFunction,
 } from "remix"
-import Modal from "~/components/Modal2"
 import { createUserSession, getUserId, loginUser } from "~/utils/session.server"
 import { AuthActionData } from "../types/actions"
 
@@ -60,7 +57,6 @@ export default function Login() {
   const [searchParams] = useSearchParams()
   const actionData = useActionData<AuthActionData>()
   const transition = useTransition()
-  const [open, setOpen] = useState(false)
 
   const submitting = transition.state === "submitting"
   return (
@@ -118,35 +114,5 @@ export default function Login() {
         </div>
       </Form>
     </>
-  )
-}
-
-function AddFavorite({ onClose }: { onClose: () => void }) {
-  return (
-    <Modal onClose={onClose}>
-      <div className="flex flex-col h-full">
-        <div className="px-3 pb-4 shadow-sm bg-[#28282a] pt-3">
-          <div className="relative text-center">
-            <span className="font-medium text-neutral-50">Contacts</span>
-            <div className="absolute inset-y-0 right-0">
-              <button
-                className="mr-1 text-blue-500 focus:outline-none"
-                onClick={onClose}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto">
-          <ul className="px-3 text-left">
-            <li className="py-2 border-b border-gray-100 ">Sam Johston</li>
-          </ul>
-
-          <p className="pt-4 pb-10 font-medium text-center ">Contacts</p>
-        </div>
-      </div>
-    </Modal>
   )
 }
