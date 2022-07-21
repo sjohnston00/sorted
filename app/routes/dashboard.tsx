@@ -20,7 +20,8 @@ import {
 import useIsMount from "~/utils/hooks/useIsMount"
 import CustomCalendar from "~/components/customCalendar"
 import { AnimatePresence } from "framer-motion"
-import Modal from "~/components/modal"
+// import Modal from "~/components/modal"
+import Modal from "~/components/Modal2"
 import { HiPlus } from "react-icons/hi"
 import MarkedHabit from "~/models/MarkedHabit.server"
 import mongoose from "mongoose"
@@ -206,115 +207,81 @@ export default function Dashboard() {
         markedHabits={markedHabits}
       />
       <Outlet />
-      <AnimatePresence
-        exitBeforeEnter
-        initial={false}
-        onExitComplete={() => null}
-      >
+      <AnimatePresence>
         {modalOpen && (
-          <Modal handleClose={handleClose}>
-            <div className="modal-body">
-              <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-medium tracking-wide">
-                  {selectedDate.toDateString()}
-                </h2>
-                <button
-                  className="p-2 rounded-sm hover:scale-110 hover:opacity-100 opacity-70 transition-all text-xl"
-                  onClick={handleClose}
-                  title="Close"
-                >
-                  &times;
-                </button>
-              </div>
-              {habits.length || 0 > 0 ? (
-                <>
-                  <div className="flex flex-col gap-2">
-                    {selectedDateMarkedHabits.length > 0 ? (
-                      <>
-                        <h2 className="text-2xl font-medium tracking-wide mb-2">
-                          Marked
-                        </h2>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedDateMarkedHabits.map((markedHabit) => (
-                            <ModalMarkedHabit
-                              key={markedHabit._id}
-                              markedHabit={markedHabit}
-                            />
-                          ))}
-                        </div>
-                      </>
-                    ) : null}
-                  </div>
-                  <h2 className="text-2xl font-medium tracking-wide mt-4 mb-2">
-                    My Habits
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {habits.map((habit, index) => (
-                      <ModalHabit
-                        key={`${habit._id}-modal-habit-${index}`}
-                        selectedDate={selectedDate}
-                        habit={habit}
-                      />
-                    ))}
-                    <Link
-                      className="p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide bg-neutral-50 text-neutral-50 hover:text-neutral-50"
-                      title="Create a new habit"
-                      to={"/habits/new"}
-                    >
-                      <HiPlus />
-                    </Link>
-                  </div>
-                  {/* <Form method="post">
-                    <small className="block text-danger p-2">
-                      {actionData && actionData.errors?.message}&nbsp;
-                    </small>
-                    <select
-                      name="selectedHabit"
-                      id="selectedHabit"
-                      className="block mb-2 bg-neutral-600 p-2 rounded-sm cursor-pointer text-neutral-50"
-                      required
-                    >
-                      <option defaultValue={undefined} disabled hidden>
-                        Select a habit
-                      </option>
-                      {habits.map((habit) => (
-                        <option key={habit._id} value={habit._id}>
-                          {habit.name}
-                        </option>
-                      ))}
-                    </select>
-
-                    <input
-                      type={"hidden"}
-                      name="selectedDate"
-                      id="selectedDate"
-                      value={selectedDate.toISOString()}
-                    />
+          <Modal onClose={handleClose}>
+            <div className="flex flex-col h-full">
+              <div className="px-3 pb-4 shadow-sm bg-[#28282a] pt-3">
+                <div className="relative text-center">
+                  <span className="font-medium text-neutral-50">
+                    {selectedDate.toDateString()}
+                  </span>
+                  <div className="absolute inset-y-0 right-0">
                     <button
-                      className="btn flex gap-1 text-neutral-50 transition-all bg-neutral-600 hover:bg-neutral-700 focus:bg-neutral-700"
-                      type="submit"
-                      disabled={transitionIsSubmitting}
+                      className="mr-1 text-blue-500 focus:outline-none"
+                      onClick={handleClose}
                     >
-                      Mark
-                      {transitionIsSubmitting ? (
-                        <LoadingIndicator className="spinner static h-6 w-6" />
-                      ) : null}
+                      Cancel
                     </button>
-                  </Form> */}
-                </>
-              ) : (
-                <>
-                  <p className="py-2 text-red-500">
-                    You do not have any habits to add
-                  </p>
-                  <Link
-                    to={"/habits/new"}
-                    className="btn btn-primary inline-flex gap-2 items-center"
-                  >
-                    Create One <HiPlus />
-                  </Link>
-                </>
-              )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 overflow-y-auto mt-2">
+                {habits.length || 0 > 0 ? (
+                  <>
+                    <div className="flex flex-col gap-2">
+                      {selectedDateMarkedHabits.length > 0 ? (
+                        <>
+                          <h2 className="text-2xl font-medium tracking-wide mb-2 text-neutral-50">
+                            Marked
+                          </h2>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedDateMarkedHabits.map((markedHabit) => (
+                              <ModalMarkedHabit
+                                key={markedHabit._id}
+                                markedHabit={markedHabit}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      ) : null}
+                    </div>
+                    <h2 className="text-2xl font-medium tracking-wide mt-4 mb-2 text-neutral-50">
+                      My Habits
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {habits.map((habit, index) => (
+                        <ModalHabit
+                          key={`${habit._id}-modal-habit-${index}`}
+                          selectedDate={selectedDate}
+                          habit={habit}
+                        />
+                      ))}
+                      <Link
+                        className="p-1 h-40 w-40 bg-opacity-20 border-4 border-solid rounded-lg flex items-center justify-center font-bold tracking-wide bg-neutral-50 text-neutral-50 hover:text-neutral-50"
+                        title="Create a new habit"
+                        to={"/habits/new"}
+                      >
+                        <HiPlus />
+                      </Link>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="py-2 text-red-500">
+                      You do not have any habits to add
+                    </p>
+                    <Link
+                      to={"/habits/new"}
+                      reloadDocument
+                      className="btn btn-primary inline-flex gap-2 items-center"
+                    >
+                      Create One <HiPlus />
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </Modal>
         )}
