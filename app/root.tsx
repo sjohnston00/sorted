@@ -64,7 +64,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const isLoading =
     transition.state === "submitting" || transition.state === "loading"
   return (
-    <html lang="en">
+    <html lang="en" className="min-h-screen">
       <head>
         <meta charSet="utf-8" />
         <meta
@@ -218,11 +218,11 @@ function Layout({ children }: { children: React.ReactNode }) {
           media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
         />
       </head>
-      <body
-        style={{ WebkitTapHighlightColor: "transparent" }}
-        className="dark:bg-neutral-800 dark:text-neutral-50 text-neutral-800 bg-neutral-50 mt-16 standalone:mt-24 mb-20"
-      >
-        <div id="__app">
+      <body style={{ WebkitTapHighlightColor: "transparent" }}>
+        <div
+          id="__app"
+          className="dark:bg-neutral-800 dark:text-neutral-50 text-neutral-800 bg-neutral-50 pt-16 standalone:pt-24 pb-20 min-h-screen"
+        >
           <Header isLoading={isLoading} />
           {user && <Navbar />}
           <main className="lg:px-40 md:px-20 px-1">{children}</main>
