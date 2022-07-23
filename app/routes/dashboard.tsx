@@ -230,27 +230,27 @@ export default function Dashboard() {
               <div className="flex-1 overflow-y-auto mt-2">
                 {habits.length || 0 > 0 ? (
                   <>
-                    <div className="flex flex-col gap-2">
-                      {selectedDateMarkedHabits.length > 0 ? (
-                        <>
-                          <h2 className="text-2xl font-medium tracking-wide mb-2 text-neutral-50">
-                            Marked
-                          </h2>
-                          <div className="flex flex-wrap gap-2">
-                            {selectedDateMarkedHabits.map((markedHabit) => (
-                              <ModalMarkedHabit
-                                key={markedHabit._id}
-                                markedHabit={markedHabit}
-                              />
-                            ))}
-                          </div>
-                        </>
-                      ) : null}
-                    </div>
-                    <h2 className="text-2xl font-medium tracking-wide mt-4 mb-2 text-neutral-50">
+                    {selectedDateMarkedHabits.length > 0 ? (
+                      <>
+                        <h2 className="text-lg font-light tracking-wide mb-2 text-neutral-400 text-left pl-2">
+                          Marked
+                        </h2>
+                        <div className="grid grid-cols-2 gap-y-4 gap-x-2 mt-4 place-items-center">
+                          {selectedDateMarkedHabits.map((markedHabit) => (
+                            <ModalMarkedHabit
+                              key={markedHabit._id}
+                              markedHabit={markedHabit}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    ) : null}
+
+                    <hr className="my-4 mx-2 border-neutral-700" />
+                    <h2 className="text-lg font-light tracking-wide mb-2 text-neutral-400 text-left pl-2">
                       My Habits
                     </h2>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="grid grid-cols-2 gap-y-4 gap-x-2 mt-4 place-items-center">
                       {habits.map((habit, index) => (
                         <ModalHabit
                           key={`${habit._id}-modal-habit-${index}`}
