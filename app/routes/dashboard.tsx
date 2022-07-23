@@ -169,38 +169,45 @@ export default function Dashboard() {
 
   return (
     <>
-      <div className="flex gap-2 p-2 overflow-auto">
-        {/* If the user is looking at anther users habits, then give a button to go back */}
-        {friendId ? (
-          <Link
-            to={`/dashboard`}
-            className="flex flex-col gap-1 dark:text-neutral-50 text-neutral-800 hover:dark:text-neutral-50 hover:text-neutral-800 hover:no-underline"
-          >
-            <img
-              className="rounded-full outline outline-green-400 outline-offset-1"
-              src={user?.gravatarURL}
-              width={48}
-              height={48}
-            />
-            {user.username}
-          </Link>
-        ) : null}
-        {user.friends.map((friend: User & { _id: string }) => (
-          <Link
-            to={`/dashboard?friend=${friend._id}`}
-            key={`friend=${friend._id}`}
-            className="flex flex-col gap-1 dark:text-neutral-50 text-neutral-800 hover:dark:text-neutral-50 hover:text-neutral-800 hover:no-underline"
-          >
-            <img
-              src={friend.gravatarURL}
-              className="rounded-full outline outline-green-400 outline-offset-1"
-              width={48}
-              height={48}
-            />
-            {friend.username}
-          </Link>
-        ))}
-      </div>
+      {user.friends.length > 0 ? (
+        <>
+          <h1 className="text-lg block font-light tracking-wide my-2 text-neutral-400 text-left">
+            Friends
+          </h1>
+          <div className="flex gap-6 py-2 px-4 overflow-x-auto">
+            {/* If the user is looking at anther users habits, then give a button to go back */}
+            {friendId ? (
+              <Link
+                to={`/dashboard`}
+                className="flex flex-col gap-1 dark:text-neutral-50 text-neutral-800 hover:dark:text-neutral-50 hover:text-neutral-800 hover:no-underline"
+              >
+                <img
+                  className="rounded-full outline outline-green-400 outline-offset-1"
+                  src={user?.gravatarURL}
+                  width={48}
+                  height={48}
+                />
+                {user.username}
+              </Link>
+            ) : null}
+            {user.friends.map((friend: User & { _id: string }) => (
+              <Link
+                to={`/dashboard?friend=${friend._id}`}
+                key={`friend=${friend._id}`}
+                className="flex flex-col gap-1 dark:text-neutral-50 text-neutral-800 hover:dark:text-neutral-50 hover:text-neutral-800 hover:no-underline"
+              >
+                <img
+                  src={friend.gravatarURL}
+                  className="rounded-full outline outline-green-400 outline-offset-1"
+                  width={48}
+                  height={48}
+                />
+                {friend.username}
+              </Link>
+            ))}
+          </div>
+        </>
+      ) : null}
       <CustomCalendar
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
