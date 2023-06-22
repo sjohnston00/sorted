@@ -7,10 +7,26 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
+model Habit {
   id    String @id @default(cuid())
   name  String 
+  colour String 
+  userId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  habits MarkedHabit[]
+}
+
+model MarkedHabit {
+  id    String @id @default(cuid())
+  habitId String
+  habit Habit @relation(fields: [habitId], references: [id])
+  date DateTime 
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
 }

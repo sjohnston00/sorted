@@ -12,6 +12,7 @@ import {
 import { rootAuthLoader } from '@clerk/remix/ssr.server'
 import { ClerkApp, ClerkCatchBoundary } from '@clerk/remix/'
 import styles from '~/styles/tailwind.css'
+import Navbar from './components/Navbar'
 
 export const links: LinksFunction = () => [{ rel: 'stylesheet', href: styles }]
 
@@ -27,6 +28,7 @@ function App() {
         <Links />
       </head>
       <body className='font-sans'>
+        <Navbar />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
