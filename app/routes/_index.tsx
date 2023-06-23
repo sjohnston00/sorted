@@ -198,12 +198,17 @@ export default function Index() {
                         {format(day, "d")}
                       </time>
                     </button>
-                    <div className="w-1 h-1 mx-auto mt-1">
-                      {markedHabits.some((m) =>
-                        isSameDay(parseISO(m.date), day)
-                      ) && (
-                        <div className="w-1 h-1 rounded-full bg-sky-500"></div>
-                      )}
+                    <div className="flex w-fit gap-px mx-auto mt-1">
+                      {markedHabits
+                        .filter((m) => isSameDay(parseISO(m.date), day))
+                        .slice(0, 3)
+                        .map((m) => (
+                          <div
+                            className="w-1 h-1 rounded-full"
+                            style={{
+                              backgroundColor: m.habit.colour,
+                            }}></div>
+                        ))}
                     </div>
                   </div>
                 ))}
@@ -213,7 +218,7 @@ export default function Index() {
               <div className="min-h-[5rem]">
                 {selectedDayMarkedHabits.length > 0 ? (
                   selectedDayMarkedHabits.map((s) => (
-                    <div key={s.id} className="flex gap-2 items-center">
+                    <div key={s.id} className="flex gap-2 py-2 items-center">
                       <span>{s.habit.name}</span>
                       <div
                         className="h-3 w-3 rounded-full shadow-sm"
