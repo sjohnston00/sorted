@@ -71,7 +71,17 @@ export default function Calendar({
         <div className='flex items-center'>
           <h2 className='flex-auto font-semibold text-gray-900'>
             {format(firstDayCurrentMonth, 'MMMM yyyy')}
+            <button
+              onClick={() => setSelectedDay(today)}
+              className={`ml-4 font-medium py-1 px-3 transition bg-sky-500 text-sm rounded-md shadow text-white active:scale-90 active:opacity-80 ${
+                !isToday(selectedDay)
+                  ? 'opacity-100 scale-100'
+                  : 'scale-0 opacity-0'
+              }`}>
+              Today
+            </button>
           </h2>
+
           <button
             type='button'
             onClick={previousMonth}
