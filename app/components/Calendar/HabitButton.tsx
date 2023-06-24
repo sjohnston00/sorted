@@ -11,6 +11,7 @@ type HabitButtonProps = {
 
 export default function HabitButton({ habit, selectedDay }: HabitButtonProps) {
   const fetcher = useFetcher()
+  const isSubmitting = fetcher.state === 'submitting'
   return (
     <fetcher.Form method='post'>
       <input type='hidden' name='_action' value='mark-date' />
@@ -20,7 +21,7 @@ export default function HabitButton({ habit, selectedDay }: HabitButtonProps) {
         value={format(selectedDay, 'yyyy-MM-dd')}
       />
       <button
-        className='py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide uppercase'
+        className='py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide uppercase disabled:opacity-80 disabled:cursor-not-allowed active:opacity-70 active:scale-90 transition'
         style={
           {
             color: habit.colour,
@@ -31,7 +32,8 @@ export default function HabitButton({ habit, selectedDay }: HabitButtonProps) {
         }
         type='submit'
         name='habitId'
-        value={habit.id}>
+        value={habit.id}
+        disabled={isSubmitting}>
         {habit.name}
       </button>
     </fetcher.Form>
