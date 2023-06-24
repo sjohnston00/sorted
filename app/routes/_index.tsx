@@ -84,7 +84,7 @@ export default function Index() {
   return (
     <div>
       <div className='pt-16'>
-        <div className='max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6'>
+        <div className='max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 mb-8'>
           <Calendar markedHabits={markedHabits} habits={habits} />
         </div>
       </div>
