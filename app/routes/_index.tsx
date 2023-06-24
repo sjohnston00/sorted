@@ -4,26 +4,9 @@ import {
   type LoaderArgs,
   type V2_MetaFunction
 } from '@remix-run/node'
-import { Form, useLoaderData } from '@remix-run/react'
-import {
-  add,
-  eachDayOfInterval,
-  endOfMonth,
-  format,
-  getDay,
-  isEqual,
-  isSameDay,
-  isSameMonth,
-  isToday,
-  parse,
-  parseISO,
-  startOfToday
-} from 'date-fns'
-import { useState } from 'react'
-import Chevron from '~/components/icons/Chevron'
+import { useLoaderData } from '@remix-run/react'
 import { prisma } from '~/db.server'
 import { getUser } from '~/utils/auth'
-import { classNames } from '../utils'
 import Calendar from '~/components/Calendar'
 
 export const loader = async (args: LoaderArgs) => {
@@ -36,6 +19,9 @@ export const loader = async (args: LoaderArgs) => {
       },
       include: {
         habit: true
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     }),
     prisma.habit.findMany({

@@ -131,7 +131,7 @@ export default function Calendar({
                   {format(day, 'd')}
                 </time>
               </button>
-              <div className='flex w-fit gap-px mx-auto mt-1'>
+              <div className='flex h-1 w-fit gap-px mx-auto mt-1'>
                 {markedHabits
                   .filter((m) => isSameDay(parseISO(m.date), day))
                   .slice(0, 3)
@@ -149,20 +149,23 @@ export default function Calendar({
         </div>
       </div>
       <div className='p-4 '>
-        <div className='min-h-[5rem]'>
+        <div className='min-h-[10rem]'>
+          <h2 className='font-semibold text-lg'>Marked Habits</h2>
           {selectedDayMarkedHabits.length > 0 ? (
-            selectedDayMarkedHabits.map((s) => (
-              <MarkedHabitRow key={s.id} markedHabit={s} />
-            ))
+            <div className='flex flex-col my-4'>
+              {selectedDayMarkedHabits.map((s) => (
+                <MarkedHabitRow key={s.id} markedHabit={s} />
+              ))}
+            </div>
           ) : (
-            <span className='text-gray-400 block text-center'>
-              No habits marked for this day
-            </span>
+            <p className='text-gray-300 mt-4 block text-center'>
+              No habits marked yet
+            </p>
           )}
         </div>
 
         <hr />
-        <div className='grid grid-cols-3 place-items-center mt-4'>
+        <div className='grid grid-cols-3 gap-4 place-items-center mt-4'>
           {habits.map((h) => (
             <HabitButton habit={h} selectedDay={selectedDay} key={h.id} />
           ))}

@@ -12,7 +12,7 @@ export default function Chevron({ direction = 'left' }: ChevronProps) {
       viewBox='0 0 24 24'
       strokeWidth={1.5}
       stroke='currentColor'
-      className={`w-6 h-6 ${
+      className={`w-5 h-5 ${
         direction === 'left'
           ? 'rotate-0'
           : direction === 'right'
