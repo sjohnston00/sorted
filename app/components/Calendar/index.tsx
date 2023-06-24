@@ -137,6 +137,7 @@ export default function Calendar({
                   .slice(0, 3)
                   .map((m) => (
                     <div
+                      key={`calendar-${m.id}`}
                       className='w-1 h-1 rounded-full'
                       style={{
                         backgroundColor: m.habit.colour

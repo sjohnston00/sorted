@@ -63,6 +63,15 @@ export const action = async (args: ActionArgs) => {
     return Object.fromEntries(formData)
   }
 
+  if (formData.get('_action') === 'remove-marked-habit') {
+    await prisma.markedHabit.delete({
+      where: {
+        id: formData.get('markedHabit-id')?.toString()
+      }
+    })
+    return {}
+  }
+
   await prisma.habit.create({
     data: {
       userId,
