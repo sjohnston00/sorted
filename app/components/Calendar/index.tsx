@@ -158,7 +158,7 @@ export default function Calendar({
           ))}
         </div>
       </div>
-      <div className='p-4 '>
+      <div className='px-4'>
         <div className='min-h-[10rem]'>
           <h2 className='font-semibold text-lg'>Marked Habits</h2>
           {selectedDayMarkedHabits.length > 0 ? (
