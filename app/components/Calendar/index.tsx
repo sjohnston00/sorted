@@ -66,7 +66,7 @@ export default function Calendar({
     isSameDay(new Date(m.date), selectedDay)
   )
   return (
-    <div className='md:grid md:grid-cols-2 md:divide-x md:divide-gray-200'>
+    <div className='md:grid md:grid-cols-2 '>
       <div className='md:pr-14'>
         <div className='flex items-center'>
           <h2 className='flex-auto font-semibold text-gray-900'>
@@ -158,7 +158,7 @@ export default function Calendar({
           ))}
         </div>
       </div>
-      <div className='px-4'>
+      <div className='p-4 md:pt-0 border-t md:border-t-0 md:border-l border-gray-200'>
         <div className='min-h-[10rem]'>
           <h2 className='font-semibold text-lg'>Marked Habits</h2>
           {selectedDayMarkedHabits.length > 0 ? (
