@@ -11,7 +11,7 @@ type MarkedHabitRowProps = {
 
 export default function MarkedHabitRow({ markedHabit }: MarkedHabitRowProps) {
   const fetcher = useFetcher()
-  const isSubmitting = !!fetcher.submission
+  const isSubmitting = !!fetcher.formData
 
   return (
     <div
