@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import MarkedHabitRow from './MarkedHabitRow'
-import { Form } from '@remix-run/react'
+import { Form, useFetchers } from '@remix-run/react'
 import {
   add,
   eachDayOfInterval,
@@ -20,6 +20,7 @@ import Chevron from '../icons/Chevron'
 import { classNames } from '~/utils'
 import { SerializeFrom } from '@remix-run/node'
 import HabitButton from './HabitButton'
+import Trash from '../icons/Trash'
 
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>
@@ -32,6 +33,8 @@ export default function Calendar({
   habits,
   startWeekMonday
 }: CalendarProps) {
+  const fetchers = useFetchers()
+
   let colStartClasses = [
     '',
     'col-start-2',
@@ -172,6 +175,44 @@ export default function Calendar({
           </div>
           {selectedDayMarkedHabits.length > 0 ? (
             <div className='flex flex-col my-4'>
+              {fetchers
+                .filter(
+                  (f) => f.formData?.get('_action')?.toString() === 'mark-date'
+                )
+                .map(
+                  (
+                    f //OPTIMISTIC UI for marked habits
+                  ) => (
+                    <div
+                      className={`flex gap-2 py-2 group justify-between items-center transition rounded-xl px-4 hover:bg-gray-50`}
+                      key={f.formData?.get('habitId')?.toString()}>
+                      <div className='flex gap-4 items-center'>
+                        <div
+                          className='h-10 w-10 rounded-full shadow-sm'
+                          style={{
+                            backgroundColor: f.formData
+                              ?.get('habitColour')
+                              ?.toString()
+                          }}></div>
+                        <div>
+                          <p>{f.formData?.get('habitName')?.toString()}</p>
+                          <p className='text-xs text-gray-500'>
+                            HH:mm
+                            {/* {format(parseISO(markedHabit.createdAt), 'HH:mm')} */}
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <button
+                          type='submit'
+                          className='py-2 pl-6 pr-2 text-red-300 md:opacity-0  hover:text-red-400  group-hover:opacity-100 transition'
+                          disabled>
+                          <Trash />
+                        </button>
+                      </div>
+                    </div>
+                  )
+                )}
               {selectedDayMarkedHabits.map((s) => (
                 <MarkedHabitRow key={s.id} markedHabit={s} />
               ))}

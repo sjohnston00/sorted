@@ -4,7 +4,7 @@ import {
   type LoaderArgs,
   type V2_MetaFunction
 } from '@remix-run/node'
-import { useLoaderData } from '@remix-run/react'
+import { useFetchers, useLoaderData } from '@remix-run/react'
 import { prisma } from '~/db.server'
 import { getUser } from '~/utils/auth'
 import Calendar from '~/components/Calendar'

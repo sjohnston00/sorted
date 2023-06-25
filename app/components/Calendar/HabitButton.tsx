@@ -20,8 +20,10 @@ export default function HabitButton({ habit, selectedDay }: HabitButtonProps) {
         name='date'
         value={format(selectedDay, 'yyyy-MM-dd')}
       />
+      <input type='hidden' name='habitName' value={habit.name} />
+      <input type='hidden' name='habitColour' value={habit.colour} />
       <button
-        className='py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide uppercase disabled:opacity-80 disabled:cursor-not-allowed active:opacity-70 active:scale-90 transition'
+        className='py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide disabled:opacity-30 disabled:cursor-not-allowed active:opacity-70 active:scale-90 transition'
         style={
           {
             color: habit.colour,
