@@ -72,9 +72,13 @@ export default function Calendar({
           <h2 className='flex-auto font-semibold text-gray-900'>
             {format(firstDayCurrentMonth, 'MMMM yyyy')}
             <button
-              onClick={() => setSelectedDay(today)}
+              onClick={() => {
+                setSelectedDay(today)
+                setCurrentMonth(format(today, 'MMM-yyyy'))
+              }}
               className={`ml-4 font-medium py-1 px-3 transition bg-sky-500 text-sm rounded-md shadow text-white active:scale-90 active:opacity-80 ${
-                !isToday(selectedDay)
+                !isToday(selectedDay) ||
+                !isSameMonth(firstDayCurrentMonth, selectedDay)
                   ? 'opacity-100 scale-100'
                   : 'scale-0 opacity-0'
               }`}>
@@ -160,7 +164,12 @@ export default function Calendar({
       </div>
       <div className='p-4 md:pt-0 border-t md:border-t-0 md:border-l border-gray-200'>
         <div className='min-h-[10rem]'>
-          <h2 className='font-semibold text-lg'>Marked Habits</h2>
+          <div className='flex items-center justify-between'>
+            <h2 className='font-semibold text-lg'>Marked Habits</h2>
+            <span className='text-sm text-gray-400'>
+              {format(selectedDay, 'dd/MM/yyyy')}
+            </span>
+          </div>
           {selectedDayMarkedHabits.length > 0 ? (
             <div className='flex flex-col my-4'>
               {selectedDayMarkedHabits.map((s) => (
