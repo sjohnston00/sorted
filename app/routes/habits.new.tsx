@@ -49,7 +49,7 @@ export default function NewHabit() {
         />
         <button
           type="submit"
-          className="px-4 py-2 bg-indigo-400 text-gray-100 font-semibold uppercase tracking-wide rounded shadow active:scale-95 active:opacity-80 disabled:opacity-80 disabled:cursor-not-allowed transition"
+          className="px-4 py-2 bg-indigo-400 text-gray-100 font-semibold tracking-wide rounded shadow active:scale-95 active:opacity-80 disabled:opacity-80 disabled:cursor-not-allowed transition"
           disabled={isSubmitting || isLoading}>
           Create
         </button>
