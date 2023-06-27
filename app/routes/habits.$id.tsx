@@ -78,8 +78,10 @@ export default function Habit() {
         }>
         {habit.name}
       </button>
-      <span className='text-lg font-bold mt-4 mb-2 block'>Days</span>
-      <div className='flex gap-4 justify-center items-center my-4'>
+      <span className='text-sm text-center text-gray-400 mt-4 mb-2 block'>
+        Tracking days selected
+      </span>
+      <div className='max-w-md mx-auto grid grid-cols-7 gap-1 md:gap-3 justify-items-center my-4'>
         {[
           'Monday',
           'Tuesday',
@@ -92,13 +94,14 @@ export default function Habit() {
           <label
             htmlFor={`days-${d}`}
             key={d}
-            className='h-8 w-8 flex justify-center items-center rounded-full relative text-center transition select-none z-[2] toggle-label border-2 text-sky-500 border-sky-500'>
+            title={d}
+            className='scale-95 min-h-[2rem] h-full w-full aspect-square flex justify-center items-center rounded-full relative text-center transition select-none z-[2] toggle-label border-2 text-sky-500 border-sky-500'>
             {d.substring(0, 1)}
             <input
               type='checkbox'
               name='days'
-              disabled
               defaultChecked={habit.days.includes(d)}
+              disabled
               id={`days-${d}`}
               value={d}
               className='appearance-none cursor-pointer absolute inset-0 rounded-full toggle-checkbox z-[1]'

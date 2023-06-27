@@ -58,7 +58,7 @@ export default function NewHabit() {
           </div>
         </div>
         <span className='text-sm text-center text-gray-400 mt-4 mb-2 block'>
-          Select the days you'd like to track
+          Select the days you'd like to track:
         </span>
         <div className='grid grid-cols-7 gap-1 md:gap-3 justify-items-center my-4'>
           {[
