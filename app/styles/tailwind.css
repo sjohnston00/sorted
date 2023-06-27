@@ -7,7 +7,7 @@
 }
 
 .toggle-label:has(.toggle-checkbox:checked) {
-  @apply bg-sky-500 !text-white;
+  @apply bg-sky-500 text-white font-semibold scale-100;
 }
 
 input[type='color']::-webkit-color-swatch-wrapper {
