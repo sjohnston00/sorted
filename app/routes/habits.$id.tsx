@@ -1,4 +1,4 @@
-import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node"
+import { ActionArgs, LoaderArgs } from "@remix-run/node"
 import { Form, useLoaderData } from "@remix-run/react"
 import { prisma } from "~/db.server"
 import { getUser } from "~/utils/auth"
@@ -13,7 +13,7 @@ export const loader = async (args: LoaderArgs) => {
     },
   })
 
-  if (!habit) {
+  if (!habit || habit.deleted) {
     throw new Response("Not Found", {
       status: 404,
     })
@@ -37,7 +37,7 @@ export const action = async (args: ActionArgs) => {
     },
   })
 
-  if (!habit) {
+  if (!habit || habit.deleted) {
     throw new Response("Not Found", {
       status: 404,
     })
@@ -48,34 +48,15 @@ export const action = async (args: ActionArgs) => {
       status: 401,
     })
   }
-  //Validation passed
-  //TODO: decide wether we want to keep the marked habits on the calendar, which will mean we only need to set an enabled flag to false
-  // or delete all the marked habits before deleting the actual habit as it would cause a DB foreign key issue
-  // this could also be a decission a user makes when deleting the actual habit, like a checkbox
-
-  // method 1:
-  // await prisma.habit.update({
-  //   data: {
-  //     enabled: false
-  //   },
-  //   where: {
-  //     id
-  //   }
-  // })
-
-  // method 2:
-  await prisma.markedHabit.deleteMany({
+  await prisma.habit.update({
+    data: {
+      deleted: true,
+      deletedAt: new Date(),
+    },
     where: {
-      habitId: id,
+      id,
     },
   })
-  await prisma.habit.delete({
-    where: {
-      id: id,
-    },
-  })
-
-  throw redirect("/habits")
 }
 
 export default function Habit() {

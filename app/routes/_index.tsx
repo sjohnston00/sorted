@@ -16,6 +16,9 @@ export const loader = async (args: LoaderArgs) => {
     prisma.markedHabit.findMany({
       where: {
         userId,
+        habit: {
+          deleted: false,
+        },
       },
       include: {
         habit: true,
@@ -27,6 +30,7 @@ export const loader = async (args: LoaderArgs) => {
     prisma.habit.findMany({
       where: {
         userId,
+        deleted: false,
       },
     }),
   ])

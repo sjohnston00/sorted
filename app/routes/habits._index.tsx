@@ -9,6 +9,7 @@ export const loader = async (args: LoaderArgs) => {
   const habits = await prisma.habit.findMany({
     where: {
       userId,
+      deleted: false,
     },
   })
   return { habits }

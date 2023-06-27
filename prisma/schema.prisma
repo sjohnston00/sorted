@@ -15,6 +15,8 @@ model Habit {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  deletedAt DateTime? 
+  deleted Boolean @default(false)
 
   habits MarkedHabit[]
 }
