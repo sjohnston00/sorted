@@ -23,7 +23,13 @@ export default function MarkedHabitRow({ markedHabit }: MarkedHabitRowProps) {
           className='h-10 w-10 rounded-full shadow-sm'
           style={{ backgroundColor: markedHabit.habit.colour }}></div>
         <div>
-          <p>{markedHabit.habit.name}</p>
+          <p>
+            {markedHabit.habit.name}{' '}
+            {/* TODO: Figure out to calculate streaks */}
+            {/* <span className='text-sm text-gray-400' title='Streak'>
+              🔥 4
+            </span> */}
+          </p>
           <p className='text-xs text-gray-500'>
             {format(parseISO(markedHabit.createdAt), 'HH:mm')}
           </p>
