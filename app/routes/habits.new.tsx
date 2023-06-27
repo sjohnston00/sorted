@@ -20,7 +20,7 @@ export const action = async (args: ActionArgs) => {
     },
   })
 
-  throw redirect("/")
+  throw redirect("/habits")
 }
 
 export default function NewHabit() {

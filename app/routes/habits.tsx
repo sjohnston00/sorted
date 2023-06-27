@@ -1,5 +1,6 @@
 import { LoaderArgs } from "@remix-run/node"
-import { Link, Outlet, useLocation } from "@remix-run/react"
+import { Link, Outlet, useLocation, useNavigation } from "@remix-run/react"
+import Spinner from "~/components/icons/Spinner"
 import { getUser } from "~/utils/auth"
 
 export const loader = async (args: LoaderArgs) => {
@@ -9,10 +10,16 @@ export const loader = async (args: LoaderArgs) => {
 
 export default function Habits() {
   const location = useLocation()
+  const navigation = useNavigation()
+  const navagating =
+    navigation.state === "loading" || navigation.state === "submitting"
   return (
     <div className="pt-16">
       <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 mb-8">
-        <h1 className="font-bold text-3xl tracking-tight">Habits</h1>
+        <div className="flex gap-4 items-center">
+          <h1 className="font-bold text-3xl tracking-tight">Habits</h1>
+          {navagating ? <Spinner /> : null}
+        </div>
         <div className="my-4 flex gap-4">
           <Link
             to={"/"}

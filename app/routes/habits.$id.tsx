@@ -1,4 +1,4 @@
-import { ActionArgs, LoaderArgs } from "@remix-run/node"
+import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node"
 import { Form, useLoaderData } from "@remix-run/react"
 import { prisma } from "~/db.server"
 import { getUser } from "~/utils/auth"
@@ -57,6 +57,8 @@ export const action = async (args: ActionArgs) => {
       id,
     },
   })
+
+  throw redirect("/habits")
 }
 
 export default function Habit() {
