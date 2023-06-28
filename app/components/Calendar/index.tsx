@@ -225,7 +225,7 @@ export default function Calendar({
         </div>
 
         <hr />
-        <div className='grid grid-cols-3 gap-4 place-items-center mt-4'>
+        <div className='grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 place-items-center mt-4'>
           {habits.map((h) => (
             <HabitButton habit={h} selectedDay={selectedDay} key={h.id} />
           ))}
