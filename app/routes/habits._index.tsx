@@ -19,7 +19,7 @@ export default function Habits() {
   const { habits } = useLoaderData<typeof loader>()
 
   return (
-    <div className='grid grid-cols-4 gap-4'>
+    <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
       {habits.map((h) => (
         <Link
           key={h.id}
