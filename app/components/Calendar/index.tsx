@@ -184,7 +184,7 @@ export default function Calendar({
                     f //OPTIMISTIC UI for marked habits
                   ) => (
                     <div
-                      className={`flex gap-2 py-2 group justify-between items-center transition rounded-xl px-4 hover:bg-gray-50`}
+                      className={`flex gap-2 py-2 group justify-between items-center transition rounded-xl px-4 hover:bg-gray-50 opacity-70`}
                       key={f.formData?.get('habitId')?.toString()}>
                       <div className='flex gap-4 items-center'>
                         <div
