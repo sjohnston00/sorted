@@ -4,6 +4,7 @@ import { useFetcher } from '@remix-run/react'
 import { format, parseISO } from 'date-fns'
 import React from 'react'
 import Trash from '../icons/Trash'
+import { motion } from 'framer-motion'
 
 type MarkedHabitRowProps = {
   markedHabit: SerializeFrom<MarkedHabit & { habit: Habit }>
@@ -14,11 +15,21 @@ export default function MarkedHabitRow({ markedHabit }: MarkedHabitRowProps) {
   const isSubmitting = !!fetcher.formData
 
   return (
-    <div
-      className={`flex gap-2 py-2 group justify-between items-center transition rounded-xl px-4 hover:bg-gray-50 ${
-        isSubmitting ? 'scale-50 opacity-0 origin-left' : ''
+    <motion.div
+      // initial={{ opacity: 0, height: 0 }}
+      animate={{
+        opacity: isSubmitting ? 0 : 1,
+        scale: isSubmitting ? 0 : 1,
+        height: isSubmitting ? 0 : 'auto'
+      }}
+      transition={{
+        duration: 0.15
+      }}
+      // exit={{ opacity: 0, height: 0 }}
+      className={`flex gap-2 group justify-between items-center transition rounded-xl hover:bg-gray-50 ${
+        isSubmitting ? '' : ''
       }`}>
-      <div className='flex gap-4 items-center'>
+      <div className='flex gap-4 py-2 px-4 items-center'>
         <div
           className='h-10 w-10 rounded-full shadow-sm'
           style={{ backgroundColor: markedHabit.habit.colour }}></div>
@@ -45,6 +56,6 @@ export default function MarkedHabitRow({ markedHabit }: MarkedHabitRowProps) {
           <Trash />
         </button>
       </fetcher.Form>
-    </div>
+    </motion.div>
   )
 }

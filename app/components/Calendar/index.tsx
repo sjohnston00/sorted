@@ -21,6 +21,7 @@ import { classNames } from '~/utils'
 import { SerializeFrom } from '@remix-run/node'
 import HabitButton from './HabitButton'
 import Trash from '../icons/Trash'
+import { AnimatePresence, motion } from 'framer-motion'
 
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>
@@ -49,6 +50,7 @@ export default function Calendar({
   const [selectedDay, setSelectedDay] = useState(today)
   const [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
   const firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
+  // const [_markedHabits, set_markedHabits] = useState(markedHabits)
 
   const days = eachDayOfInterval({
     start: firstDayCurrentMonth,
@@ -68,6 +70,7 @@ export default function Calendar({
   const selectedDayMarkedHabits = markedHabits.filter((m) =>
     isSameDay(new Date(m.date), selectedDay)
   )
+
   return (
     <div className='md:grid md:grid-cols-2 '>
       <div className='md:pr-14'>
@@ -173,55 +176,58 @@ export default function Calendar({
               {format(selectedDay, 'dd/MM/yyyy')}
             </span>
           </div>
-          {selectedDayMarkedHabits.length > 0 ? (
-            <div className='flex flex-col my-4'>
-              {fetchers
-                .filter(
-                  (f) => f.formData?.get('_action')?.toString() === 'mark-date'
-                )
-                .map(
-                  (
-                    f //OPTIMISTIC UI for marked habits
-                  ) => (
-                    <div
-                      className={`flex gap-2 py-2 group justify-between items-center transition rounded-xl px-4 hover:bg-gray-50 opacity-70`}
-                      key={f.formData?.get('habitId')?.toString()}>
-                      <div className='flex gap-4 items-center'>
-                        <div
-                          className='h-10 w-10 rounded-full shadow-sm'
-                          style={{
-                            backgroundColor: f.formData
-                              ?.get('habitColour')
-                              ?.toString()
-                          }}></div>
+          <AnimatePresence initial={false}>
+            {selectedDayMarkedHabits.length > 0 ? (
+              <motion.div className='flex flex-col my-4'>
+                {fetchers
+                  .filter(
+                    (f) =>
+                      f.formData?.get('_action')?.toString() === 'mark-date'
+                  )
+                  .map(
+                    (
+                      f //OPTIMISTIC UI for marked habits
+                    ) => (
+                      <div
+                        className={`flex gap-2 py-2 group justify-between items-center transition rounded-xl px-4 hover:bg-gray-50 opacity-70`}
+                        key={f.formData?.get('habitId')?.toString()}>
+                        <div className='flex gap-4 items-center'>
+                          <div
+                            className='h-10 w-10 rounded-full shadow-sm'
+                            style={{
+                              backgroundColor: f.formData
+                                ?.get('habitColour')
+                                ?.toString()
+                            }}></div>
+                          <div>
+                            <p>{f.formData?.get('habitName')?.toString()}</p>
+                            <p className='text-xs text-gray-500'>
+                              HH:mm
+                              {/* {format(parseISO(markedHabit.createdAt), 'HH:mm')} */}
+                            </p>
+                          </div>
+                        </div>
                         <div>
-                          <p>{f.formData?.get('habitName')?.toString()}</p>
-                          <p className='text-xs text-gray-500'>
-                            HH:mm
-                            {/* {format(parseISO(markedHabit.createdAt), 'HH:mm')} */}
-                          </p>
+                          <button
+                            type='submit'
+                            className='py-2 pl-6 pr-2 text-red-300 md:opacity-0  hover:text-red-400  group-hover:opacity-100 transition'
+                            disabled>
+                            <Trash />
+                          </button>
                         </div>
                       </div>
-                      <div>
-                        <button
-                          type='submit'
-                          className='py-2 pl-6 pr-2 text-red-300 md:opacity-0  hover:text-red-400  group-hover:opacity-100 transition'
-                          disabled>
-                          <Trash />
-                        </button>
-                      </div>
-                    </div>
-                  )
-                )}
-              {selectedDayMarkedHabits.map((s) => (
-                <MarkedHabitRow key={s.id} markedHabit={s} />
-              ))}
-            </div>
-          ) : (
-            <p className='text-gray-300 mt-4 block text-center'>
-              No habits marked yet
-            </p>
-          )}
+                    )
+                  )}
+                {selectedDayMarkedHabits.map((s) => (
+                  <MarkedHabitRow key={s.id} markedHabit={s} />
+                ))}
+              </motion.div>
+            ) : (
+              <p className='text-gray-300 mt-4 block text-center'>
+                No habits marked yet
+              </p>
+            )}
+          </AnimatePresence>
         </div>
 
         <hr />
