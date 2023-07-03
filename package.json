@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@clerk/remix": "^2.6.16",
+    "@heroicons/react": "^2.0.18",
     "@prisma/client": "^4.16.2",
     "@remix-run/css-bundle": "^1.18.1",
     "@remix-run/node": "^1.18.1",
