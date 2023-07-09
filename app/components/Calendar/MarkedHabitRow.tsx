@@ -1,18 +1,32 @@
 import { Habit, MarkedHabit } from '@prisma/client'
 import { SerializeFrom } from '@remix-run/node'
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useFetchers } from '@remix-run/react'
 import { format, parseISO } from 'date-fns'
 import React from 'react'
 import Trash from '../icons/Trash'
 import { motion } from 'framer-motion'
+import { EllipsisVerticalIcon } from '@heroicons/react/24/outline'
+import EllipsisVertical from '../icons/EllipsisVertical'
 
 type MarkedHabitRowProps = {
   markedHabit: SerializeFrom<MarkedHabit & { habit: Habit }>
+  closeModal: () => void
+  openModal: () => void
+  setFocusedMarkedHabit: React.Dispatch<
+    React.SetStateAction<SerializeFrom<MarkedHabit & { habit: Habit }> | null>
+  >
 }
 
-export default function MarkedHabitRow({ markedHabit }: MarkedHabitRowProps) {
+export default function MarkedHabitRow({
+  markedHabit,
+  openModal,
+  setFocusedMarkedHabit
+}: MarkedHabitRowProps) {
   const fetcher = useFetcher()
+  const fetchers = useFetchers()
   const isSubmitting = !!fetcher.formData
+
+  console.log(fetchers)
 
   return (
     <motion.div
@@ -41,21 +55,56 @@ export default function MarkedHabitRow({ markedHabit }: MarkedHabitRowProps) {
               🔥 4
             </span> */}
           </p>
-          <p className='text-xs text-gray-500'>
-            {format(parseISO(markedHabit.createdAt), 'HH:mm')}
-          </p>
+
+          {fetchers.filter(
+            (f) =>
+              f.formData?.get('_action')?.toString() ===
+                'updateMarkedHabitTime' &&
+              f.formData?.get('markedHabitId')?.toString() === markedHabit.id &&
+              f.state === 'submitting'
+          )[0] ? (
+            <p className='text-xs text-gray-300'>
+              {fetchers
+                .filter(
+                  (f) =>
+                    f.formData?.get('_action')?.toString() ===
+                      'updateMarkedHabitTime' &&
+                    f.formData?.get('markedHabitId')?.toString() ===
+                      markedHabit.id &&
+                    f.state === 'submitting'
+                )[0]
+                .formData?.get('newMarkedHabitTime')
+                ?.toString()}{' '}
+              saving...
+            </p>
+          ) : (
+            <p className='text-xs text-gray-500'>
+              {format(parseISO(markedHabit.createdAt), 'HH:mm')}
+            </p>
+          )}
         </div>
       </div>
-      <fetcher.Form method='post'>
-        <input type='hidden' name='_action' value='remove-marked-habit' />
-        <input type='hidden' name='markedHabit-id' value={markedHabit.id} />
+      <div className='flex gap-px items-center'>
+        <fetcher.Form method='post'>
+          <input type='hidden' name='_action' value='remove-marked-habit' />
+          <input type='hidden' name='markedHabit-id' value={markedHabit.id} />
+          <button
+            type='submit'
+            className='py-2 px-3 text-red-300 md:opacity-0 hover:text-red-400 group-hover:opacity-100 transition'
+            disabled={isSubmitting}>
+            <Trash />
+          </button>
+        </fetcher.Form>
         <button
-          type='submit'
-          className='py-2 pl-6 pr-2 text-red-300 md:opacity-0  hover:text-red-400  group-hover:opacity-100 transition'
-          disabled={isSubmitting}>
-          <Trash />
+          type='button'
+          className='py-2 px-3 text-gray-300 md:opacity-0 hover:text-gray-400 group-hover:opacity-100 transition'
+          onClick={() => {
+            setFocusedMarkedHabit(markedHabit)
+            openModal()
+          }}>
+          <EllipsisVertical />
         </button>
-      </fetcher.Form>
+      </div>
     </motion.div>
   )
 }
