@@ -32,9 +32,7 @@ export const action = async (args: ActionArgs) => {
   }
 
   const newCreatedAt = new Date(
-    `${format(markedHabit.createdAt, 'yyyy-MM-dd')}T${
-      data.newMarkedHabitTime
-    }:00.000` //no Z on the end to make sure the it respects the time zone
+    `${format(markedHabit.createdAt, 'yyyy-MM-dd')}T${data.newMarkedHabitTime}`
   )
 
   await prisma.markedHabit.update({
