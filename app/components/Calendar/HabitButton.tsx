@@ -2,6 +2,7 @@ import { Habit } from '@prisma/client'
 import { SerializeFrom } from '@remix-run/node'
 import { useFetcher } from '@remix-run/react'
 import { format } from 'date-fns'
+import Button from '~/components/Button'
 import React from 'react'
 
 type HabitButtonProps = {
@@ -22,8 +23,8 @@ export default function HabitButton({ habit, selectedDay }: HabitButtonProps) {
       />
       <input type='hidden' name='habitName' value={habit.name} />
       <input type='hidden' name='habitColour' value={habit.colour} />
-      <button
-        className='min-h-[8rem] w-full py-4 min px-2 rounded shadow border-2 text-center font-semibold text-lg tracking-wide disabled:opacity-30 disabled:cursor-not-allowed active:opacity-70 active:scale-90 transition'
+      <Button
+        className='min-h-[8rem] w-full py-4 border-2 text-lg'
         style={
           {
             color: habit.colour,
@@ -37,7 +38,7 @@ export default function HabitButton({ habit, selectedDay }: HabitButtonProps) {
         value={habit.id}
         disabled={isSubmitting}>
         {habit.name}
-      </button>
+      </Button>
     </fetcher.Form>
   )
 }

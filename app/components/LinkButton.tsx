@@ -1,25 +1,31 @@
-import { Link as RemixLink } from "@remix-run/react"
-import { RemixLinkProps } from "@remix-run/react/dist/components"
-import React, { forwardRef } from "react"
-import { twMerge } from "tailwind-merge"
+import { Link as RemixLink } from "@remix-run/react";
+import { RemixLinkProps } from "@remix-run/react/dist/components";
+import React, { forwardRef } from "react";
+import { twMerge } from "tailwind-merge";
+import { ButtonVariant, variantClassName } from "./Button";
 
-type LinkProps = RemixLinkProps & React.RefAttributes<HTMLAnchorElement>
+type LinkProps = RemixLinkProps &
+  React.RefAttributes<HTMLAnchorElement> & {
+    variant?: ButtonVariant;
+  };
 
-type Ref = HTMLAnchorElement
+type Ref = HTMLAnchorElement;
 
 const LinkButton = forwardRef<Ref, LinkProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, variant = "primary", ...props }, ref) => {
     return (
       <RemixLink
         ref={ref}
         className={twMerge(
-          "p-2 px-3 rounded shadow-sm bg-sky-500 font-semibold tracking-wide transition focus:ring hover:bg-sky-400 active:bg-sky-300 active:ring-sky-300 outline-none ring-sky-500 hover:ring-sky-400 ring-offset-2 active:scale-95 text-white",
+          `inline-flex gap-2 items-center justify-center p-2 px-3 rounded shadow-sm font-semibold tracking-wide transition focus:ring outline-none ${variantClassName(
+            variant
+          )} ring-offset-2 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed`,
           className
         )}
         {...props}
       />
-    )
+    );
   }
-)
+);
 
-export default LinkButton
+export default LinkButton;
