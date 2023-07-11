@@ -1,5 +1,5 @@
 import { ActionArgs } from '@remix-run/node'
-import { set } from 'date-fns'
+import { format, set } from 'date-fns'
 import { prisma } from '~/db.server'
 import { getUser } from '~/utils/auth'
 
@@ -31,10 +31,11 @@ export const action = async (args: ActionArgs) => {
     })
   }
 
-  const newCreatedAt = set(markedHabit.createdAt, {
-    hours: Number(data.newMarkedHabitTime.toString().substring(0, 2)),
-    minutes: Number(data.newMarkedHabitTime.toString().substring(3, 5))
-  })
+  const newCreatedAt = new Date(
+    `${format(markedHabit.createdAt, 'yyyy-MM-dd')}T${
+      data.newMarkedHabitTime
+    }:00.000` //no Z on the end to make sure the it respects the time zone
+  )
 
   await prisma.markedHabit.update({
     data: {
