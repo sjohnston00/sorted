@@ -17,7 +17,7 @@ const LinkButton = forwardRef<Ref, LinkProps>(
       <RemixLink
         ref={ref}
         className={twMerge(
-          `inline-flex gap-2 items-center justify-center p-2 px-3 rounded shadow-sm font-semibold tracking-wide transition focus:ring outline-none ${variantClassName(
+          `inline-flex gap-2 items-center justify-center p-2 px-3 rounded shadow-sm font-semibold tracking-wide transition focus-visible:ring outline-none ${variantClassName(
             variant
           )} ring-offset-2 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed`,
           className
