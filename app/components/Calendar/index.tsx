@@ -13,6 +13,7 @@ import {
   isToday,
   parse,
   parseISO,
+  set,
   startOfToday
 } from 'date-fns'
 import { Habit, MarkedHabit } from '@prisma/client'
@@ -84,6 +85,10 @@ export default function Calendar({
   function openModal() {
     setIsOpen(true)
   }
+
+  const [newFocusedMarkedHabitTime, setNewFocusedMarkedHabitTime] = useState(
+    parseISO(focusedMarkedHabit?.createdAt || new Date().toISOString())
+  )
 
   return (
     <>
@@ -319,8 +324,21 @@ export default function Calendar({
                             parseISO(focusedMarkedHabit.createdAt),
                             'HH:mm'
                           )}
+                          onChange={(e) => {
+                            setNewFocusedMarkedHabitTime((prev) => {
+                              return set(prev, {
+                                hours: Number(e.target.value.substring(0, 2)),
+                                minutes: Number(e.target.value.substring(3, 5))
+                              })
+                            })
+                          }}
                         />
                       ) : null}
+                      <input
+                        type='hidden'
+                        name='newMarkedHabitTimeISO'
+                        value={newFocusedMarkedHabitTime.toISOString()}
+                      />
                     </div>
 
                     <div className='mt-4 flex items-center gap-2'>
