@@ -26,6 +26,7 @@
     "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "remix-development-tools": "^1.2.2",
     "tailwind-merge": "^1.14.0",
     "zod": "^3.21.4"
   },
