@@ -1,6 +1,11 @@
 // import * as Icons from "@heroicons/react/24/outline"
+import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node"
 import { Form, useNavigation } from "@remix-run/react"
+import randomColour from "randomcolor"
+import { useState } from "react"
+import Button from "~/components/Button"
+import Input, { Textarea } from "~/components/Input"
 import { prisma } from "~/db.server"
 import { getUser } from "~/utils/auth"
 
@@ -11,7 +16,7 @@ export const loader = async (args: LoaderArgs) => {
 export const action = async (args: ActionArgs) => {
   const { userId } = await getUser(args)
   const formData = await args.request.formData()
-  const { name, colour } = Object.fromEntries(formData)
+  const { name, colour, description } = Object.fromEntries(formData)
 
   await prisma.habit.create({
     data: {
@@ -19,6 +24,7 @@ export const action = async (args: ActionArgs) => {
       colour: colour.toString()!,
       userId,
       days: formData.getAll("days").map((d) => String(d)),
+      description: description.toString(),
     },
   })
 
@@ -29,37 +35,55 @@ export default function NewHabit() {
   const navigation = useNavigation()
   const isSubmitting = navigation.state === "submitting"
   const isLoading = navigation.state === "loading"
+  const [colour, setColour] = useState(randomColour())
   // const icons = Object.entries(Icons)
 
   return (
     <div className="max-w-md mx-auto">
       <Form method="post">
-        <div className="flex gap-2">
-          <div className="flex-1">
-            <label htmlFor="name">Name</label>
-            <input
-              className="block w-full p-2 border border-gray-400"
-              type="text"
-              name="name"
-              id="name"
-              placeholder="name"
-              autoComplete="off"
-              minLength={3}
-              maxLength={255}
-              required
-            />
-          </div>
-          <div className="flex-1">
-            <label htmlFor="colour">Colour</label>
-            <input
-              className="block w-full rounded-none border-none bg-none"
+        <div className="flex gap-2 mb-4">
+          <Input
+            label="Name"
+            type="text"
+            name="name"
+            id="name"
+            placeholder="e.g Drink 2L"
+            autoComplete="off"
+            minLength={3}
+            maxLength={255}
+            required
+          />
+          <div className="flex">
+            <Input
+              label="Colour"
+              className="p-0 border-none"
               type="color"
               name="colour"
+              value={colour}
+              onChange={(e) => {
+                setColour(e.target.value)
+              }}
               id="colour"
               required
             />
+            <Button
+              className="self-end"
+              onClick={() => {
+                setColour(randomColour())
+              }}
+              variant="ghost"
+              type="button">
+              <ArrowPathIcon className="h-6 w-6" />
+            </Button>
           </div>
         </div>
+        <Textarea
+          label="Description"
+          name="description"
+          placeholder="Give your habit a nice description..."
+          id="description"
+          autoComplete="off"
+        />
         <span className="text-sm text-center text-gray-400 mt-4 mb-2 block">
           Select the days you'd like to track:
         </span>

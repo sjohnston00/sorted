@@ -1,21 +1,22 @@
-import React, { forwardRef } from "react";
-import { twMerge } from "tailwind-merge";
+import React, { forwardRef } from "react"
+import { twMerge } from "tailwind-merge"
 
 export type ButtonVariant =
   | "primary"
   | "secondary"
   | "tertiary"
   | "danger"
-  | "dark";
+  | "dark"
+  | "ghost"
 
 type ButtonProps = React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 > & {
-  variant?: ButtonVariant;
-};
+  variant?: ButtonVariant
+}
 
-type Ref = HTMLButtonElement;
+type Ref = HTMLButtonElement
 
 export const variantClassName = (variant?: ButtonVariant) =>
   variant === "primary"
@@ -26,7 +27,9 @@ export const variantClassName = (variant?: ButtonVariant) =>
     ? "bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-300 active:ring-emerald-300 ring-emerald-500 hover:ring-emerald-400 text-white"
     : variant === "danger"
     ? "bg-red-500 hover:bg-red-400 active:bg-red-300 active:ring-red-300 ring-red-500 hover:ring-red-400 text-white"
-    : "bg-gray-800 hover:bg-gray-700 active:bg-gray-600 active:ring-gray-600 ring-gray-800 hover:ring-gray-700 text-white";
+    : variant === "ghost"
+    ? "bg-none text-black shadow-none border-none active:bg-gray-100 hover:bg-gray-50"
+    : "bg-gray-800 hover:bg-gray-700 active:bg-gray-600 active:ring-gray-600 ring-gray-800 hover:ring-gray-700 text-white"
 
 const Button = forwardRef<Ref, ButtonProps>(
   ({ className, variant = "primary", ...props }, ref) => {
@@ -41,8 +44,8 @@ const Button = forwardRef<Ref, ButtonProps>(
         )}
         {...props}
       />
-    );
+    )
   }
-);
+)
 
-export default Button;
+export default Button

@@ -8,28 +8,29 @@ generator client {
 }
 
 model Habit {
-  id    String @id @default(cuid())
-  name  String 
-  colour String 
-  userId String
-  days   String[]
+  id          String   @id @default(cuid())
+  name        String
+  colour      String
+  userId      String
+  days        String[]
+  description String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deletedAt DateTime? 
-  deleted Boolean @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
 
   habits MarkedHabit[]
 }
 
 model MarkedHabit {
-  id    String @id @default(cuid())
+  id      String   @id @default(cuid())
   habitId String
-  habit Habit @relation(fields: [habitId], references: [id])
-  date DateTime 
-  userId String
+  habit   Habit    @relation(fields: [habitId], references: [id])
+  date    DateTime
+  userId  String
+  note    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
 }
