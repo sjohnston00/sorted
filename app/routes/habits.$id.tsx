@@ -1,5 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react"
-import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node"
+import {
+  ActionArgs,
+  LoaderArgs,
+  V2_MetaFunction,
+  redirect,
+} from "@remix-run/node"
 import { Form, useLoaderData } from "@remix-run/react"
 import React, { Fragment, useState } from "react"
 import Button from "~/components/Button"
@@ -28,6 +33,11 @@ export const loader = async (args: LoaderArgs) => {
     })
   }
   return { habit }
+}
+
+export const meta: V2_MetaFunction = (args) => {
+  const data = args.data as Awaited<ReturnType<typeof loader>>
+  return [{ title: `Sorted | My Habits | ${data.habit.name}` }]
 }
 
 export const action = async (args: ActionArgs) => {

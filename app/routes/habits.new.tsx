@@ -1,6 +1,11 @@
 // import * as Icons from "@heroicons/react/24/outline"
 import { ArrowPathIcon } from "@heroicons/react/24/outline"
-import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node"
+import {
+  ActionArgs,
+  LoaderArgs,
+  V2_MetaFunction,
+  redirect,
+} from "@remix-run/node"
 import { Form, useNavigation } from "@remix-run/react"
 import randomColour from "randomcolor"
 import { useState } from "react"
@@ -29,6 +34,10 @@ export const action = async (args: ActionArgs) => {
   })
 
   throw redirect("/habits")
+}
+
+export const meta: V2_MetaFunction = () => {
+  return [{ title: `Sorted | New Habit` }]
 }
 
 export default function NewHabit() {
