@@ -14,7 +14,7 @@ export const action = async (args: ActionArgs) => {
       id: params.id
     },
     select: {
-      createdAt: true,
+      date: true,
       userId: true
     }
   })
@@ -31,17 +31,18 @@ export const action = async (args: ActionArgs) => {
     })
   }
 
-  // const newCreatedAt = new Date(
-  //   `${format(markedHabit.createdAt, 'yyyy-MM-dd')}T${data.newMarkedHabitTime}`
-  // )
+  const newDate = new Date(
+    `${format(markedHabit.date, 'yyyy-MM-dd')}T${data.newMarkedHabitTime}`
+  )
 
   await prisma.markedHabit.update({
     data: {
-      createdAt: data.newMarkedHabitTimeISO.toString()
+      date: newDate,
+      note: data.markedHabitNote?.toString()
     },
     where: {
       id: params.id
     }
   })
-  return { userId, data, params }
+  return {}
 }

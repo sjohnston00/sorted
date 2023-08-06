@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import MarkedHabitRow from './MarkedHabitRow'
-import { Form, useFetcher, useFetchers } from '@remix-run/react'
+import { useFetcher, useFetchers } from '@remix-run/react'
 import {
   add,
   eachDayOfInterval,
@@ -13,7 +13,6 @@ import {
   isToday,
   parse,
   parseISO,
-  set,
   startOfToday
 } from 'date-fns'
 import { Habit, MarkedHabit } from '@prisma/client'
@@ -24,6 +23,7 @@ import HabitButton from './HabitButton'
 import Trash from '../icons/Trash'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Dialog, Transition } from '@headlessui/react'
+import Input, { Textarea } from '../Input'
 
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>
@@ -85,11 +85,6 @@ export default function Calendar({
   function openModal() {
     setIsOpen(true)
   }
-
-  const [newFocusedMarkedHabitTime, setNewFocusedMarkedHabitTime] = useState(
-    parseISO(focusedMarkedHabit?.createdAt || new Date().toISOString())
-  )
-
   return (
     <>
       <div className='md:grid md:grid-cols-2 '>
@@ -303,43 +298,32 @@ export default function Calendar({
                       name='_action'
                       value='updateMarkedHabitTime'
                     />
+
                     <input
                       type='hidden'
                       name='markedHabitId'
                       value={focusedMarkedHabit?.id}
                     />
-                    <div className='mt-2'>
-                      <label
-                        htmlFor='newMarkedHabitTime'
-                        className='block mb-1 text-gray-400 text-sm'>
-                        Time
-                      </label>
-                      {focusedMarkedHabit ? (
-                        <input
-                          type='time'
-                          name='newMarkedHabitTime'
-                          id='newMarkedHabitTime'
-                          className='w-full p-2 border border-gray-300 focus:ring focus:ring-gray-300 rounded shadow text-gray-500 bg-transparent'
-                          defaultValue={format(
-                            parseISO(focusedMarkedHabit.createdAt),
-                            'HH:mm'
-                          )}
-                          onChange={(e) => {
-                            setNewFocusedMarkedHabitTime((prev) => {
-                              return set(prev, {
-                                hours: Number(e.target.value.substring(0, 2)),
-                                minutes: Number(e.target.value.substring(3, 5))
-                              })
-                            })
-                          }}
-                        />
-                      ) : null}
-                      <input
-                        type='hidden'
-                        name='newMarkedHabitTimeISO'
-                        value={newFocusedMarkedHabitTime.toISOString()}
-                      />
-                    </div>
+                    <Input
+                      type='time'
+                      label='Time'
+                      divClassName='mt-2'
+                      name='newMarkedHabitTime'
+                      id='newMarkedHabitTime'
+                      defaultValue={
+                        focusedMarkedHabit
+                          ? format(parseISO(focusedMarkedHabit.date), 'HH:mm')
+                          : undefined
+                      }
+                    />
+                    <Textarea
+                      divClassName='mt-4'
+                      label='Note'
+                      placeholder='Optional..'
+                      name='markedHabitNote'
+                      id='markedHabitNote'
+                      defaultValue={focusedMarkedHabit?.note!}
+                    />
 
                     <div className='mt-4 flex items-center gap-2'>
                       <button

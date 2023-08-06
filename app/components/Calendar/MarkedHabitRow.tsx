@@ -40,7 +40,7 @@ export default function MarkedHabitRow({
         duration: 0.15
       }}
       // exit={{ opacity: 0, height: 0 }}
-      className={`flex gap-2 group justify-between items-center transition rounded-xl hover:bg-gray-50 ${
+      className={`flex gap-2 group justify-between items-center transition rounded-xl  hover:bg-gray-50 focus-within:bg-gray-50 ${
         isSubmitting ? '' : ''
       }`}>
       <div className='flex gap-4 py-2 px-4 items-center'>
@@ -79,7 +79,7 @@ export default function MarkedHabitRow({
             </p>
           ) : (
             <p className='text-xs text-gray-500'>
-              {format(parseISO(markedHabit.createdAt), 'HH:mm')}
+              {format(parseISO(markedHabit.date), 'HH:mm')}
             </p>
           )}
         </div>
@@ -90,14 +90,14 @@ export default function MarkedHabitRow({
           <input type='hidden' name='markedHabit-id' value={markedHabit.id} />
           <button
             type='submit'
-            className='py-2 px-3 text-red-300 md:opacity-0 hover:text-red-400 group-hover:opacity-100 transition'
+            className='py-2 px-3 text-red-300 md:opacity-0 hover:text-red-400 focus:text-red-400 group-focus-within:opacity-100 group-hover:opacity-100 transition'
             disabled={isSubmitting}>
             <Trash />
           </button>
         </fetcher.Form>
         <button
           type='button'
-          className='py-2 px-3 text-gray-300 md:opacity-0 hover:text-gray-400 group-hover:opacity-100 transition'
+          className='py-2 px-3 text-gray-300 md:opacity-0 hover:text-gray-400 focus:text-gray-400 group-focus-within:opacity-100 group-hover:opacity-100 transition'
           onClick={() => {
             setFocusedMarkedHabit(markedHabit)
             openModal()

@@ -1,14 +1,14 @@
-import { useUser } from "@clerk/remix"
+import { useUser } from '@clerk/remix'
 import {
   ActionArgs,
   type LoaderArgs,
-  type V2_MetaFunction,
-} from "@remix-run/node"
-import { useLoaderData } from "@remix-run/react"
-import Calendar from "~/components/Calendar"
-import LinkButton from "~/components/LinkButton"
-import { prisma } from "~/db.server"
-import { getUser } from "~/utils/auth"
+  type V2_MetaFunction
+} from '@remix-run/node'
+import { useLoaderData } from '@remix-run/react'
+import Calendar from '~/components/Calendar'
+import LinkButton from '~/components/LinkButton'
+import { prisma } from '~/db.server'
+import { getUser } from '~/utils/auth'
 
 export const loader = async (args: LoaderArgs) => {
   const { userId } = await getUser(args)
@@ -18,22 +18,22 @@ export const loader = async (args: LoaderArgs) => {
       where: {
         userId,
         habit: {
-          deleted: false,
-        },
+          deleted: false
+        }
       },
       include: {
-        habit: true,
+        habit: true
       },
       orderBy: {
-        createdAt: "desc",
-      },
+        date: 'desc'
+      }
     }),
     prisma.habit.findMany({
       where: {
         userId,
-        deleted: false,
-      },
-    }),
+        deleted: false
+      }
+    })
   ])
 
   return { markedHabits, habits }
@@ -43,22 +43,22 @@ export const action = async (args: ActionArgs) => {
   const { userId } = await getUser(args)
 
   const formData = await args.request.formData()
-  if (formData.get("_action") === "mark-date") {
+  if (formData.get('_action') === 'mark-date') {
     await prisma.markedHabit.create({
       data: {
-        date: new Date(formData.get("date")?.toString()!),
+        date: new Date(formData.get('date')?.toString()!),
         userId,
-        habitId: formData.get("habitId")?.toString()!,
-      },
+        habitId: formData.get('habitId')?.toString()!
+      }
     })
     return Object.fromEntries(formData)
   }
 
-  if (formData.get("_action") === "remove-marked-habit") {
+  if (formData.get('_action') === 'remove-marked-habit') {
     await prisma.markedHabit.delete({
       where: {
-        id: formData.get("markedHabit-id")?.toString(),
-      },
+        id: formData.get('markedHabit-id')?.toString()
+      }
     })
     return {}
   }
@@ -66,16 +66,16 @@ export const action = async (args: ActionArgs) => {
   await prisma.habit.create({
     data: {
       userId,
-      name: "Test",
-      colour: "#ffffff",
-    },
+      name: 'Test',
+      colour: '#ffffff'
+    }
   })
 
   return {}
 }
 
 export const meta: V2_MetaFunction = () => {
-  return [{ title: "Sorted" }]
+  return [{ title: 'Sorted' }]
 }
 
 export default function Index() {
@@ -88,10 +88,10 @@ export default function Index() {
 
   return (
     <div>
-      <div className="mt-10">
-        <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 mb-8">
-          <div className="my-4 flex">
-            <LinkButton to={"/habits"}>Habits</LinkButton>
+      <div className='mt-10'>
+        <div className='max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 mb-8'>
+          <div className='my-4 flex'>
+            <LinkButton to={'/habits'}>Habits</LinkButton>
           </div>
           <Calendar markedHabits={markedHabits} habits={habits} />
         </div>
