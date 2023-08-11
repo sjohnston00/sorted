@@ -5,6 +5,7 @@ import {
   type V2_MetaFunction
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
+import { format } from 'date-fns'
 import Calendar from '~/components/Calendar'
 import LinkButton from '~/components/LinkButton'
 import { prisma } from '~/db.server'
@@ -46,7 +47,9 @@ export const action = async (args: ActionArgs) => {
   if (formData.get('_action') === 'mark-date') {
     await prisma.markedHabit.create({
       data: {
-        date: new Date(formData.get('date')?.toString()!),
+        date: new Date(
+          `${formData.get('date')?.toString()}T${format(new Date(), 'HH:mm')}`
+        ),
         userId,
         habitId: formData.get('habitId')?.toString()!
       }
