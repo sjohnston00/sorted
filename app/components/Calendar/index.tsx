@@ -308,6 +308,7 @@ export default function Calendar({
                       type='time'
                       label='Time'
                       divClassName='mt-2'
+                      className='appearance-none bg-transparent text-gray-500'
                       name='newMarkedHabitTime'
                       id='newMarkedHabitTime'
                       defaultValue={
