@@ -12,6 +12,8 @@ import {
 import React, { Suspense } from 'react'
 import styles from '~/styles/tailwind.css'
 import Navbar from './components/Navbar'
+import Trash from './components/icons/Trash'
+import BottomNavbar from './components/BottomNavbar'
 const RemixDevTools =
   process.env.NODE_ENV === 'development'
     ? React.lazy(() => import('remix-development-tools'))
@@ -44,16 +46,13 @@ function App() {
         <Meta />
         <Links />
       </head>
-      <body className='font-sans'>
-        <Navbar />
+      <body className='font-sans pb-24'>
+        {/* <Navbar /> */}
         <Outlet />
         <ScrollRestoration />
         {process.env.NODE_ENV === 'development' ? <LiveReload /> : null}
-        {RemixDevTools && (
-          <Suspense>
-            <RemixDevTools />
-          </Suspense>
-        )}
+        {RemixDevTools && <Suspense>{/* <RemixDevTools /> */}</Suspense>}
+        <BottomNavbar />
         <Scripts />
       </body>
     </html>

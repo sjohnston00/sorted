@@ -91,15 +91,18 @@ export default function Index() {
 
   return (
     <div>
-      <div className='mt-10'>
+      <div className='mt-8'>
         <div className='max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 mb-8'>
-          <div className='my-4 flex'>
+          {/* <div className='my-4 flex'>
             <LinkButton to={'/habits'}>Habits</LinkButton>
-          </div>
-          <Calendar markedHabits={markedHabits} habits={habits} />
+          </div> */}
+          <Calendar
+            markedHabits={markedHabits}
+            habits={habits}
+            startWeekMonday
+          />
         </div>
       </div>
-      {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
     </div>
   )
 }

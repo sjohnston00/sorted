@@ -5,6 +5,7 @@ import {
   add,
   eachDayOfInterval,
   endOfMonth,
+  endOfWeek,
   format,
   getDay,
   isEqual,
@@ -13,7 +14,8 @@ import {
   isToday,
   parse,
   parseISO,
-  startOfToday
+  startOfToday,
+  startOfWeek
 } from 'date-fns'
 import { Habit, MarkedHabit } from '@prisma/client'
 import Chevron from '../icons/Chevron'
@@ -58,8 +60,12 @@ export default function Calendar({
   // const [_markedHabits, set_markedHabits] = useState(markedHabits)
 
   const days = eachDayOfInterval({
-    start: firstDayCurrentMonth,
-    end: endOfMonth(firstDayCurrentMonth)
+    start: startOfWeek(firstDayCurrentMonth, {
+      weekStartsOn: startWeekMonday ? 1 : 0
+    }),
+    end: endOfWeek(endOfMonth(firstDayCurrentMonth), {
+      weekStartsOn: startWeekMonday ? 1 : 0
+    })
   })
 
   function previousMonth() {
@@ -87,8 +93,8 @@ export default function Calendar({
   }
   return (
     <>
-      <div className='md:grid md:grid-cols-2 '>
-        <div className='md:pr-14'>
+      <div className='md:grid md:grid-cols-2'>
+        <div className='md:pr-14 mb-8 md:mb-2'>
           <div className='flex items-center'>
             <h2 className='flex-auto font-semibold text-gray-900'>
               {format(firstDayCurrentMonth, 'MMMM yyyy')}
@@ -123,20 +129,24 @@ export default function Calendar({
             </button>
           </div>
           <div className='grid grid-cols-7 mt-10 text-xs leading-6 text-center text-gray-500'>
-            <div>S</div>
+            {startWeekMonday ? null : <div>S</div>}
             <div>M</div>
             <div>T</div>
             <div>W</div>
             <div>T</div>
             <div>F</div>
             <div>S</div>
+            {startWeekMonday ? <div>S</div> : null}
           </div>
           <div className='grid grid-cols-7 mt-2 text-sm'>
             {days.map((day, dayIdx) => (
               <div
                 key={day.toString()}
                 className={classNames(
-                  dayIdx === 0 && colStartClasses[getDay(day)],
+                  dayIdx === 0 &&
+                    colStartClasses[
+                      startWeekMonday ? getDay(day) - 1 : getDay(day)
+                    ],
                   'py-1.5'
                 )}>
                 <button

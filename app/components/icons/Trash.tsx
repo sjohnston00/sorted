@@ -1,14 +1,19 @@
 import React from 'react'
+import { twMerge } from 'tailwind-merge'
 
-export default function Trash() {
+type TrashProps = {
+  className?: string
+}
+
+export default function Trash({ className = '' }: TrashProps) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       fill='none'
       viewBox='0 0 24 24'
-      strokeWidth={1.5}
       stroke='currentColor'
-      className='w-5 h-5'>
+      strokeWidth={1.5}
+      className={twMerge('w-5 h-5', className)}>
       <path
         strokeLinecap='round'
         strokeLinejoin='round'
