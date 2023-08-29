@@ -42,8 +42,8 @@ function NavItem({ name, to, icon }: NavItemProps) {
       }>
       {({ isActive, isPending }) => (
         <>
-          {icon}
-          <span>{name}</span>
+          <span className={`${isActive ? 'text-blue-500' : ''}`}>{icon}</span>
+          <span className={`${isActive ? 'text-blue-500' : ''}`}>{name}</span>
         </>
       )}
     </NavLink>
