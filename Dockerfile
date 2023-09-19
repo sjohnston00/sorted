@@ -1,5 +1,5 @@
 # base node image
-FROM node:16-bullseye-slim as base
+FROM node:18-bullseye-slim as base
 
 # set for base and all layer that inherit from it
 ENV NODE_ENV production
@@ -22,7 +22,7 @@ WORKDIR /myapp
 
 COPY --from=deps /myapp/node_modules /myapp/node_modules
 ADD package.json package-lock.json ./
-RUN npm prune --production
+RUN npm prune --force --production
 
 # Build the app
 FROM base as build
