@@ -1,9 +1,9 @@
-import { ActionArgs } from '@remix-run/node'
+import { ActionFunctionArgs } from '@remix-run/node'
 import { format, set } from 'date-fns'
 import { prisma } from '~/db.server'
 import { getUser } from '~/utils/auth'
 
-export const action = async (args: ActionArgs) => {
+export const action = async (args: ActionFunctionArgs) => {
   const { params, request } = args
   const { userId } = await getUser(args)
   const formData = await request.formData()

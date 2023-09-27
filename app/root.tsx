@@ -1,6 +1,6 @@
-import { ClerkApp, V2_ClerkErrorBoundary } from '@clerk/remix/'
+import { ClerkApp, ClerkErrorBoundary } from '@clerk/remix'
 import { rootAuthLoader } from '@clerk/remix/ssr.server'
-import type { LinksFunction, LoaderArgs } from '@remix-run/node'
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import {
   Links,
   LiveReload,
@@ -34,7 +34,7 @@ export const links: LinksFunction = () => [
   }
 ]
 
-export const loader = (args: LoaderArgs) => rootAuthLoader(args)
+export const loader = (args: LoaderFunctionArgs) => rootAuthLoader(args)
 
 type LayoutProps = {
   children?: React.ReactNode
@@ -100,4 +100,4 @@ function RootErrorBoundary() {
 
 export default ClerkApp(App)
 
-export const ErrorBoundary = V2_ClerkErrorBoundary(RootErrorBoundary)
+export const ErrorBoundary = ClerkErrorBoundary(RootErrorBoundary)

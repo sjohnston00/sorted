@@ -1,7 +1,7 @@
 import { useUser } from '@clerk/remix'
 import {
-  ActionArgs,
-  type LoaderArgs,
+  ActionFunctionArgs,
+  type LoaderFunctionArgs,
   type V2_MetaFunction
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
@@ -11,7 +11,7 @@ import LinkButton from '~/components/LinkButton'
 import { prisma } from '~/db.server'
 import { getUser } from '~/utils/auth'
 
-export const loader = async (args: LoaderArgs) => {
+export const loader = async (args: LoaderFunctionArgs) => {
   const { userId } = await getUser(args)
 
   const [markedHabits, habits] = await Promise.all([
@@ -40,7 +40,7 @@ export const loader = async (args: LoaderArgs) => {
   return { markedHabits, habits }
 }
 
-export const action = async (args: ActionArgs) => {
+export const action = async (args: ActionFunctionArgs) => {
   const { userId } = await getUser(args)
 
   const formData = await args.request.formData()
