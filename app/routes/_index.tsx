@@ -2,7 +2,7 @@ import { useUser } from '@clerk/remix'
 import {
   ActionFunctionArgs,
   type LoaderFunctionArgs,
-  type V2_MetaFunction
+  type MetaFunction
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
@@ -77,7 +77,7 @@ export const action = async (args: ActionFunctionArgs) => {
   return {}
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [{ title: 'Sorted' }]
 }
 
