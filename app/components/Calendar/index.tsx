@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import MarkedHabitRow from './MarkedHabitRow'
-import { useFetcher, useFetchers } from '@remix-run/react'
+import { useFetcher, useFetchers, useSearchParams } from '@remix-run/react'
 import {
   add,
   eachDayOfInterval,
@@ -39,6 +39,7 @@ export default function Calendar({
   startWeekMonday
 }: CalendarProps) {
   const fetchers = useFetchers()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   let colStartClasses = [
     '',
@@ -100,6 +101,16 @@ export default function Calendar({
               {format(firstDayCurrentMonth, 'MMMM yyyy')}
               <button
                 onClick={() => {
+                  setSearchParams(
+                    (prevParams) => {
+                      prevParams.set('d', format(today, 'yyyy-MM-dd'))
+                      return prevParams
+                    },
+                    {
+                      replace: true,
+                      preventScrollReset: true
+                    }
+                  )
                   setSelectedDay(today)
                   setCurrentMonth(format(today, 'MMM-yyyy'))
                 }}
@@ -153,7 +164,19 @@ export default function Calendar({
                   type='submit'
                   name='date'
                   value={format(day, 'yyyy-MM-dd')}
-                  onClick={() => setSelectedDay(day)}
+                  onClick={() => {
+                    setSearchParams(
+                      (prevParams) => {
+                        prevParams.set('d', format(day, 'yyyy-MM-dd'))
+                        return prevParams
+                      },
+                      {
+                        replace: true,
+                        preventScrollReset: true
+                      }
+                    )
+                    setSelectedDay(day)
+                  }}
                   className={classNames(
                     isEqual(day, selectedDay) && 'text-white',
                     !isEqual(day, selectedDay) &&
