@@ -3,7 +3,7 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline'
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
-  V2_MetaFunction,
+  MetaFunction,
   redirect
 } from '@remix-run/node'
 import { Form, useNavigation } from '@remix-run/react'
@@ -36,7 +36,7 @@ export const action = async (args: ActionFunctionArgs) => {
   throw redirect('/habits')
 }
 
-export const meta: V2_MetaFunction = () => {
+export const meta: MetaFunction = () => {
   return [{ title: `Sorted | New Habit` }]
 }
 
@@ -82,7 +82,7 @@ export default function NewHabit() {
               }}
               variant='ghost'
               type='button'>
-              <ArrowPathIcon className='h-6 w-6' />
+              <ArrowPathIcon className='h-6 w-6 dark:text-gray-50' />
             </Button>
           </div>
         </div>

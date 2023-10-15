@@ -40,7 +40,7 @@ export default function MarkedHabitRow({
         duration: 0.15
       }}
       // exit={{ opacity: 0, height: 0 }}
-      className={`flex gap-2 group justify-between items-center transition rounded-xl  hover:bg-gray-50 focus-within:bg-gray-50 ${
+      className={`flex gap-2 group justify-between items-center transition rounded-xl  hover:bg-gray-50 dark:hover:bg-gray-700 focus-within:bg-gray-50 dark:focus-within:bg-gray-700 ${
         isSubmitting ? '' : ''
       }`}>
       <div className='flex gap-4 py-2 px-4 items-center'>

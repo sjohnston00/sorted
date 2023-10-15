@@ -1,5 +1,5 @@
-import { forwardRef } from "react"
-import { twMerge } from "tailwind-merge"
+import { forwardRef } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 type InputProps = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -17,7 +17,7 @@ const Input = forwardRef<InputRef, InputProps>(
   (
     {
       className,
-      label = "label",
+      label = 'label',
       showLabel = true,
       divClassName,
       labelClassName,
@@ -26,24 +26,24 @@ const Input = forwardRef<InputRef, InputProps>(
     ref
   ) => {
     return (
-      <div className={twMerge("flex-1", divClassName)}>
+      <div className={twMerge('flex-1', divClassName)}>
         {showLabel ? (
           <label
             htmlFor={props.id}
             className={twMerge(
-              "block w-full mb-1.5 text-gray-600 text-sm font-semibold tracking-wide",
+              'block w-full mb-1.5 text-gray-600 text-sm font-semibold tracking-wide',
               labelClassName
             )}>
             {label}
             {props.required ? (
-              <span className="text-red-500 ms-1">*</span>
+              <span className='text-red-500 ms-1'>*</span>
             ) : null}
           </label>
         ) : null}
         <input
           ref={ref}
           className={twMerge(
-            "border-2 border-gray-300 p-2 block w-full rounded-sm shadow-sm transition focus-visible:border-gray-800 outline-none disabled:opacity-30 disabled:cursor-not-allowed",
+            'border-2 border-gray-300 dark:border-gray-600 p-2 block w-full bg-gray-50 dark:bg-slate-700 rounded-sm shadow-sm transition focus-visible:border-gray-800 dark:focus-visible:border-gray-500 outline-none disabled:opacity-30 disabled:cursor-not-allowed',
             className
           )}
           {...props}
@@ -69,7 +69,7 @@ const Textarea = forwardRef<TextareaRef, TextareaProps>(
   (
     {
       className,
-      label = "label",
+      label = 'label',
       showLabel = true,
       divClassName,
       labelClassName,
@@ -78,24 +78,24 @@ const Textarea = forwardRef<TextareaRef, TextareaProps>(
     ref
   ) => {
     return (
-      <div className={twMerge("flex-1", divClassName)}>
+      <div className={twMerge('flex-1', divClassName)}>
         {showLabel ? (
           <label
             htmlFor={props.id}
             className={twMerge(
-              "block w-full mb-1.5 text-gray-600 text-sm font-semibold tracking-wide",
+              'block w-full mb-1.5 text-gray-600 text-sm font-semibold tracking-wide',
               labelClassName
             )}>
             {label}
             {props.required ? (
-              <span className="text-red-500 ms-1">*</span>
+              <span className='text-red-500 ms-1'>*</span>
             ) : null}
           </label>
         ) : null}
         <textarea
           ref={ref}
           className={twMerge(
-            "border-2 max-w-full border-gray-300 p-2 block w-full rounded-sm shadow-sm transition focus-visible:border-gray-800 outline-none disabled:opacity-30 disabled:cursor-not-allowed",
+            'border-2 max-w-full border-gray-300 dark:border-gray-600 p-2 block w-full bg-gray-50 dark:bg-slate-700 rounded-sm shadow-sm transition focus-visible:border-gray-800 dark:focus-visible:border-gray-500 outline-none disabled:opacity-30 disabled:cursor-not-allowed',
             className
           )}
           {...props}

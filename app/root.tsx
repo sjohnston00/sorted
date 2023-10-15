@@ -53,7 +53,7 @@ function Layout({ children }: LayoutProps) {
         <Meta />
         <Links />
       </head>
-      <body className='font-sans pb-24'>
+      <body className='font-sans pb-24 dark:bg-slate-800 dark:text-gray-50'>
         {/* <Navbar /> */}
         {children}
         <ScrollRestoration />
