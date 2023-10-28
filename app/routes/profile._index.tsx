@@ -22,11 +22,25 @@ export const loader = async (args: LoaderFunctionArgs) => {
         {
           friendRequestTo: user.userId
         }
+      ],
+      status: 'PENDING'
+    }
+  })
+  const friends = await prisma.userFriends.findMany({
+    where: {
+      OR: [
+        {
+          friendIdFrom: user.userId
+        },
+        {
+          friendIdTo: user.userId
+        }
       ]
     }
   })
   return {
-    friendRequests
+    friendRequests,
+    friends
   }
 }
 
