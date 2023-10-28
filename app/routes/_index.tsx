@@ -9,7 +9,7 @@ import { format } from 'date-fns'
 import Calendar from '~/components/Calendar'
 import LinkButton from '~/components/LinkButton'
 import { prisma } from '~/db.server'
-import { getUser } from '~/utils/auth'
+import { getUser } from '~/utils/auth.server'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const { userId } = await getUser(args)

@@ -2,7 +2,7 @@ import { LoaderFunctionArgs } from '@remix-run/node'
 import { Link, Outlet, useLocation, useNavigation } from '@remix-run/react'
 import LinkButton from '~/components/LinkButton'
 import Spinner from '~/components/icons/Spinner'
-import { getUser } from '~/utils/auth'
+import { getUser } from '~/utils/auth.server'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   await getUser(args)

@@ -9,13 +9,10 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
-  useAsyncError,
   useRouteError
 } from '@remix-run/react'
 import React, { Suspense } from 'react'
 import styles from '~/styles/tailwind.css'
-import Navbar from './components/Navbar'
-import Trash from './components/icons/Trash'
 import BottomNavbar from './components/BottomNavbar'
 const RemixDevTools =
   process.env.NODE_ENV === 'development'
@@ -34,7 +31,9 @@ export const links: LinksFunction = () => [
   }
 ]
 
-export const loader = (args: LoaderFunctionArgs) => rootAuthLoader(args)
+export const loader = async (args: LoaderFunctionArgs) => {
+  return rootAuthLoader(args)
+}
 
 type LayoutProps = {
   children?: React.ReactNode
@@ -53,7 +52,7 @@ function Layout({ children }: LayoutProps) {
         <Meta />
         <Links />
       </head>
-      <body className='font-sans pb-24'>
+      <body className='font-sans pb-24 dark:bg-slate-800 dark:text-gray-50'>
         {/* <Navbar /> */}
         {children}
         <ScrollRestoration />

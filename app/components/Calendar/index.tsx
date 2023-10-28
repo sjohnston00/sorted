@@ -97,7 +97,7 @@ export default function Calendar({
       <div className='md:grid md:grid-cols-2'>
         <div className='md:pr-14 mb-8 md:mb-2'>
           <div className='flex items-center'>
-            <h2 className='flex-auto font-semibold text-gray-900'>
+            <h2 className='flex-auto font-semibold dark:text-gray-50 text-gray-900'>
               {format(firstDayCurrentMonth, 'MMMM yyyy')}
               <button
                 onClick={() => {
@@ -185,14 +185,15 @@ export default function Calendar({
                     !isEqual(day, selectedDay) &&
                       !isToday(day) &&
                       isSameMonth(day, firstDayCurrentMonth) &&
-                      'text-gray-900',
+                      'text-gray-900 dark:text-gray-300',
                     !isEqual(day, selectedDay) &&
                       !isToday(day) &&
                       !isSameMonth(day, firstDayCurrentMonth) &&
                       'text-gray-400',
                     isEqual(day, selectedDay) && isToday(day) && 'bg-red-500',
                     isEqual(day, selectedDay) && !isToday(day) && 'bg-gray-900',
-                    !isEqual(day, selectedDay) && 'hover:bg-gray-200',
+                    !isEqual(day, selectedDay) &&
+                      'hover:bg-gray-200 dark:hover:bg-gray-700',
                     (isEqual(day, selectedDay) || isToday(day)) &&
                       'font-semibold',
                     'mx-auto flex h-8 w-8 items-center justify-center rounded-full'
@@ -317,10 +318,10 @@ export default function Calendar({
                 leave='ease-in duration-200'
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'>
-                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-50 dark:bg-slate-800 dark:text-gray-50 p-6 text-left align-middle shadow-xl transition-all'>
                   <Dialog.Title
                     as='h3'
-                    className='text-lg font-medium leading-6 text-gray-900'>
+                    className='text-lg font-medium leading-6'>
                     Edit Marked Habit
                   </Dialog.Title>
                   <fetcher.Form

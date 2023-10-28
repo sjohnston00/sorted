@@ -1,7 +1,7 @@
 import { ActionFunctionArgs } from '@remix-run/node'
 import { format, set } from 'date-fns'
 import { prisma } from '~/db.server'
-import { getUser } from '~/utils/auth'
+import { getUser } from '~/utils/auth.server'
 
 export const action = async (args: ActionFunctionArgs) => {
   const { params, request } = args
