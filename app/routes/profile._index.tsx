@@ -136,7 +136,8 @@ function UserRow({ children, user }: UserRowProps) {
   const { friendRequests } = useLoaderData<typeof loader>()
   const hasPendingRequest = friendRequests.some(
     (f) =>
-      (f.friendRequestFrom === user.id || f.friendRequestTo === user.id) &&
+      f.friendRequestFrom === loggedInUser?.id &&
+      f.friendRequestTo === user.id &&
       f.status === 'PENDING'
   )
   return (
