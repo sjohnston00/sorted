@@ -1,11 +1,34 @@
+import type { LoaderFunctionArgs } from '@remix-run/node'
 import React from 'react'
 import { UserProfile, useClerk } from '@clerk/remix'
 import Button from '~/components/Button'
-import { useFetcher } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
 import Input from '~/components/Input'
 import { loader as searchUsersLoader } from '~/routes/api.users'
 import { z } from 'zod'
 import Spinner from '~/components/icons/Spinner'
+import { getUser } from '~/utils/auth.server'
+import { prisma } from '~/db.server'
+
+export const loader = async (args: LoaderFunctionArgs) => {
+  const user = await getUser(args)
+
+  const friendRequests = await prisma.userFriendRequest.findMany({
+    where: {
+      OR: [
+        {
+          friendRequestFrom: user.userId
+        },
+        {
+          friendRequestTo: user.userId
+        }
+      ]
+    }
+  })
+  return {
+    friendRequests
+  }
+}
 
 export default function Profile() {
   const { signOut } = useClerk()
@@ -90,32 +113,7 @@ function SearchUsers() {
           fetcher.data.users.length > 0 ? (
             <div className='flex flex-col gap-1'>
               {fetcher.data?.users.map((u) => (
-                <div
-                  key={u.id}
-                  className='flex gap-2 items-center justify-between px-2 py-3 rounded-lg transition dark:hover:bg-slate-700'>
-                  <div className='flex gap-2 justify-between text-gray-300 items-center'>
-                    <img
-                      src={u.imageUrl}
-                      alt='user profile image'
-                      className='rounded-full h-10 w-10 md:h-12 md:w-12'
-                    />
-                    <div className='flex flex-col text-sm tracking-wide'>
-                      <span>{u.username}</span>
-                      <span className='text-xs text-gray-400'>
-                        {u.firstName} {u.lastName}
-                      </span>
-                    </div>
-                  </div>
-                  {/* TODO: if the user already has this friend */}
-                  {user?.id !== u.id ? (
-                    <Button
-                      onClick={() => {
-                        alert('TODO: Function not yet implemented')
-                      }}>
-                      Add friend
-                    </Button>
-                  ) : null}
-                </div>
+                <UserRow key={u.id} user={u} />
               ))}
             </div>
           ) : (
@@ -124,5 +122,52 @@ function SearchUsers() {
         ) : null}
       </div>
     </>
+  )
+}
+
+type UserRowProps = {
+  children?: React.ReactNode
+  user: Record<string, any>
+}
+
+function UserRow({ children, user }: UserRowProps) {
+  const { user: loggedInUser } = useClerk()
+  const fetcher = useFetcher()
+  const { friendRequests } = useLoaderData<typeof loader>()
+  const hasPendingRequest = friendRequests.some(
+    (f) =>
+      (f.friendRequestFrom === user.id || f.friendRequestTo === user.id) &&
+      f.status === 'PENDING'
+  )
+  return (
+    <div className='flex gap-2 items-center justify-between px-2 py-3 rounded-lg transition dark:hover:bg-slate-700'>
+      <div className='flex gap-2 justify-between text-gray-300 items-center'>
+        <img
+          src={user.imageUrl}
+          alt='user profile image'
+          className='rounded-full h-10 w-10 md:h-12 md:w-12'
+        />
+        <div className='flex flex-col text-sm tracking-wide'>
+          <span>{user.username}</span>
+          <span className='text-xs text-gray-400'>
+            {user.firstName} {user.lastName}
+          </span>
+        </div>
+      </div>
+
+      {hasPendingRequest ? <span>Pending request</span> : null}
+      {/* TODO: remove if the user already has this friend */}
+      {!hasPendingRequest && loggedInUser?.id !== user.id ? (
+        <fetcher.Form method='post' action='/api/friendRequest'>
+          <input
+            type='hidden'
+            name='friendIdTo'
+            id='friendIdTo'
+            value={user.id}
+          />
+          <Button type='submit'>Add friend</Button>
+        </fetcher.Form>
+      ) : null}
+    </div>
   )
 }
