@@ -60,7 +60,7 @@ function SearchUsers() {
           <Input label='Search users' name='search' id='search' />
         </fetcher.Form>
         <div className='mt-4'>
-          <p>Error: {fetcher.data.error}</p>
+          <p className='text-sm text-red-400'>Error: {fetcher.data.error}</p>
         </div>
       </>
     )
