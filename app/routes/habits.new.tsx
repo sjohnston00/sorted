@@ -12,7 +12,7 @@ import { useState } from 'react'
 import Button from '~/components/Button'
 import Input, { Textarea } from '~/components/Input'
 import { prisma } from '~/db.server'
-import { getUser } from '~/utils/auth'
+import { getUser } from '~/utils/auth.server'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   await getUser(args)

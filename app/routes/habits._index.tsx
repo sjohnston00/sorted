@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, V2_MetaFunction } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { prisma } from '~/db.server'
-import { getUser } from '~/utils/auth'
+import { getUser } from '~/utils/auth.server'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const { userId } = await getUser(args)

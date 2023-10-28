@@ -9,7 +9,7 @@ import { Form, useLoaderData } from '@remix-run/react'
 import React, { Fragment, useState } from 'react'
 import Button from '~/components/Button'
 import { prisma } from '~/db.server'
-import { getUser } from '~/utils/auth'
+import { getUser } from '~/utils/auth.server'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const { userId } = await getUser(args)
