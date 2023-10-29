@@ -7,8 +7,9 @@ import Input from '~/components/Input'
 import { loader as searchUsersLoader } from '~/routes/api.users'
 import { z } from 'zod'
 import Spinner from '~/components/icons/Spinner'
-import { getUser } from '~/utils/auth.server'
+import { clerkClient, getUser } from '~/utils/auth.server'
 import { prisma } from '~/db.server'
+import { getClerkUsersByIDs } from '~/utils'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const user = await getUser(args)
@@ -38,8 +39,34 @@ export const loader = async (args: LoaderFunctionArgs) => {
       ]
     }
   })
+
+  const mySentFriendRequests = friendRequests.filter(
+    (f) => f.friendRequestFrom === user.userId
+  )
+  const myReceivedFriendRequests = friendRequests.filter(
+    (f) => f.friendRequestTo === user.userId
+  )
+
+  const userIDs = new Set([
+    ...myReceivedFriendRequests.map((f) => f.friendRequestFrom),
+    ...mySentFriendRequests.map((f) => f.friendRequestTo)
+  ])
+
+  const users = await getClerkUsersByIDs([...userIDs])
+  console.log({ userIDs, users })
+
+  //TODO: get the user information from clerk from the friend requests IDs from DB
+
   return {
     friendRequests,
+    myReceivedFriendRequests: myReceivedFriendRequests.map((f) => ({
+      ...f,
+      user: users.find((u) => u.id === f.friendRequestFrom)
+    })),
+    mySentFriendRequests: mySentFriendRequests.map((f) => ({
+      ...f,
+      user: users.find((u) => u.id === f.friendRequestTo)
+    })),
     friends
   }
 }
@@ -60,6 +87,12 @@ export default function Profile() {
         </Button>
 
         <div className='my-8'>
+          <Friends />{' '}
+        </div>
+        <div className='my-8'>
+          <ReceivedFriendRequests />{' '}
+        </div>
+        <div className='my-8'>
           <SearchUsers />{' '}
         </div>
         <UserProfile
@@ -74,6 +107,72 @@ export default function Profile() {
         />
       </div>
     </div>
+  )
+}
+
+function Friends() {
+  const { friends } = useLoaderData<typeof loader>()
+  return (
+    <>
+      <h1 className='text-xl font-bold tracking-tight mb-2'>Friends</h1>
+      <hr className='border-gray-700' />
+      <div className='flex flex-col gap-2 mt-4'>
+        {friends.length > 0 ? (
+          friends.map((f) => <div key={f.id}>{f.friendIdFrom}</div>)
+        ) : (
+          <p className='text-gray-600 text-sm text-center'>
+            No friends added yet!
+          </p>
+        )}
+      </div>
+    </>
+  )
+}
+
+function ReceivedFriendRequests() {
+  const { myReceivedFriendRequests } = useLoaderData<typeof loader>()
+  return (
+    <>
+      <h1 className='text-xl font-bold tracking-tight mb-2'>Friend Requests</h1>
+      <hr className='border-gray-700' />
+      <div className='flex flex-col gap-2 mt-4'>
+        {myReceivedFriendRequests.length > 0 ? (
+          myReceivedFriendRequests.map((f) => (
+            <div
+              key={f.id}
+              className='flex gap-2 items-center justify-between px-2 py-3 rounded-lg transition dark:hover:bg-slate-700'>
+              <div className='flex gap-2 items-center'>
+                <img
+                  src={f.user?.imageUrl}
+                  alt='friend request user profile image'
+                  className='rounded-full h-10 w-10 md:h-12 md:w-12'
+                />
+                <div className='flex flex-col  text-sm tracking-wide'>
+                  <span>{f.user?.username}</span>
+                  <span className='text-xs text-gray-400'>
+                    {f.user?.firstName} {f.user?.lastName}
+                  </span>
+                </div>
+              </div>
+              <div className='flex gap-1'>
+                <Button onClick={() => alert('TODO: Not yet implemented')}>
+                  Accept
+                </Button>
+                <Button
+                  onClick={() => alert('TODO: Not yet implemented')}
+                  variant='danger'>
+                  Decline
+                </Button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className='text-gray-600 text-sm text-center'>
+            No friend requests yet!
+          </p>
+        )}
+      </div>
+    </>
   )
 }
 
@@ -147,12 +246,16 @@ type UserRowProps = {
 function UserRow({ children, user }: UserRowProps) {
   const { user: loggedInUser } = useClerk()
   const fetcher = useFetcher()
-  const { friendRequests } = useLoaderData<typeof loader>()
+  const { friendRequests, myReceivedFriendRequests } =
+    useLoaderData<typeof loader>()
   const hasPendingRequest = friendRequests.some(
     (f) =>
       f.friendRequestFrom === loggedInUser?.id &&
       f.friendRequestTo === user.id &&
       f.status === 'PENDING'
+  )
+  const hasReceivedFriendRequest = myReceivedFriendRequests.some(
+    (f) => f.friendRequestFrom === user.id
   )
   return (
     <div className='flex gap-2 items-center justify-between px-2 py-3 rounded-lg transition dark:hover:bg-slate-700'>
@@ -170,9 +273,12 @@ function UserRow({ children, user }: UserRowProps) {
         </div>
       </div>
 
-      {hasPendingRequest ? <span>Pending request</span> : null}
       {/* TODO: remove if the user already has this friend */}
-      {!hasPendingRequest && loggedInUser?.id !== user.id ? (
+      {hasPendingRequest ? <span>Pending request</span> : null}
+      {hasReceivedFriendRequest ? <span>Reply to request</span> : null}
+      {!hasReceivedFriendRequest &&
+      !hasPendingRequest &&
+      loggedInUser?.id !== user.id ? (
         <fetcher.Form method='post' action='/api/friendRequest'>
           <input
             type='hidden'
