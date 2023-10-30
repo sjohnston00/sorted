@@ -49,13 +49,13 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
   const userIDs = new Set([
     ...myReceivedFriendRequests.map((f) => f.friendRequestFrom),
-    ...mySentFriendRequests.map((f) => f.friendRequestTo)
+    ...mySentFriendRequests.map((f) => f.friendRequestTo),
+    ...friends.map((f) => f.friendIdFrom),
+    ...friends.map((f) => f.friendIdTo)
   ])
 
   const users = await getClerkUsersByIDs([...userIDs])
   console.log({ userIDs, users })
-
-  //TODO: get the user information from clerk from the friend requests IDs from DB
 
   return {
     friendRequests,
@@ -67,7 +67,11 @@ export const loader = async (args: LoaderFunctionArgs) => {
       ...f,
       user: users.find((u) => u.id === f.friendRequestTo)
     })),
-    friends
+    friends: friends.map((f) => ({
+      ...f,
+      userFrom: users.find((u) => u.id === f.friendIdFrom),
+      userTo: users.find((u) => u.id === f.friendIdTo)
+    }))
   }
 }
 
@@ -112,13 +116,59 @@ export default function Profile() {
 
 function Friends() {
   const { friends } = useLoaderData<typeof loader>()
+  const fetcher = useFetcher()
+  const { user } = useClerk()
   return (
     <>
       <h1 className='text-xl font-bold tracking-tight mb-2'>Friends</h1>
       <hr className='border-gray-700' />
       <div className='flex flex-col gap-2 mt-4'>
         {friends.length > 0 ? (
-          friends.map((f) => <div key={f.id}>{f.friendIdFrom}</div>)
+          friends.map((f) => {
+            const friend = f.friendIdFrom === user?.id ? f.userTo : f.userFrom
+            return (
+              <div
+                key={f.id}
+                className='flex gap-2 items-center justify-between px-2 py-3 rounded-lg transition dark:hover:bg-slate-700'>
+                <div className='flex gap-2 items-center'>
+                  <img
+                    src={friend?.imageUrl}
+                    alt='friend request user profile image'
+                    className='rounded-full h-10 w-10 md:h-12 md:w-12'
+                  />
+                  <div className='flex flex-col  text-sm tracking-wide'>
+                    <span>{friend?.username}</span>
+                    <span className='text-xs text-gray-400'>
+                      {friend?.firstName} {friend?.lastName}
+                    </span>
+                  </div>
+                </div>
+                <fetcher.Form
+                  method='delete'
+                  action='/api/friend'
+                  className='flex gap-1'>
+                  <input
+                    type='hidden'
+                    name='_action'
+                    id='_action'
+                    value='removeFriend'
+                  />
+                  <input
+                    type='hidden'
+                    name='friendId'
+                    id='friendId'
+                    value={f.id}
+                  />
+                  <Button
+                    variant='danger'
+                    type='button'
+                    onClick={() => alert('TODO: Not yet implemented')}>
+                    Remove
+                  </Button>
+                </fetcher.Form>
+              </div>
+            )
+          })
         ) : (
           <p className='text-gray-600 text-sm text-center'>
             No friends added yet!
@@ -131,6 +181,7 @@ function Friends() {
 
 function ReceivedFriendRequests() {
   const { myReceivedFriendRequests } = useLoaderData<typeof loader>()
+  const fetcher = useFetcher()
   return (
     <>
       <h1 className='text-xl font-bold tracking-tight mb-2'>Friend Requests</h1>
@@ -154,16 +205,33 @@ function ReceivedFriendRequests() {
                   </span>
                 </div>
               </div>
-              <div className='flex gap-1'>
-                <Button onClick={() => alert('TODO: Not yet implemented')}>
+              <fetcher.Form
+                method='put'
+                action='/api/friendRequest'
+                className='flex gap-1'>
+                <input
+                  type='hidden'
+                  name='_action'
+                  id='_action'
+                  value='updateFriendRequest'
+                />
+                <input
+                  type='hidden'
+                  name='friendRequestId'
+                  id='friendRequestId'
+                  value={f.id}
+                />
+                <Button name='value' id='value' value='accept'>
                   Accept
                 </Button>
                 <Button
-                  onClick={() => alert('TODO: Not yet implemented')}
+                  name='value'
+                  id='value'
+                  value='decline'
                   variant='danger'>
                   Decline
                 </Button>
-              </div>
+              </fetcher.Form>
             </div>
           ))
         ) : (
@@ -246,8 +314,13 @@ type UserRowProps = {
 function UserRow({ children, user }: UserRowProps) {
   const { user: loggedInUser } = useClerk()
   const fetcher = useFetcher()
-  const { friendRequests, myReceivedFriendRequests } =
-    useLoaderData<typeof loader>()
+  //TODO: if loggedInUser has this user has a friend then don't show the add friend button
+  const {
+    friendRequests,
+    myReceivedFriendRequests,
+    friends,
+    mySentFriendRequests
+  } = useLoaderData<typeof loader>()
   const hasPendingRequest = friendRequests.some(
     (f) =>
       f.friendRequestFrom === loggedInUser?.id &&
