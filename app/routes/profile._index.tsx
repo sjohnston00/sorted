@@ -155,16 +155,11 @@ function Friends() {
                   />
                   <input
                     type='hidden'
-                    name='friendId'
-                    id='friendId'
+                    name='friendRowId'
+                    id='friendRowId'
                     value={f.id}
                   />
-                  <Button
-                    variant='danger'
-                    type='button'
-                    onClick={() => alert('TODO: Not yet implemented')}>
-                    Remove
-                  </Button>
+                  <Button variant='danger'>Remove</Button>
                 </fetcher.Form>
               </div>
             )
@@ -321,6 +316,12 @@ function UserRow({ children, user }: UserRowProps) {
     friends,
     mySentFriendRequests
   } = useLoaderData<typeof loader>()
+
+  const areUsersFriends = friends.some(
+    (f) =>
+      (f.friendIdFrom === loggedInUser?.id && f.friendIdTo === user.id) ||
+      (f.friendIdFrom === user?.id && f.friendIdTo === loggedInUser?.id)
+  )
   const hasPendingRequest = friendRequests.some(
     (f) =>
       f.friendRequestFrom === loggedInUser?.id &&
@@ -349,7 +350,8 @@ function UserRow({ children, user }: UserRowProps) {
       {/* TODO: remove if the user already has this friend */}
       {hasPendingRequest ? <span>Pending request</span> : null}
       {hasReceivedFriendRequest ? <span>Reply to request</span> : null}
-      {!hasReceivedFriendRequest &&
+      {!areUsersFriends &&
+      !hasReceivedFriendRequest &&
       !hasPendingRequest &&
       loggedInUser?.id !== user.id ? (
         <fetcher.Form method='post' action='/api/friendRequest'>
