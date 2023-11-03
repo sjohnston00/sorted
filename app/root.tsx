@@ -1,5 +1,5 @@
 import { ClerkApp, ClerkErrorBoundary } from '@clerk/remix'
-import { rootAuthLoader } from '@clerk/remix/ssr.server'
+import { getAuth, rootAuthLoader } from '@clerk/remix/ssr.server'
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node'
 import {
   Links,
@@ -14,6 +14,9 @@ import {
 import React, { Suspense } from 'react'
 import styles from '~/styles/tailwind.css'
 import BottomNavbar from './components/BottomNavbar'
+import { prisma } from './db.server'
+import { getUser } from './utils/auth.server'
+import { getClerkUsersByIDs } from './utils'
 const RemixDevTools =
   process.env.NODE_ENV === 'development'
     ? React.lazy(() => import('remix-development-tools'))
@@ -31,8 +34,42 @@ export const links: LinksFunction = () => [
   }
 ]
 
+export type RootLoaderData = typeof loader
+
 export const loader = async (args: LoaderFunctionArgs) => {
-  return rootAuthLoader(args)
+  return rootAuthLoader(args, async ({ request }) => {
+    const user = request.auth
+    if (!user.userId) {
+      return null
+    }
+    const friends = await prisma.userFriends.findMany({
+      where: {
+        OR: [
+          {
+            friendIdFrom: user.userId
+          },
+          {
+            friendIdTo: user.userId
+          }
+        ]
+      }
+    })
+
+    const userIDs = new Set([
+      ...friends.map((f) => f.friendIdFrom),
+      ...friends.map((f) => f.friendIdTo)
+    ])
+
+    const users = await getClerkUsersByIDs([...userIDs])
+
+    return {
+      friends: friends.map((f) => ({
+        ...f,
+        userFrom: users.find((u) => u.id === f.friendIdFrom),
+        userTo: users.find((u) => u.id === f.friendIdTo)
+      }))
+    }
+  })
 }
 
 type LayoutProps = {
