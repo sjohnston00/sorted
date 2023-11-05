@@ -11,6 +11,7 @@ import {
 } from '@remix-run/react'
 import { format } from 'date-fns'
 import Calendar from '~/components/Calendar'
+import FriendsRow from '~/components/FriendsRow'
 import LinkButton from '~/components/LinkButton'
 import { prisma } from '~/db.server'
 import { RootLoaderData } from '~/root'
@@ -104,47 +105,8 @@ export default function Index() {
           {/* <div className='my-4 flex'>
             <LinkButton to={'/habits'}>Habits</LinkButton>
           </div> */}
-          {loggedInUser?.friends && loggedInUser.friends.length > 0 ? (
-            <div className='h-12 w-full mb-8'>
-              {loggedInUser.friends.map((f) => {
-                const friend =
-                  f.friendIdFrom === user?.id ? f.userTo : f.userFrom
-                const searchParamSameFriend =
-                  searchParams.get('friend') === friend?.username
-                return (
-                  <button
-                    className={`h-full w-12 rounded-full outline outline-2 outline-offset-2 !duration-2000 ${
-                      searchParamSameFriend
-                        ? 'outline-white animate-spin'
-                        : 'outline-transparent'
-                    }`}
-                    key={f.id}
-                    onClick={() => {
-                      setSearchParams(
-                        (prevParams) => {
-                          if (searchParamSameFriend) {
-                            prevParams.delete('friend')
-                          } else {
-                            prevParams.set('friend', friend?.username!)
-                          }
-                          return prevParams
-                        },
-                        {
-                          replace: true,
-                          preventScrollReset: true
-                        }
-                      )
-                    }}>
-                    <img
-                      src={friend?.imageUrl}
-                      alt='user profile image'
-                      className='rounded-full'
-                    />
-                  </button>
-                )
-              })}
-            </div>
-          ) : null}
+          <h2 className='text-lg font-bold tracking-tight mb-4'>Friends</h2>
+          <FriendsRow />
           <Calendar
             markedHabits={markedHabits}
             habits={habits}
