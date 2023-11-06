@@ -1,6 +1,7 @@
 import { useUser } from '@clerk/remix'
 import {
   ActionFunctionArgs,
+  redirect,
   type LoaderFunctionArgs,
   type MetaFunction
 } from '@remix-run/node'
@@ -10,15 +11,76 @@ import {
   useSearchParams
 } from '@remix-run/react'
 import { format } from 'date-fns'
+import { z } from 'zod'
 import Calendar from '~/components/Calendar'
 import FriendsRow from '~/components/FriendsRow'
 import LinkButton from '~/components/LinkButton'
 import { prisma } from '~/db.server'
 import { RootLoaderData } from '~/root'
+import { getClerkUser, getClerkUsersByIDs } from '~/utils'
 import { getUser } from '~/utils/auth.server'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const { userId } = await getUser(args)
+
+  const url = new URL(args.request.url)
+  const { friend } = z
+    .object({
+      friend: z.string().optional()
+    })
+    .parse(Object.fromEntries(url.searchParams))
+
+  if (friend) {
+    const friendData = await getClerkUser(friend)
+    if (!friendData) {
+      throw redirect('/')
+    }
+
+    const userFriend = await prisma.userFriends
+      .findFirstOrThrow({
+        where: {
+          OR: [
+            {
+              AND: {
+                friendIdFrom: friendData.id,
+                friendIdTo: userId
+              }
+            },
+            {
+              AND: {
+                friendIdTo: friendData.id,
+                friendIdFrom: userId
+              }
+            }
+          ]
+        }
+      })
+      .catch(() => {
+        console.log('users are not friends')
+        throw redirect('/')
+      })
+
+    //we know the users are friends so get the requests friends marked habits
+    const friendsMarkedHabits = await prisma.markedHabit.findMany({
+      where: {
+        userId: userFriend.id,
+        habit: {
+          deleted: false
+        }
+      },
+      include: {
+        habit: true
+      },
+      orderBy: {
+        date: 'desc'
+      }
+    })
+
+    return {
+      markedHabits: friendsMarkedHabits,
+      habits: []
+    }
+  }
 
   const [markedHabits, habits] = await Promise.all([
     prisma.markedHabit.findMany({
