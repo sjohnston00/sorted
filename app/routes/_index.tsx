@@ -1,26 +1,29 @@
 import { useUser } from '@clerk/remix'
+import { Habit, MarkedHabit } from '@prisma/client'
 import {
   ActionFunctionArgs,
   redirect,
   type LoaderFunctionArgs,
   type MetaFunction
 } from '@remix-run/node'
-import {
-  useLoaderData,
-  useRouteLoaderData,
-  useSearchParams
-} from '@remix-run/react'
+import { useLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
 import { z } from 'zod'
 import Calendar from '~/components/Calendar'
 import FriendsRow from '~/components/FriendsRow'
-import LinkButton from '~/components/LinkButton'
 import { prisma } from '~/db.server'
-import { RootLoaderData } from '~/root'
-import { getClerkUser, getClerkUsersByIDs } from '~/utils'
+import { getClerkUser } from '~/utils'
 import { getUser } from '~/utils/auth.server'
 
-export const loader = async (args: LoaderFunctionArgs) => {
+type LoaderData = {
+  markedHabits: (MarkedHabit & {
+    habit: Habit
+  })[]
+  habits: Habit[]
+  isLoadingFriendsHabits: boolean
+}
+
+export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
   const { userId } = await getUser(args)
 
   const url = new URL(args.request.url)
@@ -60,25 +63,38 @@ export const loader = async (args: LoaderFunctionArgs) => {
         throw redirect('/')
       })
 
-    //we know the users are friends so get the requests friends marked habits
-    const friendsMarkedHabits = await prisma.markedHabit.findMany({
-      where: {
-        userId: userFriend.id,
-        habit: {
+    const userFriendId =
+      userFriend.friendIdFrom === userId
+        ? userFriend.friendIdTo
+        : userFriend.friendIdFrom
+
+    const [friendsMarkedHabits, friendsHabits] = await Promise.all([
+      prisma.markedHabit.findMany({
+        where: {
+          userId: userFriendId,
+          habit: {
+            deleted: false
+          }
+        },
+        include: {
+          habit: true
+        },
+        orderBy: {
+          date: 'desc'
+        }
+      }),
+      prisma.habit.findMany({
+        where: {
+          userId: userFriendId,
           deleted: false
         }
-      },
-      include: {
-        habit: true
-      },
-      orderBy: {
-        date: 'desc'
-      }
-    })
+      })
+    ])
 
     return {
       markedHabits: friendsMarkedHabits,
-      habits: []
+      habits: friendsHabits,
+      isLoadingFriendsHabits: true
     }
   }
 
@@ -105,7 +121,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     })
   ])
 
-  return { markedHabits, habits }
+  return { markedHabits, habits, isLoadingFriendsHabits: false }
 }
 
 export const action = async (args: ActionFunctionArgs) => {
@@ -150,11 +166,9 @@ export const meta: MetaFunction = () => {
 }
 
 export default function Index() {
-  const { user, isLoaded, isSignedIn } = useUser()
-  const loggedInUser = useRouteLoaderData<RootLoaderData>('root')
-
-  const { markedHabits, habits } = useLoaderData<typeof loader>()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { isLoaded, isSignedIn } = useUser()
+  const { markedHabits, habits, isLoadingFriendsHabits } =
+    useLoaderData<typeof loader>()
 
   if (!isLoaded || !isSignedIn) {
     return null
@@ -164,12 +178,10 @@ export default function Index() {
     <div>
       <div className='mt-8'>
         <div className='max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 mb-8'>
-          {/* <div className='my-4 flex'>
-            <LinkButton to={'/habits'}>Habits</LinkButton>
-          </div> */}
           <h2 className='text-lg font-bold tracking-tight mb-4'>Friends</h2>
           <FriendsRow />
           <Calendar
+            isLoadingFriendsHabits={isLoadingFriendsHabits}
             markedHabits={markedHabits}
             habits={habits}
             startWeekMonday

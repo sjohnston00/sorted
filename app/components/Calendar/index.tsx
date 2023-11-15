@@ -30,13 +30,15 @@ import Input, { Textarea } from '../Input'
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>
   habits: SerializeFrom<Habit[]>
+  isLoadingFriendsHabits: boolean
   startWeekMonday?: boolean
 }
 
 export default function Calendar({
   markedHabits,
   habits,
-  startWeekMonday
+  startWeekMonday,
+  isLoadingFriendsHabits
 }: CalendarProps) {
   const fetchers = useFetchers()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -271,6 +273,7 @@ export default function Calendar({
                     )}
                   {selectedDayMarkedHabits.map((s) => (
                     <MarkedHabitRow
+                      isLoadingFriendsHabits={isLoadingFriendsHabits}
                       key={s.id}
                       markedHabit={s}
                       closeModal={closeModal}
@@ -289,9 +292,15 @@ export default function Calendar({
 
           <hr />
           <div className='grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4 place-items-center mt-4'>
-            {habits.map((h) => (
-              <HabitButton habit={h} selectedDay={selectedDay} key={h.id} />
-            ))}
+            {isLoadingFriendsHabits ? (
+              <span className='col-span-3 text-gray-400'>
+                You are curretly viewing a friends habits
+              </span>
+            ) : (
+              habits.map((h) => (
+                <HabitButton habit={h} selectedDay={selectedDay} key={h.id} />
+              ))
+            )}
           </div>
         </div>
       </div>

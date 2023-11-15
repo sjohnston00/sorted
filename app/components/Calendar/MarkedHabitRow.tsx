@@ -15,12 +15,14 @@ type MarkedHabitRowProps = {
   setFocusedMarkedHabit: React.Dispatch<
     React.SetStateAction<SerializeFrom<MarkedHabit & { habit: Habit }> | null>
   >
+  isLoadingFriendsHabits: boolean
 }
 
 export default function MarkedHabitRow({
   markedHabit,
   openModal,
-  setFocusedMarkedHabit
+  setFocusedMarkedHabit,
+  isLoadingFriendsHabits
 }: MarkedHabitRowProps) {
   const fetcher = useFetcher()
   const fetchers = useFetchers()
@@ -85,7 +87,7 @@ export default function MarkedHabitRow({
         </div>
       </div>
       <div className='flex gap-px items-center'>
-        <fetcher.Form method='post'>
+        <fetcher.Form method='post' hidden={isLoadingFriendsHabits}>
           <input type='hidden' name='_action' value='remove-marked-habit' />
           <input type='hidden' name='markedHabit-id' value={markedHabit.id} />
           <button
@@ -96,6 +98,7 @@ export default function MarkedHabitRow({
           </button>
         </fetcher.Form>
         <button
+          hidden={isLoadingFriendsHabits}
           type='button'
           className='py-2 px-3 text-gray-300 md:opacity-0 hover:text-gray-400 focus:text-gray-400 group-focus-within:opacity-100 group-hover:opacity-100 transition'
           onClick={() => {
