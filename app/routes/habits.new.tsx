@@ -21,12 +21,14 @@ export const loader = async (args: LoaderFunctionArgs) => {
 export const action = async (args: ActionFunctionArgs) => {
   const { userId } = await getUser(args)
   const formData = await args.request.formData()
-  const { name, colour, description } = Object.fromEntries(formData)
+  const { name, colour, description, privateHabit } =
+    Object.fromEntries(formData)
 
   await prisma.habit.create({
     data: {
       name: name.toString()!,
       colour: colour.toString()!,
+      private: !!privateHabit,
       userId,
       days: formData.getAll('days').map((d) => String(d)),
       description: description.toString()
@@ -34,6 +36,7 @@ export const action = async (args: ActionFunctionArgs) => {
   })
 
   throw redirect('/habits')
+  return {}
 }
 
 export const meta: MetaFunction = () => {
@@ -93,6 +96,12 @@ export default function NewHabit() {
           id='description'
           autoComplete='off'
         />
+        <div className='mt-4'>
+          <label>
+            <input type='checkbox' name='privateHabit' className='p-1' />
+            <span className='text-gray-200 ml-2'>Private habit?</span>
+          </label>
+        </div>
         <span className='text-sm text-center text-gray-400 mt-4 mb-2 block'>
           Select the days you'd like to track:
         </span>

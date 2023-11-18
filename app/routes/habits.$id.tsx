@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
-  V2_MetaFunction,
+  MetaFunction,
   redirect
 } from '@remix-run/node'
 import { Form, useLoaderData } from '@remix-run/react'
@@ -35,7 +35,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return { habit }
 }
 
-export const meta: V2_MetaFunction = (args) => {
+export const meta: MetaFunction = (args) => {
   const data = args.data as Awaited<ReturnType<typeof loader>>
   return [{ title: `Sorted | My Habits | ${data.habit.name}` }]
 }
@@ -94,17 +94,20 @@ export default function Habit() {
   return (
     <>
       <div className=''>
-        <div
-          className='inline-flex items-center justify-center aspect-square w-fit min-w-[8rem] py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide'
-          style={
-            {
-              color: habit.colour,
-              borderColor: habit.colour,
-              backgroundColor: `${habit.colour}20`,
-              '--tw-shadow-color': habit.colour
-            } as React.CSSProperties
-          }>
-          {habit.name}
+        <div className='flex gap-2 items-end'>
+          <div
+            className='inline-flex items-center justify-center aspect-square w-fit min-w-[8rem] py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide'
+            style={
+              {
+                color: habit.colour,
+                borderColor: habit.colour,
+                backgroundColor: `${habit.colour}20`,
+                '--tw-shadow-color': habit.colour
+              } as React.CSSProperties
+            }>
+            {habit.name}
+          </div>
+          {habit.private ? <span>Private habit</span> : null}
         </div>
         {habit.description ? (
           <p className='text-gray-600 mt-2'>Description: {habit.description}</p>

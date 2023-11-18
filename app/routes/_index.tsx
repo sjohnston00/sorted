@@ -73,7 +73,8 @@ export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
         where: {
           userId: userFriendId,
           habit: {
-            deleted: false
+            deleted: false,
+            private: false
           }
         },
         include: {
@@ -86,7 +87,8 @@ export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
       prisma.habit.findMany({
         where: {
           userId: userFriendId,
-          deleted: false
+          deleted: false,
+          private: false
         }
       })
     ])

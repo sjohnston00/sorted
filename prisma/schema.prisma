@@ -19,6 +19,7 @@ model Habit {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
   deleted   Boolean   @default(false)
+  private   Boolean   @default(false)
 
   habits MarkedHabit[]
 }
