@@ -9,7 +9,7 @@ import UserCircle from './icons/UserCircle'
 
 export default function BottomNavbar() {
   return (
-    <nav className='fixed px-4 bottom-0 h-[83px] backdrop-blur-md inset-x-0 text-black flex pt-1.5 items-start justify-around bottom-nav overflow-x-auto border-t border-gray-100'>
+    <div className='btm-nav backdrop-blur-md bottom-nav bg-transparent'>
       <NavItem name='Home' to='/' icon={<CalendarDays className='w-7 h-7' />} />
       <NavItem
         name='Habits'
@@ -21,7 +21,7 @@ export default function BottomNavbar() {
         to='/profile'
         icon={<UserCircle className='w-7 h-7' />}
       />
-    </nav>
+    </div>
   )
 }
 
@@ -36,14 +36,18 @@ function NavItem({ name, to, icon }: NavItemProps) {
     <NavLink
       to={to}
       className={({ isActive, isPending }) =>
-        `flex flex-col items-center justify-center px-2 text-gray-500 text-xs tracking-tighter gap-px transition ${
-          isActive ? 'text-blue-500 font-medium' : ''
+        `flex flex-col items-center justify-center px-2 text-gray-500 text-xs tracking-tighter gap-px transition bg-transparent ${
+          isActive ? 'active border-accent ' : ''
         } ${isPending ? 'opacity-30' : ''}`
       }>
       {({ isActive, isPending }) => (
         <>
-          <span className={`${isActive ? 'text-blue-500' : ''}`}>{icon}</span>
-          <span className={`${isActive ? 'text-blue-500' : ''}`}>{name}</span>
+          <span className={`${isActive ? 'active text-accent' : ''}`}>
+            {icon}
+          </span>
+          <span className={`${isActive ? 'active text-accent' : ''}`}>
+            {name}
+          </span>
         </>
       )}
     </NavLink>

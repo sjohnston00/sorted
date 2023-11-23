@@ -5,7 +5,10 @@ type InputProps = React.DetailedHTMLProps<
   React.InputHTMLAttributes<HTMLInputElement>,
   HTMLInputElement
 > & {
-  label?: string | React.ReactNode
+  label?: React.ReactNode
+  topRightlabel?: React.ReactNode
+  bottomLeftlabel?: React.ReactNode
+  bottomRightlabel?: React.ReactNode
   showLabel?: boolean
   divClassName?: string
   labelClassName?: string
@@ -21,33 +24,37 @@ const Input = forwardRef<InputRef, InputProps>(
       showLabel = true,
       divClassName,
       labelClassName,
+      topRightlabel,
+      bottomLeftlabel,
+      bottomRightlabel,
       ...props
     },
     ref
   ) => {
     return (
-      <div className={twMerge('flex-1', divClassName)}>
+      <div className={twMerge('flex-1 form-control w-full', divClassName)}>
         {showLabel ? (
           <label
             htmlFor={props.id}
-            className={twMerge(
-              'block w-full mb-1.5 text-gray-600 text-sm font-semibold tracking-wide',
-              labelClassName
-            )}>
-            {label}
-            {props.required ? (
-              <span className='text-red-500 ms-1'>*</span>
-            ) : null}
+            className={twMerge('label', labelClassName)}>
+            <span className='label-text'>
+              {label}{' '}
+              {props.required ? (
+                <span className='text-red-500 ms-1'>*</span>
+              ) : null}
+            </span>
+            <span className='label-text-alt'>{topRightlabel}</span>
           </label>
         ) : null}
         <input
           ref={ref}
-          className={twMerge(
-            'border-2 border-gray-300 dark:border-gray-600 p-2 block w-full bg-gray-50 dark:bg-slate-700 rounded-sm shadow-sm transition focus-visible:border-gray-800 dark:focus-visible:border-gray-500 outline-none disabled:opacity-30 disabled:cursor-not-allowed',
-            className
-          )}
+          className={twMerge('input input-bordered w-full', className)}
           {...props}
         />
+        <label className='label'>
+          <span className='label-text-alt'>{bottomLeftlabel}</span>
+          <span className='label-text-alt'>{bottomRightlabel}</span>
+        </label>
       </div>
     )
   }

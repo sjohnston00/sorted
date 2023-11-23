@@ -10,6 +10,7 @@ import { Form, useNavigation } from '@remix-run/react'
 import randomColour from 'randomcolor'
 import { useState } from 'react'
 import Button from '~/components/Button'
+import Checkbox from '~/components/Form/Checkbox'
 import Input, { Textarea } from '~/components/Input'
 import { prisma } from '~/db.server'
 import { getUser } from '~/utils/auth.server'
@@ -96,12 +97,7 @@ export default function NewHabit() {
           id='description'
           autoComplete='off'
         />
-        <div className='mt-4'>
-          <label>
-            <input type='checkbox' name='privateHabit' className='p-1' />
-            <span className='text-gray-200 ml-2'>Private habit?</span>
-          </label>
-        </div>
+        <Checkbox className='mt-4' name='privateHabit' label='Private Habit' />
         <span className='text-sm text-center text-gray-400 mt-4 mb-2 block'>
           Select the days you'd like to track:
         </span>
