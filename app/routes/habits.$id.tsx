@@ -240,7 +240,11 @@ function UpdateHabitForm() {
       />
       {/* <Input label='Description' defaultValue={habit.description} /> */}
       <label className='block mt-4'>
-        <input type='checkbox' name='privateHabit' />
+        <input
+          type='checkbox'
+          name='privateHabit'
+          defaultChecked={habit.private}
+        />
         <span>Private Habit?</span>
       </label>
       <span className='text-sm text-center text-gray-400 mt-4 mb-2 block'>
