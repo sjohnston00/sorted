@@ -37,15 +37,15 @@ function NavItem({ name, to, icon }: NavItemProps) {
       to={to}
       className={({ isActive, isPending }) =>
         `flex flex-col items-center justify-center px-2 text-gray-500 text-xs tracking-tighter gap-px transition bg-transparent ${
-          isActive ? 'active border-accent ' : ''
+          isActive ? 'active border-primary ' : ''
         } ${isPending ? 'opacity-30' : ''}`
       }>
       {({ isActive, isPending }) => (
         <>
-          <span className={`${isActive ? 'active text-accent' : ''}`}>
+          <span className={`${isActive ? 'active text-primary' : ''}`}>
             {icon}
           </span>
-          <span className={`${isActive ? 'active text-accent' : ''}`}>
+          <span className={`${isActive ? 'active text-primary' : ''}`}>
             {name}
           </span>
         </>

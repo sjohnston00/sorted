@@ -64,7 +64,10 @@ type TextareaProps = React.DetailedHTMLProps<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
   HTMLTextAreaElement
 > & {
-  label?: string | React.ReactNode
+  label?: React.ReactNode
+  topRightLabel?: React.ReactNode
+  bottomLeftLabel?: React.ReactNode
+  bottomRightLabel?: React.ReactNode
   showLabel?: boolean
   divClassName?: string
   labelClassName?: string
@@ -80,33 +83,37 @@ const Textarea = forwardRef<TextareaRef, TextareaProps>(
       showLabel = true,
       divClassName,
       labelClassName,
+      topRightLabel,
+      bottomLeftLabel,
+      bottomRightLabel,
       ...props
     },
     ref
   ) => {
     return (
-      <div className={twMerge('flex-1', divClassName)}>
+      <div className={twMerge('form-control', divClassName)}>
         {showLabel ? (
           <label
             htmlFor={props.id}
-            className={twMerge(
-              'block w-full mb-1.5 text-gray-600 text-sm font-semibold tracking-wide',
-              labelClassName
-            )}>
-            {label}
-            {props.required ? (
-              <span className='text-red-500 ms-1'>*</span>
-            ) : null}
+            className={twMerge('label', labelClassName)}>
+            <span className='label-text'>
+              {label}{' '}
+              {props.required ? (
+                <span className='text-red-500 ms-1'>*</span>
+              ) : null}
+            </span>
+            <span className='label-text-alt'>{topRightLabel}</span>
           </label>
         ) : null}
         <textarea
           ref={ref}
-          className={twMerge(
-            'border-2 max-w-full border-gray-300 dark:border-gray-600 p-2 block w-full bg-gray-50 dark:bg-slate-700 rounded-sm shadow-sm transition focus-visible:border-gray-800 dark:focus-visible:border-gray-500 outline-none disabled:opacity-30 disabled:cursor-not-allowed',
-            className
-          )}
+          className={twMerge('textarea textarea-bordered h-24', className)}
           {...props}
         />
+        <label className='label'>
+          <span className='label-text-alt'>{bottomLeftLabel}</span>
+          <span className='label-text-alt'>{bottomRightLabel}</span>
+        </label>
       </div>
     )
   }

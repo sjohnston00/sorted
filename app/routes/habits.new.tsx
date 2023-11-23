@@ -54,7 +54,7 @@ export default function NewHabit() {
   return (
     <div className='max-w-md mx-auto'>
       <Form method='post'>
-        <div className='flex gap-2 mb-4'>
+        <div className='flex gap-2 mb-2'>
           <Input
             label='Name'
             type='text'
@@ -66,10 +66,9 @@ export default function NewHabit() {
             maxLength={255}
             required
           />
-          <div className='flex'>
+          <div className='flex items-center'>
             <Input
               label='Colour'
-              className='p-0 border-none'
               type='color'
               name='colour'
               value={colour}
@@ -80,7 +79,6 @@ export default function NewHabit() {
               required
             />
             <Button
-              className='self-end'
               onClick={() => {
                 setColour(randomColour())
               }}
@@ -140,12 +138,9 @@ export default function NewHabit() {
             </div>
           ))}
         </div> */}
-        <button
-          type='submit'
-          className='px-4 py-2 bg-indigo-400 text-gray-100 font-semibold tracking-wide rounded shadow active:scale-95 active:opacity-80 disabled:opacity-80 disabled:cursor-not-allowed transition'
-          disabled={isSubmitting || isLoading}>
+        <Button type='submit' disabled={isSubmitting || isLoading}>
           Create
-        </button>
+        </Button>
       </Form>
     </div>
   )
