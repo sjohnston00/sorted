@@ -1,4 +1,6 @@
+import { prisma } from '~/db.server'
 import { clerkClient } from './auth.server'
+import { SignedInAuthObject } from '@clerk/remix/api/index'
 
 export function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ')
@@ -42,4 +44,46 @@ export async function getClerkUsersByIDs(userIDs: string[]) {
     firstName: u.firstName,
     lastName: u.lastName
   }))
+}
+
+export async function getUsersFriendRequests(user: SignedInAuthObject) {
+  const friendRequests = await prisma.userFriendRequest.findMany({
+    where: {
+      OR: [
+        {
+          friendRequestFrom: user.userId
+        },
+        {
+          friendRequestTo: user.userId
+        }
+      ],
+      status: 'PENDING'
+    }
+  })
+
+  const mySentFriendRequests = friendRequests.filter(
+    (f) => f.friendRequestFrom === user.userId
+  )
+  const myReceivedFriendRequests = friendRequests.filter(
+    (f) => f.friendRequestTo === user.userId
+  )
+
+  const userIDs = new Set([
+    ...myReceivedFriendRequests.map((f) => f.friendRequestFrom),
+    ...mySentFriendRequests.map((f) => f.friendRequestTo)
+  ])
+
+  const users = await getClerkUsersByIDs([...userIDs])
+
+  return {
+    friendRequests,
+    myReceivedFriendRequests: myReceivedFriendRequests.map((f) => ({
+      ...f,
+      user: users.find((u) => u.id === f.friendRequestFrom)
+    })),
+    mySentFriendRequests: mySentFriendRequests.map((f) => ({
+      ...f,
+      user: users.find((u) => u.id === f.friendRequestTo)
+    }))
+  }
 }

@@ -9,24 +9,14 @@ import { z } from 'zod'
 import Spinner from '~/components/icons/Spinner'
 import { clerkClient, getUser } from '~/utils/auth.server'
 import { prisma } from '~/db.server'
-import { getClerkUsersByIDs } from '~/utils'
+import { getClerkUsersByIDs, getUsersFriendRequests } from '~/utils'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const user = await getUser(args)
 
-  const friendRequests = await prisma.userFriendRequest.findMany({
-    where: {
-      OR: [
-        {
-          friendRequestFrom: user.userId
-        },
-        {
-          friendRequestTo: user.userId
-        }
-      ],
-      status: 'PENDING'
-    }
-  })
+  const { myReceivedFriendRequests, mySentFriendRequests, friendRequests } =
+    await getUsersFriendRequests(user)
+
   const friends = await prisma.userFriends.findMany({
     where: {
       OR: [
@@ -40,13 +30,6 @@ export const loader = async (args: LoaderFunctionArgs) => {
     }
   })
 
-  const mySentFriendRequests = friendRequests.filter(
-    (f) => f.friendRequestFrom === user.userId
-  )
-  const myReceivedFriendRequests = friendRequests.filter(
-    (f) => f.friendRequestTo === user.userId
-  )
-
   const userIDs = new Set([
     ...myReceivedFriendRequests.map((f) => f.friendRequestFrom),
     ...mySentFriendRequests.map((f) => f.friendRequestTo),
@@ -55,18 +38,11 @@ export const loader = async (args: LoaderFunctionArgs) => {
   ])
 
   const users = await getClerkUsersByIDs([...userIDs])
-  console.log({ userIDs, users })
 
   return {
     friendRequests,
-    myReceivedFriendRequests: myReceivedFriendRequests.map((f) => ({
-      ...f,
-      user: users.find((u) => u.id === f.friendRequestFrom)
-    })),
-    mySentFriendRequests: mySentFriendRequests.map((f) => ({
-      ...f,
-      user: users.find((u) => u.id === f.friendRequestTo)
-    })),
+    myReceivedFriendRequests,
+    mySentFriendRequests,
     friends: friends.map((f) => ({
       ...f,
       userFrom: users.find((u) => u.id === f.friendIdFrom),
@@ -159,7 +135,7 @@ function Friends() {
                     id='friendRowId'
                     value={f.id}
                   />
-                  <Button variant='danger'>Remove</Button>
+                  <Button>Remove</Button>
                 </fetcher.Form>
               </div>
             )
@@ -216,14 +192,18 @@ function ReceivedFriendRequests() {
                   id='friendRequestId'
                   value={f.id}
                 />
-                <Button name='value' id='value' value='accept'>
+                <Button
+                  name='value'
+                  id='value'
+                  value='accept'
+                  className='btn-primary'>
                   Accept
                 </Button>
                 <Button
                   name='value'
                   id='value'
                   value='decline'
-                  variant='danger'>
+                  className='btn-error'>
                   Decline
                 </Button>
               </fetcher.Form>

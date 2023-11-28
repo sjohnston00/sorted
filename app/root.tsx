@@ -16,7 +16,7 @@ import styles from '~/styles/tailwind.css'
 import BottomNavbar from './components/BottomNavbar'
 import { prisma } from './db.server'
 import { getUser } from './utils/auth.server'
-import { getClerkUsersByIDs } from './utils'
+import { getClerkUsersByIDs, getUsersFriendRequests } from './utils'
 const RemixDevTools =
   process.env.NODE_ENV === 'development'
     ? React.lazy(() => import('remix-development-tools'))
@@ -37,8 +37,8 @@ export const links: LinksFunction = () => [
 export type RootLoaderData = typeof loader
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  const user = await getUser(args)
   return rootAuthLoader(args, async ({ request }) => {
-    const user = request.auth
     if (!user.userId) {
       return null
     }
@@ -61,8 +61,10 @@ export const loader = async (args: LoaderFunctionArgs) => {
     ])
 
     const users = await getClerkUsersByIDs([...userIDs])
+    const { myReceivedFriendRequests } = await getUsersFriendRequests(user)
 
     return {
+      myReceivedFriendRequests,
       friends: friends.map((f) => ({
         ...f,
         userFrom: users.find((u) => u.id === f.friendIdFrom),
