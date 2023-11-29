@@ -37,7 +37,7 @@ export const links: LinksFunction = () => [
 export type RootLoaderData = typeof loader
 
 export const loader = async (args: LoaderFunctionArgs) => {
-  const user = await getUser(args)
+  const user = await getAuth(args)
   return rootAuthLoader(args, async ({ request }) => {
     if (!user.userId) {
       return null
