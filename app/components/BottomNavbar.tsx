@@ -24,7 +24,7 @@ export default function BottomNavbar() {
         to='/profile'
         icon={<UserCircle className='w-7 h-7' />}>
         <div className='indicator'>
-          {rootLoaderData &&
+          {rootLoaderData && rootLoaderData.myReceivedFriendRequests &&
           rootLoaderData.myReceivedFriendRequests.length > 0 ? (
             <span className='indicator-item badge badge-primary'>
               {rootLoaderData.myReceivedFriendRequests.length}
