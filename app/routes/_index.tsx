@@ -7,12 +7,25 @@ import {
   type MetaFunction
 } from '@remix-run/node'
 import { useLoaderData } from '@remix-run/react'
-import { format } from 'date-fns'
+import {
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
+  getDay,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  parse,
+  parseISO,
+  startOfToday,
+  startOfWeek
+} from 'date-fns'
 import { z } from 'zod'
 import Calendar from '~/components/Calendar'
 import FriendsRow from '~/components/FriendsRow'
 import { prisma } from '~/db.server'
-import { getClerkUser } from '~/utils'
+import { classNames, getClerkUser } from '~/utils'
 import { getUser } from '~/utils/auth.server'
 
 type LoaderData = {
@@ -182,6 +195,7 @@ export default function Index() {
         <div className='max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 mb-8'>
           <h2 className='text-lg font-bold tracking-tight mb-4'>Friends</h2>
           <FriendsRow />
+
           <Calendar
             isLoadingFriendsHabits={isLoadingFriendsHabits}
             markedHabits={markedHabits}
@@ -190,6 +204,88 @@ export default function Index() {
           />
         </div>
       </div>
+    </div>
+  )
+}
+
+function ScrollingCalendar() {
+  const { markedHabits } = useLoaderData<typeof loader>()
+  const today = startOfToday()
+  const currentMonth = format(today, 'MMM-yyyy')
+  const firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
+  const days = eachDayOfInterval({
+    start: startOfWeek(firstDayCurrentMonth, {
+      weekStartsOn: 1
+    }),
+    end: endOfWeek(endOfMonth(firstDayCurrentMonth), {
+      weekStartsOn: 1
+    })
+  })
+
+  let colStartClasses = [
+    '',
+    'col-start-2',
+    'col-start-3',
+    'col-start-4',
+    'col-start-5',
+    'col-start-6',
+    'col-start-7'
+  ]
+  return (
+    <div className='flex gap-8 overflow-x-auto snap-x snap-mandatory mb-20 [-webkit-overflow-scrolling:touch] scroll-smooth'>
+      {['December 2023', 'January 2024', 'Febuary 2024', 'March 2024'].map(
+        (v, i) => (
+          <div
+            key={i}
+            className='[scroll-snap-align:start] min-w-full min-h-full'>
+            <span className='text-xl font-bold ml-2'>{v}</span>
+            <div className='grid grid-cols-7 mt-10 text-xs leading-6 text-center text-gray-500'>
+              <div>M</div>
+              <div>T</div>
+              <div>W</div>
+              <div>T</div>
+              <div>F</div>
+              <div>S</div>
+              <div>S</div>
+            </div>
+            <div className='grid grid-cols-7 mt-2 text-sm'>
+              {days.map((day, dayIdx) => (
+                <div
+                  key={day.toString()}
+                  className={classNames(
+                    dayIdx === 0 && colStartClasses[getDay(day) - 1],
+                    'py-1.5'
+                  )}>
+                  <button
+                    type='submit'
+                    name='date'
+                    value={format(day, 'yyyy-MM-dd')}
+                    className={
+                      'mx-auto flex h-8 w-8 items-center justify-center rounded-full'
+                    }>
+                    <time dateTime={format(day, 'yyyy-MM-dd')}>
+                      {format(day, 'd')}
+                    </time>
+                  </button>
+                  <div className='flex h-1 w-fit gap-px mx-auto mt-1'>
+                    {markedHabits
+                      .filter((m) => isSameDay(parseISO(m.date), day))
+                      .slice(0, 3)
+                      .map((m) => (
+                        <div
+                          key={`calendar-${m.id}`}
+                          className='w-1 h-1 rounded-full'
+                          style={{
+                            backgroundColor: m.habit.colour
+                          }}></div>
+                      ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      )}
     </div>
   )
 }
