@@ -12,39 +12,44 @@
     "deploy:db": "prisma migrate deploy"
   },
   "dependencies": {
-    "@clerk/remix": "^3.1.6",
+    "@clerk/remix": "^3.1.9",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
-    "@prisma/client": "^5.6.0",
+    "@prisma/client": "^5.7.0",
     "@remix-run/css-bundle": "^2.3.1",
     "@remix-run/node": "^2.3.1",
     "@remix-run/react": "^2.3.1",
     "@remix-run/serve": "^2.3.1",
+    "@types/react-virtualized": "^9.21.29",
     "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
-    "framer-motion": "^10.16.5",
+    "framer-motion": "^10.16.16",
     "isbot": "^3.7.1",
     "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remix-development-tools": "^3.4.0",
-    "tailwind-merge": "^2.0.0",
+    "react-virtualized": "github:samarai-project/react-virtualized-fixed",
+    "remix-development-tools": "^3.6.2",
+    "tailwind-merge": "^2.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.3.1",
     "@remix-run/eslint-config": "^2.3.1",
     "@types/randomcolor": "^0.5.9",
-    "@types/react": "^18.2.38",
+    "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "daisyui": "^4.4.4",
-    "eslint": "^8.54.0",
-    "prisma": "^5.6.0",
-    "tailwindcss": "^3.3.5",
+    "daisyui": "^4.4.19",
+    "eslint": "^8.55.0",
+    "prisma": "^5.7.0",
+    "tailwindcss": "^3.3.6",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.3"
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "resolutions": {
+    "react-virtualized": "git+https://git@github.com/remorses/react-virtualized-fixed-import.git#9.22.3"
   }
 }
