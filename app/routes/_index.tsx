@@ -11,7 +11,6 @@ import { format } from 'date-fns'
 import { z } from 'zod'
 import Calendar from '~/components/Calendar'
 import FriendsRow from '~/components/FriendsRow'
-import ScrollingCalendar from '~/components/ScrollingCalendar'
 import { prisma } from '~/db.server'
 import { getClerkUser } from '~/utils'
 import { getUser } from '~/utils/auth.server'
@@ -184,7 +183,7 @@ export default function Index() {
           <h2 className='text-lg font-bold tracking-tight mb-4'>Friends</h2>
           <FriendsRow />
 
-          {/* <ScrollingCalendar indicators={markedHabits} /> */}
+          {/* <ScrollingCalendar indicators={markedHabits}/> */}
           <Calendar
             isLoadingFriendsHabits={isLoadingFriendsHabits}
             markedHabits={markedHabits}
