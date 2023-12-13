@@ -54,3 +54,25 @@ model UserFriendRequest {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model FeatureFlag {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users UserFeatureFlag[]
+}
+
+model UserFeatureFlag {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  featureFlagId Int
+  featureFlag   FeatureFlag @relation(fields: [featureFlagId], references: [id])
+}
