@@ -63,7 +63,14 @@ export const loader = async (args: LoaderFunctionArgs) => {
     const users = await getClerkUsersByIDs([...userIDs])
     const { myReceivedFriendRequests } = await getUsersFriendRequests(user)
 
+    const userFeatureFlags = await prisma.userFeatureFlag.findMany({
+      where: {
+        userId: user.userId
+      }
+    })
+
     return {
+      userFeatureFlags,
       myReceivedFriendRequests,
       friends: friends.map((f) => ({
         ...f,
