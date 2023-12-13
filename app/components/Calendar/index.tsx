@@ -26,6 +26,7 @@ import Trash from '../icons/Trash'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Dialog, Transition } from '@headlessui/react'
 import Input, { Textarea } from '../Input'
+import Button from '../Button'
 
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>
@@ -327,7 +328,7 @@ export default function Calendar({
                 leave='ease-in duration-200'
                 leaveFrom='opacity-100 scale-100'
                 leaveTo='opacity-0 scale-95'>
-                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-2xl bg-gray-50 dark:bg-slate-800 dark:text-gray-50 p-6 text-left align-middle shadow-xl transition-all'>
+                <Dialog.Panel className='w-full max-w-md transform overflow-hidden rounded-box p-6 bg-base-100 align-middle shadow-xl transition-all'>
                   <Dialog.Title
                     as='h3'
                     className='text-lg font-medium leading-6'>
@@ -351,7 +352,7 @@ export default function Calendar({
                       type='time'
                       label='Time'
                       divClassName='mt-2'
-                      className='appearance-none bg-transparent text-gray-500'
+                      className='appearance-none'
                       name='newMarkedHabitTime'
                       id='newMarkedHabitTime'
                       defaultValue={
@@ -370,19 +371,19 @@ export default function Calendar({
                     />
 
                     <div className='mt-4 flex items-center gap-2'>
-                      <button
+                      <Button
                         type='button'
-                        className='inline-flex justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 text-sm font-medium text-red-900 hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2'
+                        className='btn-error'
                         onClick={closeModal}>
                         Cancel
-                      </button>
+                      </Button>
 
-                      <button
+                      <Button
                         type='submit'
-                        className='inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2'
+                        className='btn-primary'
                         onClick={closeModal}>
                         Confirm
-                      </button>
+                      </Button>
                     </div>
                   </fetcher.Form>
                 </Dialog.Panel>

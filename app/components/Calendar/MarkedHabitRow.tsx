@@ -28,8 +28,6 @@ export default function MarkedHabitRow({
   const fetchers = useFetchers()
   const isSubmitting = !!fetcher.formData
 
-  console.log(fetchers)
-
   return (
     <motion.div
       // initial={{ opacity: 0, height: 0 }}
