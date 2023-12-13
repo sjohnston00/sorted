@@ -2,7 +2,7 @@ import type { LoaderFunctionArgs } from '@remix-run/node'
 import React from 'react'
 import { UserProfile, useClerk } from '@clerk/remix'
 import Button from '~/components/Button'
-import { useFetcher, useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData, useRouteLoaderData } from '@remix-run/react'
 import Input from '~/components/Input'
 import { loader as searchUsersLoader } from '~/routes/api.users'
 import { z } from 'zod'
@@ -10,6 +10,7 @@ import Spinner from '~/components/icons/Spinner'
 import { clerkClient, getUser } from '~/utils/auth.server'
 import { prisma } from '~/db.server'
 import { getClerkUsersByIDs, getUsersFriendRequests } from '~/utils'
+import { RootLoaderData } from '~/root'
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const user = await getUser(args)
@@ -39,6 +40,12 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
   const users = await getClerkUsersByIDs([...userIDs])
 
+  const featureFlags = await prisma.featureFlag.findMany({
+    where: {
+      enabled: true
+    }
+  })
+
   return {
     friendRequests,
     myReceivedFriendRequests,
@@ -47,7 +54,8 @@ export const loader = async (args: LoaderFunctionArgs) => {
       ...f,
       userFrom: users.find((u) => u.id === f.friendIdFrom),
       userTo: users.find((u) => u.id === f.friendIdTo)
-    }))
+    })),
+    featureFlags
   }
 }
 
@@ -67,13 +75,16 @@ export default function Profile() {
         </Button>
 
         <div className='my-8'>
-          <Friends />{' '}
+          <Friends />
         </div>
         <div className='my-8'>
-          <ReceivedFriendRequests />{' '}
+          <ReceivedFriendRequests />
         </div>
         <div className='my-8'>
-          <SearchUsers />{' '}
+          <SearchUsers />
+        </div>
+        <div className='my-8'>
+          <FeatureFlags />
         </div>
         <UserProfile
           appearance={{
@@ -345,5 +356,47 @@ function UserRow({ children, user }: UserRowProps) {
         </fetcher.Form>
       ) : null}
     </div>
+  )
+}
+
+function FeatureFlags() {
+  const { featureFlags } = useLoaderData<typeof loader>()
+
+  return (
+    <>
+      <h1 className='text-xl font-bold tracking-tight mb-2'>Feature Flags</h1>
+      <hr className='border-gray-700' />
+      {featureFlags.map((f) => (
+        <FeatureFlagRow key={f.id} featureFlag={f} />
+      ))}
+    </>
+  )
+}
+
+type FeatureFlagRowProps = {
+  featureFlag: any
+}
+
+function FeatureFlagRow({ featureFlag }: FeatureFlagRowProps) {
+  const loggedInUser = useRouteLoaderData<RootLoaderData>('root')
+  const fetcher = useFetcher()
+  //TODO: update the userFeatureFlag in the DB everytime the user switches flag
+  return (
+    <fetcher.Form method='post'>
+      <div className='form-control'>
+        <label className='label cursor-pointer'>
+          <span className='label-text'>{featureFlag.name}</span>
+
+          <input
+            type='checkbox'
+            className='toggle'
+            defaultChecked={loggedInUser?.userFeatureFlags.some(
+              (uf) => uf.featureFlagId === featureFlag.id && uf.enabled
+            )}
+          />
+        </label>
+        <span className='text-sm text-gray-500'>{featureFlag.description}</span>
+      </div>
+    </fetcher.Form>
   )
 }
