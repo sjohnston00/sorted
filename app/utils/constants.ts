@@ -1,0 +1,3 @@
+export const FEATURE_FLAGS = {
+  SCROLLING_CALENDAR: 1,
+};
