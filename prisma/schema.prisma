@@ -59,6 +59,7 @@ model FeatureFlag {
   id          Int      @id @default(autoincrement())
   name        String
   description String?
+  badge       String?
   enabled     Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

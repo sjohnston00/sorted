@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs, SerializeFrom } from "@remix-run/node";
 import React from "react";
 import { UserProfile, useClerk } from "@clerk/remix";
 import Button from "~/components/Button";
@@ -17,6 +17,7 @@ import { prisma } from "~/db.server";
 import { getClerkUsersByIDs, getUsersFriendRequests } from "~/utils";
 import { RootLoaderData } from "~/root";
 import Switch from "~/components/Switch";
+import { FeatureFlag } from "@prisma/client";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const user = await getUser(args);
@@ -393,7 +394,7 @@ function FeatureFlags() {
 }
 
 type FeatureFlagRowProps = {
-  featureFlag: any;
+  featureFlag: SerializeFrom<FeatureFlag>;
 };
 
 function FeatureFlagRow({ featureFlag }: FeatureFlagRowProps) {
@@ -417,6 +418,7 @@ function FeatureFlagRow({ featureFlag }: FeatureFlagRowProps) {
       <Switch
         label={featureFlag.name}
         description={featureFlag.description}
+        badge={featureFlag.badge}
         name="enabled"
         defaultChecked={loggedInUser?.userFeatureFlags.some(
           (uf) => uf.featureFlagId === featureFlag.id && uf.enabled
