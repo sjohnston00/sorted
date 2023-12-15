@@ -16,6 +16,7 @@ import { clerkClient, getUser } from "~/utils/auth.server";
 import { prisma } from "~/db.server";
 import { getClerkUsersByIDs, getUsersFriendRequests } from "~/utils";
 import { RootLoaderData } from "~/root";
+import Switch from "~/components/Switch";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const user = await getUser(args);
@@ -259,7 +260,12 @@ function SearchUsers() {
     return (
       <>
         <fetcher.Form method="get" action="/api/users">
-          <Input label="Search users" name="search" id="search" />
+          <Input
+            label="Search users"
+            name="search"
+            id="search"
+            autoComplete="off"
+          />
         </fetcher.Form>
         <div className="mt-4">
           <p className="text-sm text-red-400">Error: {fetcher.data.error}</p>
@@ -406,22 +412,16 @@ function FeatureFlagRow({ featureFlag }: FeatureFlagRowProps) {
         });
       }}
     >
-      <div className="form-control">
-        <label className="label cursor-pointer">
-          <span className="label-text">{featureFlag.name}</span>
-          <input type="hidden" name="featureFlagId" value={featureFlag.id} />
-          <input type="hidden" name="_action" value="updateUserFeatureFlag" />
-          <input
-            type="checkbox"
-            className="toggle"
-            name="enabled"
-            defaultChecked={loggedInUser?.userFeatureFlags.some(
-              (uf) => uf.featureFlagId === featureFlag.id && uf.enabled
-            )}
-          />
-        </label>
-        <span className="text-sm text-gray-500">{featureFlag.description}</span>
-      </div>
+      <input type="hidden" name="featureFlagId" value={featureFlag.id} />
+      <input type="hidden" name="_action" value="updateUserFeatureFlag" />
+      <Switch
+        label={featureFlag.name}
+        description={featureFlag.description}
+        name="enabled"
+        defaultChecked={loggedInUser?.userFeatureFlags.some(
+          (uf) => uf.featureFlagId === featureFlag.id && uf.enabled
+        )}
+      />
     </fetcher.Form>
   );
 }
