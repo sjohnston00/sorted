@@ -191,7 +191,13 @@ export default function Index() {
           <FriendsRow />
 
           {useScrollingCalendarFeature ? (
-            <ScrollingCalendar indicators={markedHabits} />
+            <ScrollingCalendar
+              indicators={markedHabits}
+              isLoadingFriendsHabits={isLoadingFriendsHabits}
+              markedHabits={markedHabits}
+              habits={habits}
+              startWeekMonday
+            />
           ) : (
             <Calendar
               isLoadingFriendsHabits={isLoadingFriendsHabits}

@@ -420,6 +420,7 @@ function FeatureFlagRow({ featureFlag }: FeatureFlagRowProps) {
         description={featureFlag.description}
         badge={featureFlag.badge}
         name="enabled"
+        className="checked:toggle-primary"
         defaultChecked={loggedInUser?.userFeatureFlags.some(
           (uf) => uf.featureFlagId === featureFlag.id && uf.enabled
         )}
