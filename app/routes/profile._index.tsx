@@ -18,6 +18,7 @@ import { getClerkUsersByIDs, getUsersFriendRequests } from "~/utils";
 import { RootLoaderData } from "~/root";
 import Switch from "~/components/Switch";
 import { FeatureFlag } from "@prisma/client";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const user = await getUser(args);
@@ -156,7 +157,12 @@ function Friends() {
                     id="friendRowId"
                     value={f.id}
                   />
-                  <Button>Remove</Button>
+                  <Button
+                    className="btn-circle btn-outline btn-error"
+                    title="Remove friend"
+                  >
+                    <TrashIcon className="w-4 h-4" />
+                  </Button>
                 </fetcher.Form>
               </div>
             );
@@ -384,7 +390,7 @@ function FeatureFlags() {
 
   return (
     <>
-      <h1 className="text-xl font-bold tracking-tight mb-2">Feature Flags</h1>
+      <h1 className="text-xl font-bold tracking-tight mb-2">Features</h1>
       <hr className="border-gray-700" />
       {featureFlags.map((f) => (
         <FeatureFlagRow key={f.id} featureFlag={f} />
