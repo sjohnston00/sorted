@@ -1,25 +1,24 @@
-import React from 'react'
-import { twMerge } from 'tailwind-merge'
+import React from "react";
+import { twMerge } from "tailwind-merge";
 
-type CheckboxProps = {
-  className?: string
-  label?: string
-  name?: string
-  id?: string
-}
+type CheckboxProps = React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> & {
+  label?: string;
+};
 
 export default function Checkbox({
-  className = '',
+  className = "",
   label,
-  name,
-  id
+  ...props
 }: CheckboxProps) {
   return (
     <div className={twMerge(`form-control ${className}`)}>
-      <label className='label cursor-pointer'>
-        <span className='label-text'>{label}</span>
-        <input type='checkbox' className='checkbox' name={name} id={id} />
+      <label className="label cursor-pointer">
+        <span className="label-text">{label}</span>
+        <input type="checkbox" className="checkbox" {...props} />
       </label>
     </div>
-  )
+  );
 }
