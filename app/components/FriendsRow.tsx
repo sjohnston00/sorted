@@ -27,7 +27,7 @@ export default function FriendsRow() {
           className={twMerge(buttonClassName, 'text-base-content')}
           preventScrollReset
           replace>
-          <div className='bg-base-200 flex justify-center items-center h-16 rounded-full w-full'>
+          <div className='bg-base-200 flex justify-center items-center h-16 rounded-full w-full shadow-sm'>
             <ArrowLeftIcon className='w-5 h-5' />
           </div>
           <div className='text-xs'>Back</div>
@@ -39,40 +39,27 @@ export default function FriendsRow() {
             const searchParamSameFriend =
               searchParams.get('friend') === friend?.username
             return (
-              <button
-                className={buttonClassName}
+              <Link
+                className={twMerge(
+                  buttonClassName,
+                  searchParamSameFriend ? 'animate-pulse' : ''
+                )}
                 key={f.id}
-                onClick={() => {
-                  setSearchParams(
-                    (prevParams) => {
-                      if (searchParamSameFriend) {
-                        prevParams.delete('friend')
-                      } else {
-                        prevParams.set('friend', friend?.username!)
-                      }
-                      return prevParams
-                    },
-                    {
-                      replace: true,
-                      preventScrollReset: true
-                    }
-                  )
+                to={{
+                  search: searchParamSameFriend
+                    ? ''
+                    : `friend=${friend?.username}`
                 }}>
                 <img
                   src={friend?.imageUrl}
-                  // src={''}
                   alt='user profile image'
-                  className={`box-content relative rounded-full w-full ${
-                    searchParamSameFriend ? 'profile-image' : ''
-                  }`}
+                  className={`box-content relative rounded-full w-full shadow-sm`}
                 />
                 <span
-                  className={`text-xs w-full overflow-ellipsis font-medium text-gray-400 ${
-                    searchParamSameFriend ? 'duration-200 animate-blink ' : ''
-                  }`}>
+                  className={`text-xs w-full text-center overflow-ellipsis font-medium text-gray-400`}>
                   {friend?.username}
                 </span>
-              </button>
+              </Link>
             )
           })
         : null}
