@@ -66,3 +66,13 @@ input[type='color']::-webkit-color-swatch {
     transform: rotateZ(360deg);
   }
 }
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.animate-blink {
+  animation: blink 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
