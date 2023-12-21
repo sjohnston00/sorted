@@ -8,7 +8,6 @@ import {
 } from '@remix-run/node'
 import { useLoaderData, useRouteLoaderData } from '@remix-run/react'
 import { format } from 'date-fns'
-import { z } from 'zod'
 import Calendar from '~/components/Calendar'
 import FriendsRow from '~/components/FriendsRow'
 import ScrollingCalendar from '~/components/ScrollingCalendar'
@@ -16,7 +15,16 @@ import { prisma } from '~/db.server'
 import { RootLoaderData } from '~/root'
 import { getClerkUser } from '~/utils'
 import { getUser } from '~/utils/auth.server'
-import { FEATURE_FLAGS } from '~/utils/constants'
+import { FEATURE_FLAGS, FORM_ACTIONS } from '~/utils/constants'
+import {
+  HabitQueries,
+  MarkedHabitQueries,
+  UserFriendQueries
+} from '~/utils/queries.server'
+import {
+  MarkedHabitSchemas,
+  URLSearchParamsSchemas
+} from '~/utils/schemas.server'
 
 type LoaderData = {
   markedHabits: (MarkedHabit & {
@@ -26,15 +34,14 @@ type LoaderData = {
   isLoadingFriendsHabits: boolean
 }
 
+export type IndexLoaderData = typeof loader
 export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
   const { userId } = await getUser(args)
 
   const url = new URL(args.request.url)
-  const { friend } = z
-    .object({
-      friend: z.string().optional()
-    })
-    .parse(Object.fromEntries(url.searchParams))
+  const { friend } = URLSearchParamsSchemas.friend(
+    Object.fromEntries(url.searchParams)
+  )
 
   if (friend) {
     const friendData = await getClerkUser(friend)
@@ -42,29 +49,13 @@ export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
       throw redirect('/')
     }
 
-    const userFriend = await prisma.userFriends
-      .findFirstOrThrow({
-        where: {
-          OR: [
-            {
-              AND: {
-                friendIdFrom: friendData.id,
-                friendIdTo: userId
-              }
-            },
-            {
-              AND: {
-                friendIdTo: friendData.id,
-                friendIdFrom: userId
-              }
-            }
-          ]
-        }
-      })
-      .catch(() => {
-        console.log('users are not friends')
-        throw redirect('/')
-      })
+    const userFriend = await UserFriendQueries.getUserFriend(
+      userId,
+      friendData.id
+    ).catch(() => {
+      console.log('users are not friends')
+      throw redirect('/')
+    })
 
     const userFriendId =
       userFriend.friendIdFrom === userId
@@ -72,28 +63,8 @@ export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
         : userFriend.friendIdFrom
 
     const [friendsMarkedHabits, friendsHabits] = await Promise.all([
-      prisma.markedHabit.findMany({
-        where: {
-          userId: userFriendId,
-          habit: {
-            deleted: false,
-            private: false
-          }
-        },
-        include: {
-          habit: true
-        },
-        orderBy: {
-          date: 'desc'
-        }
-      }),
-      prisma.habit.findMany({
-        where: {
-          userId: userFriendId,
-          deleted: false,
-          private: false
-        }
-      })
+      MarkedHabitQueries.getUserPublicMarkedHabits(userFriendId),
+      HabitQueries.getUserPublicHabits(userFriendId)
     ])
 
     return {
@@ -104,26 +75,8 @@ export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
   }
 
   const [markedHabits, habits] = await Promise.all([
-    prisma.markedHabit.findMany({
-      where: {
-        userId,
-        habit: {
-          deleted: false
-        }
-      },
-      include: {
-        habit: true
-      },
-      orderBy: {
-        date: 'desc'
-      }
-    }),
-    prisma.habit.findMany({
-      where: {
-        userId,
-        deleted: false
-      }
-    })
+    MarkedHabitQueries.getUserPublicMarkedHabits(userId),
+    HabitQueries.getUserPublicHabits(userId)
   ])
 
   return { markedHabits, habits, isLoadingFriendsHabits: false }
@@ -133,40 +86,30 @@ export const action = async (args: ActionFunctionArgs) => {
   const { userId } = await getUser(args)
 
   const formData = await args.request.formData()
-  if (formData.get('_action') === 'mark-date') {
+  if (formData.get('_action') === FORM_ACTIONS.MARK_DATE) {
+    const { date, habitId } = MarkedHabitSchemas.addMarkedHabit(formData)
     await prisma.markedHabit.create({
       data: {
-        date: new Date(
-          `${formData.get('date')?.toString()}T${format(new Date(), 'HH:mm')}`
-        ),
+        date: new Date(`${date}T${format(new Date(), 'HH:mm')}`),
         userId,
-        habitId: formData.get('habitId')?.toString()!
+        habitId
       }
     })
-    return Object.fromEntries(formData)
+    return null
   }
 
-  if (formData.get('_action') === 'remove-marked-habit') {
+  if (formData.get('_action') === FORM_ACTIONS.REMOVE_MARKED_HABIT) {
+    const { markedHabitId } = MarkedHabitSchemas.removeMarkedHabit(formData)
     await prisma.markedHabit.delete({
       where: {
-        id: formData.get('markedHabit-id')?.toString()
+        id: markedHabitId
       }
     })
-    return {}
+    return null
   }
 
-  await prisma.habit.create({
-    data: {
-      userId,
-      name: 'Test',
-      colour: '#ffffff'
-    }
-  })
-
-  return {}
+  return { error: 'Action not implemented' }
 }
-
-export type IndexLoaderData = typeof loader
 
 export const meta: MetaFunction = () => {
   return [{ title: 'Sorted' }]

@@ -7,6 +7,7 @@ import Trash from '../icons/Trash'
 import { motion } from 'framer-motion'
 import { EllipsisVerticalIcon } from '@heroicons/react/24/outline'
 import EllipsisVertical from '../icons/EllipsisVertical'
+import { FORM_ACTIONS } from '~/utils/constants'
 
 type MarkedHabitRowProps = {
   markedHabit: SerializeFrom<MarkedHabit & { habit: Habit }>
@@ -86,8 +87,12 @@ export default function MarkedHabitRow({
       </div>
       <div className='flex gap-px items-center'>
         <fetcher.Form method='post' hidden={isLoadingFriendsHabits}>
-          <input type='hidden' name='_action' value='remove-marked-habit' />
-          <input type='hidden' name='markedHabit-id' value={markedHabit.id} />
+          <input
+            type='hidden'
+            name='_action'
+            value={FORM_ACTIONS.REMOVE_MARKED_HABIT}
+          />
+          <input type='hidden' name='markedHabitId' value={markedHabit.id} />
           <button
             type='submit'
             className='py-2 px-3 text-red-300 md:opacity-0 hover:text-red-400 focus:text-red-400 group-focus-within:opacity-100 group-hover:opacity-100 transition'

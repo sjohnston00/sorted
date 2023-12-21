@@ -4,6 +4,7 @@ import { useFetcher } from '@remix-run/react'
 import { format } from 'date-fns'
 import Button from '~/components/Button'
 import React from 'react'
+import { FORM_ACTIONS } from '~/utils/constants'
 
 type HabitButtonProps = {
   habit: SerializeFrom<Habit>
@@ -15,7 +16,7 @@ export default function HabitButton({ habit, selectedDay }: HabitButtonProps) {
   const isSubmitting = fetcher.state === 'submitting'
   return (
     <fetcher.Form method='post' className='h-full w-full'>
-      <input type='hidden' name='_action' value='mark-date' />
+      <input type='hidden' name='_action' value={FORM_ACTIONS.MARK_DATE} />
       <input
         type='hidden'
         name='date'

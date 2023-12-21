@@ -27,6 +27,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Dialog, Transition } from '@headlessui/react'
 import Input, { Textarea } from '../Input'
 import Button from '../Button'
+import { FORM_ACTIONS } from '~/utils/constants'
 
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>
@@ -236,7 +237,8 @@ export default function Calendar({
                   {fetchers
                     .filter(
                       (f) =>
-                        f.formData?.get('_action')?.toString() === 'mark-date'
+                        f.formData?.get('_action')?.toString() ===
+                        FORM_ACTIONS.MARK_DATE
                     )
                     .map(
                       (
