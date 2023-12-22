@@ -141,7 +141,7 @@ export default function Habit() {
       <div className="">
         <div className="flex gap-2 items-end">
           <div
-            className="inline-flex items-center justify-center aspect-square w-fit min-w-[8rem] py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide"
+            className="inline-flex items-center justify-center aspect-square w-fit min-w-32 py-4 px-2 rounded shadow border-2 font-semibold text-lg tracking-wide"
             style={
               {
                 color: habit.colour,
@@ -267,7 +267,7 @@ function UpdateHabitForm() {
             htmlFor={`days-${d}`}
             key={d}
             title={d}
-            className="scale-95 min-h-[2rem] h-full w-full aspect-square flex justify-center items-center rounded-full relative text-center transition select-none z-[2] toggle-label border-2 text-sky-500 border-sky-500"
+            className="scale-95 min-h-8 h-full w-full aspect-square flex justify-center items-center rounded-full relative text-center transition select-none z-[2] toggle-label border-2 text-sky-500 border-sky-500"
           >
             {d.substring(0, 1)}
             <input

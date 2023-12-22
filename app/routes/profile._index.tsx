@@ -17,7 +17,7 @@ import { prisma } from "~/db.server";
 import { getClerkUsersByIDs, getUsersFriendRequests } from "~/utils";
 import { RootLoaderData } from "~/root";
 import Switch from "~/components/Switch";
-import { FeatureFlag } from "@prisma/client";
+import { ChildrenFeatureFlag, FeatureFlag } from "@prisma/client";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 export const loader = async (args: LoaderFunctionArgs) => {
@@ -51,6 +51,16 @@ export const loader = async (args: LoaderFunctionArgs) => {
   const featureFlags = await prisma.featureFlag.findMany({
     where: {
       enabled: true,
+    },
+    include: {
+      childrenFeatureFlags: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "asc",
     },
   });
 
@@ -400,10 +410,63 @@ function FeatureFlags() {
 }
 
 type FeatureFlagRowProps = {
-  featureFlag: SerializeFrom<FeatureFlag>;
+  featureFlag: SerializeFrom<
+    FeatureFlag & {
+      childrenFeatureFlags: ChildrenFeatureFlag[];
+    }
+  >;
 };
 
 function FeatureFlagRow({ featureFlag }: FeatureFlagRowProps) {
+  const loggedInUser = useRouteLoaderData<RootLoaderData>("root");
+  const fetcher = useFetcher();
+  const submit = useSubmit();
+  const userFlagEnabled = loggedInUser?.userFeatureFlags.some(
+    (uf) => uf.featureFlagId === featureFlag.id && uf.enabled
+  );
+  return (
+    <>
+      <fetcher.Form
+        method="post"
+        onChange={(e) => {
+          submit(e.currentTarget, {
+            replace: true,
+            navigate: false,
+            preventScrollReset: true,
+            action: "/api/featureFlag",
+            method: "post",
+          });
+        }}
+      >
+        <input type="hidden" name="featureFlagId" value={featureFlag.id} />
+        <input type="hidden" name="_action" value="updateUserFeatureFlag" />
+        <Switch
+          label={featureFlag.name}
+          description={featureFlag.description}
+          badge={featureFlag.badge}
+          name="enabled"
+          className="checked:toggle-primary"
+          defaultChecked={userFlagEnabled}
+        />
+      </fetcher.Form>
+      {userFlagEnabled && featureFlag.childrenFeatureFlags.length > 0 ? (
+        <div className="mt-2 text-sm border-l-2 border-l-gray-700 ml-3 pl-2">
+          {featureFlag.childrenFeatureFlags.map((ffc) => (
+            <ChildrenFeatureFlagRow childFeatureFlag={ffc} key={ffc.id} />
+          ))}
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+type ChildrenFeatureFlagRowProps = {
+  childFeatureFlag: SerializeFrom<ChildrenFeatureFlag>;
+};
+
+function ChildrenFeatureFlagRow({
+  childFeatureFlag,
+}: ChildrenFeatureFlagRowProps) {
   const loggedInUser = useRouteLoaderData<RootLoaderData>("root");
   const fetcher = useFetcher();
   const submit = useSubmit();
@@ -414,23 +477,51 @@ function FeatureFlagRow({ featureFlag }: FeatureFlagRowProps) {
         submit(e.currentTarget, {
           replace: true,
           navigate: false,
-          action: "/api/featureFlag",
+          preventScrollReset: true,
+          action: "/api/childFeatureFlag",
           method: "post",
         });
       }}
     >
-      <input type="hidden" name="featureFlagId" value={featureFlag.id} />
-      <input type="hidden" name="_action" value="updateUserFeatureFlag" />
-      <Switch
-        label={featureFlag.name}
-        description={featureFlag.description}
-        badge={featureFlag.badge}
-        name="enabled"
-        className="checked:toggle-primary"
-        defaultChecked={loggedInUser?.userFeatureFlags.some(
-          (uf) => uf.featureFlagId === featureFlag.id && uf.enabled
-        )}
+      <input
+        type="hidden"
+        name="childFeatureFlagId"
+        value={childFeatureFlag.id}
       />
+      <input type="hidden" name="_action" value="updateUserChildFeatureFlag" />
+      <div className="form-control" key={childFeatureFlag.id}>
+        <input
+          type="hidden"
+          name="childrenFeatureFlagId"
+          value={childFeatureFlag.id}
+        />
+
+        <label className="label cursor-pointer">
+          <span className="label-text">
+            {childFeatureFlag.name}{" "}
+            {childFeatureFlag.badge ? (
+              <span className="badge badge-xs text-2xs badge-outline badge-primary ml-1">
+                {childFeatureFlag.badge}
+              </span>
+            ) : null}
+          </span>
+          <input
+            className="input input-bordered max-w-24"
+            type={childFeatureFlag.inputType}
+            defaultValue={
+              loggedInUser?.userChildrenFeatureFlag.find(
+                (ufc) => ufc.childrenFeatureFlagId === childFeatureFlag.id
+              )?.value || undefined
+            }
+            name="value"
+          />
+        </label>
+        {childFeatureFlag.description ? (
+          <span className="px-1 text-xs text-gray-500">
+            {childFeatureFlag.description}
+          </span>
+        ) : null}
+      </div>
     </fetcher.Form>
   );
 }

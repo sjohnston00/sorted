@@ -64,7 +64,37 @@ model FeatureFlag {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  users UserFeatureFlag[]
+  childrenFeatureFlags ChildrenFeatureFlag[]
+  users                UserFeatureFlag[]
+}
+
+model ChildrenFeatureFlag {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  badge       String?
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  inputType   String
+
+  parentId Int
+  parent   FeatureFlag @relation(fields: [parentId], references: [id])
+
+  users UserChildrenFeatureFlag[]
+}
+
+model UserChildrenFeatureFlag {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  enabled   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  value String?
+
+  childrenFeatureFlagId Int
+  childrenFeatureFlag   ChildrenFeatureFlag @relation(fields: [childrenFeatureFlagId], references: [id])
 }
 
 model UserFeatureFlag {
