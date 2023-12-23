@@ -7,6 +7,7 @@ import CalendarDays from './icons/CalendarDays'
 import Squares from './icons/Squares'
 import UserCircle from './icons/UserCircle'
 import { RootLoaderData } from '~/root'
+import { ArrowTrendingUpIcon } from '@heroicons/react/24/outline'
 
 export default function BottomNavbar() {
   const rootLoaderData = useRouteLoaderData<RootLoaderData>('root')
@@ -18,13 +19,19 @@ export default function BottomNavbar() {
         to='/habits'
         icon={<Squares className='w-7 h-7' />}
       />
+      <NavItem
+        name='Trends'
+        to='/trends'
+        icon={<ArrowTrendingUpIcon className='w-7 h-7' />}
+      />
 
       <NavItem
         name='Profile'
         to='/profile'
         icon={<UserCircle className='w-7 h-7' />}>
         <div className='indicator'>
-          {rootLoaderData && rootLoaderData.myReceivedFriendRequests &&
+          {rootLoaderData &&
+          rootLoaderData.myReceivedFriendRequests &&
           rootLoaderData.myReceivedFriendRequests.length > 0 ? (
             <span className='indicator-item badge badge-primary'>
               {rootLoaderData.myReceivedFriendRequests.length}
