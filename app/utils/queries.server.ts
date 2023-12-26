@@ -79,3 +79,13 @@ export class HabitQueries {
     })
   }
 }
+
+export class UserFeatureFlagQueries {
+  static getUsersFeatureFlags = async (userId: string) => {
+    return prisma.userFeatureFlag.findMany({
+      where: {
+        userId: userId
+      }
+    })
+  }
+}
