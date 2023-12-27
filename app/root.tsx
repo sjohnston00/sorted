@@ -3,7 +3,6 @@ import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -17,20 +16,25 @@ import BottomNavbar from "./components/BottomNavbar";
 import { prisma } from "./db.server";
 import { getUser } from "./utils/auth.server";
 import { getClerkUsersByIDs, getUsersFriendRequests } from "./utils";
-const RemixDevTools =
-  process.env.NODE_ENV === "development"
-    ? React.lazy(() => import("remix-development-tools"))
-    : undefined;
+import { useSWEffect, LiveReload } from "@remix-pwa/sw";
+// const RemixDevTools =
+//   process.env.NODE_ENV === "development"
+//     ? React.lazy(() => import("remix-development-tools"))
+//     : undefined;
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
   {
     rel: "manifest",
-    href: "/manifest.json",
+    href: "/manifest.webmanifest",
   },
   {
     rel: "icon",
     type: "image/png",
-    href: "/images/logo_192x192.png",
+    href: "/images/icon.png",
+  },
+  {
+    rel: "apple-touch-startup-image",
+    href: "/launch.png",
   },
 ];
 
@@ -94,6 +98,7 @@ type LayoutProps = {
 };
 
 function Layout({ children }: LayoutProps) {
+  useSWEffect();
   return (
     <html lang="en">
       <head>
@@ -103,6 +108,59 @@ function Layout({ children }: LayoutProps) {
           content="width=device-width,initial-scale=1, maximum-scale=1.0, user-scalable=0"
         />
         <meta name="HandheldFriendly" content="true" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <link
+          href="/images/splashscreens/iphone5_splash.png"
+          media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/iphone6_splash.png"
+          media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/iphoneplus_splash.png"
+          media="(device-width: 621px) and (device-height: 1104px) and (-webkit-device-pixel-ratio: 3)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/iphonex_splash.png"
+          media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/iphonexr_splash.png"
+          media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/iphonexsmax_splash.png"
+          media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/ipad_splash.png"
+          media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/ipadpro1_splash.png"
+          media="(device-width: 834px) and (device-height: 1112px) and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/ipadpro3_splash.png"
+          media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image"
+        />
+        <link
+          href="/images/splashscreens/ipadpro2_splash.png"
+          media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)"
+          rel="apple-touch-startup-image"
+        />
+
         <Meta />
         <Links />
       </head>
@@ -111,7 +169,11 @@ function Layout({ children }: LayoutProps) {
         {children}
         <ScrollRestoration />
         {process.env.NODE_ENV === "development" ? <LiveReload /> : null}
-        {RemixDevTools && <Suspense>{/* <RemixDevTools /> */}</Suspense>}
+        {/* {RemixDevTools && (
+          <Suspense>
+            <RemixDevTools />
+          </Suspense>
+        )} */}
         <BottomNavbar />
         <Scripts />
       </body>
