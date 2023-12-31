@@ -2010,6 +2010,13 @@ var require_sign_up = __commonJS({
   }
 });
 
+// routes-module:routes/_index.tsx?worker
+var require_index = __commonJS({
+  "routes-module:routes/_index.tsx?worker"(exports, module) {
+    module.exports = {};
+  }
+});
+
 // routes-module:routes/habits.tsx?worker
 var require_habits = __commonJS({
   "routes-module:routes/habits.tsx?worker"(exports, module) {
@@ -2020,13 +2027,6 @@ var require_habits = __commonJS({
 // routes-module:routes/trends/route.tsx?worker
 var require_route = __commonJS({
   "routes-module:routes/trends/route.tsx?worker"(exports, module) {
-    module.exports = {};
-  }
-});
-
-// routes-module:routes/_index.tsx?worker
-var require_index = __commonJS({
-  "routes-module:routes/_index.tsx?worker"(exports, module) {
     module.exports = {};
   }
 });
@@ -6710,12 +6710,12 @@ var route10 = __toESM(require_habits_new());
 var route11 = __toESM(require_api_users());
 var route12 = __toESM(require_sign_in());
 var route13 = __toESM(require_sign_up());
-var route14 = __toESM(require_habits());
-var route15 = __toESM(require_route());
-var route16 = __toESM(require_index());
+var route14 = __toESM(require_index());
+var route15 = __toESM(require_habits());
+var route16 = __toESM(require_route());
 
 // assets-module:@remix-pwa/dev?assets
-var assets = ["/build/__remix_entry_dev-YUTXTRSA.js", "/build/root-RGM4UW66.js", "/build/manifest-C99CA837.js", "/build/entry.client-3ZZDLRA7.js", "/build/_shared\\runtime-GC7QIU56.js", "/build/_shared\\remix_hmr-HBR2UG3K.js", "/build/_shared\\react-dom-BEFB7ICU.js", "/build/_shared\\react-3OYUNTOK.js", "/build/_shared\\jsx-runtime-7NXSP56X.js", "/build/_shared\\jsx-dev-runtime-RDH4Y5YT.js", "/build/_shared\\esm-COAH5JOD.js", "/build/_shared\\client-DFZR44C7.js", "/build/_shared\\chunk-ZWGWGGVF.js", "/build/_shared\\chunk-YSJMGTXM.js", "/build/_shared\\chunk-XU7DNSPJ.js", "/build/_shared\\chunk-UWV35TSL.js", "/build/_shared\\chunk-PNG5AS42.js", "/build/_shared\\chunk-OXQONCCV.js", "/build/_shared\\chunk-OO6JAH5E.js", "/build/_shared\\chunk-OJ746Z7U.js", "/build/_shared\\chunk-OBCROQ4K.js", "/build/_shared\\chunk-KQ7YF7KZ.js", "/build/_shared\\chunk-KKIK2PWV.js", "/build/_shared\\chunk-JSCKBFOW.js", "/build/_shared\\chunk-JMNDOVSV.js", "/build/_shared\\chunk-I6YM24ZM.js", "/build/_shared\\chunk-HF4VHDKK.js", "/build/_shared\\chunk-GIAAE3CH.js", "/build/_shared\\chunk-G7CHZRZX.js", "/build/_shared\\chunk-F42UMFLU.js", "/build/_shared\\chunk-E7TNPIXH.js", "/build/_shared\\chunk-BOXFZXVX.js", "/build/_shared\\chunk-3QTFQYFN.js", "/build/_shared\\chunk-2ERGFHMQ.js", "/build/_assets\\tailwind-2VQI3EVQ.css", "/build/routes\\_index-JGVM5RM6.js", "/build/routes\\trends-AURCZVEZ.js", "/build/routes\\sign-up.$-HFDECBEX.js", "/build/routes\\sign-in.$-2FCX2PZP.js", "/build/routes\\profile._index-K6ZAQGA2.js", "/build/routes\\manifest[.]webmanifest-J3KYYY3Q.js", "/build/routes\\habits._index-IVWCKSVE.js", "/build/routes\\habits.new-IAYYJFSR.js", "/build/routes\\habits.$id-U636TORP.js", "/build/routes\\habits-GXGCAUGU.js", "/build/routes\\api.users-P3AYWDXM.js", "/build/routes\\api.markedHabit.$id-FJR2DJGF.js", "/build/routes\\api.friendRequest-ISB4VBIT.js", "/build/routes\\api.friend-FSVM44OE.js", "/build/routes\\api.featureFlag-FV7PRCK4.js", "/build/routes\\api.childFeatureFlag-WQPKGGW7.js"];
+var assets = ["/build/root-TTF6H32W.js", "/build/manifest-C128B203.js", "/build/entry.client-ILFEGDQP.js", "/build/__remix_entry_dev-VBP2KEZR.js", "/build/_assets/tailwind-6ZIAX7RG.css", "/build/routes/trends-XCHR2XAZ.js", "/build/routes/sign-up.$-SAO2E4VI.js", "/build/routes/sign-in.$-LGRKRONF.js", "/build/routes/profile._index-P7S7JR4P.js", "/build/routes/manifest[.]webmanifest-J3KYYY3Q.js", "/build/routes/habits.new-FYW2UXHQ.js", "/build/routes/habits._index-BMP2GZP3.js", "/build/routes/habits.$id-6WWQZ2KE.js", "/build/routes/habits-IM3Y7PBL.js", "/build/routes/api.users-P3AYWDXM.js", "/build/routes/api.markedHabit.$id-FJR2DJGF.js", "/build/routes/api.friendRequest-ISB4VBIT.js", "/build/routes/api.friend-FSVM44OE.js", "/build/routes/api.featureFlag-FV7PRCK4.js", "/build/routes/api.childFeatureFlag-WQPKGGW7.js", "/build/routes/_index-3M32TVYD.js", "/build/_shared/runtime-GC7QIU56.js", "/build/_shared/remix_hmr-RWDXGVTC.js", "/build/_shared/react-dom-BEFB7ICU.js", "/build/_shared/react-3OYUNTOK.js", "/build/_shared/jsx-runtime-7NXSP56X.js", "/build/_shared/jsx-dev-runtime-RDH4Y5YT.js", "/build/_shared/esm-X4O6IG5J.js", "/build/_shared/client-DFZR44C7.js", "/build/_shared/chunk-ZWGWGGVF.js", "/build/_shared/chunk-YSJMGTXM.js", "/build/_shared/chunk-YKCMGKZJ.js", "/build/_shared/chunk-XU7DNSPJ.js", "/build/_shared/chunk-UWV35TSL.js", "/build/_shared/chunk-RQSD6HCR.js", "/build/_shared/chunk-RJL5VGVD.js", "/build/_shared/chunk-PNG5AS42.js", "/build/_shared/chunk-OBCROQ4K.js", "/build/_shared/chunk-JSCKBFOW.js", "/build/_shared/chunk-JMNDOVSV.js", "/build/_shared/chunk-IUM3DMFK.js", "/build/_shared/chunk-IPEOOW4G.js", "/build/_shared/chunk-GIAAE3CH.js", "/build/_shared/chunk-G7CHZRZX.js", "/build/_shared/chunk-E7TNPIXH.js", "/build/_shared/chunk-DOQROKJA.js", "/build/_shared/chunk-BOXFZXVX.js", "/build/_shared/chunk-6I74KDLC.js", "/build/_shared/chunk-5RVYRLJO.js", "/build/_shared/chunk-4N6GZAYY.js", "/build/_shared/chunk-3RBM3ZPN.js", "/build/_shared/chunk-3MDOW3PH.js"];
 
 // entry-module:@remix-pwa/build/magic
 var routes = {
@@ -6831,27 +6831,27 @@ var routes = {
     caseSensitive: void 0,
     module: route13
   },
+  "routes/_index": {
+    id: "routes/_index",
+    parentId: "root",
+    path: void 0,
+    index: true,
+    caseSensitive: void 0,
+    module: route14
+  },
   "routes/habits": {
     id: "routes/habits",
     parentId: "root",
     path: "habits",
     index: void 0,
     caseSensitive: void 0,
-    module: route14
+    module: route15
   },
   "routes/trends": {
     id: "routes/trends",
     parentId: "root",
     path: "trends",
     index: void 0,
-    caseSensitive: void 0,
-    module: route15
-  },
-  "routes/_index": {
-    id: "routes/_index",
-    parentId: "root",
-    path: void 0,
-    index: true,
     caseSensitive: void 0,
     module: route16
   }
