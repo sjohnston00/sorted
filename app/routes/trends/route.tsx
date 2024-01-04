@@ -94,14 +94,8 @@ export const loader = async (args: LoaderFunctionArgs) => {
 
   const parsedURL = urlSearchSchema.parse(Object.fromEntries(url.searchParams));
 
-  const userFeatureFlags = await UserFeatureFlagQueries.getUsersFeatureFlags(
-    userId
-  );
-  const showPrivateHabits = getFeatureFlagEnabledWithDefaultValue({
-    featureFlagId: FEATURE_FLAGS.VIEW_PRIVATE_HABITS_BY_DEFAULT,
-    flags: userFeatureFlags,
-    defaultValue: false,
-  });
+  const showPrivateHabits =
+    await UserFeatureFlagQueries.showPrivateHabitsEnabled(userId);
 
   let beginDate: Date | undefined;
   let endDate: Date | undefined;
@@ -113,7 +107,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 
   if (parsedURL.tab === "week") {
-    const date = setWeek(new Date(), parsedURL.week, { weekStartsOn: 1 });
+    const date = setWeek(new Date(parsedURL.year, 0, 1), parsedURL.week, {
+      weekStartsOn: 1,
+    });
     beginDate = startOfWeek(date, { weekStartsOn: 1 });
     endDate = endOfWeek(date, { weekStartsOn: 1 });
   }

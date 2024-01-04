@@ -1,4 +1,6 @@
-import { prisma } from '~/db.server'
+import { prisma } from "~/db.server";
+import { getFeatureFlagEnabledWithDefaultValue } from "./featureFlags";
+import { FEATURE_FLAGS } from "./constants";
 
 export class UserFriendQueries {
   static getUserFriend = async (userId: string, friendId: string) => {
@@ -8,19 +10,19 @@ export class UserFriendQueries {
           {
             AND: {
               friendIdFrom: friendId,
-              friendIdTo: userId
-            }
+              friendIdTo: userId,
+            },
           },
           {
             AND: {
               friendIdTo: friendId,
-              friendIdFrom: userId
-            }
-          }
-        ]
-      }
-    })
-  }
+              friendIdFrom: userId,
+            },
+          },
+        ],
+      },
+    });
+  };
 }
 
 export class MarkedHabitQueries {
@@ -30,34 +32,51 @@ export class MarkedHabitQueries {
         userId: userId,
         habit: {
           deleted: false,
-          private: false
-        }
+          private: false,
+        },
       },
       include: {
-        habit: true
+        habit: true,
       },
       orderBy: {
-        date: 'desc'
-      }
-    })
-  }
+        date: "desc",
+      },
+    });
+  };
 
   static getUserAllMarkedHabits = async (userId: string) => {
     return prisma.markedHabit.findMany({
       where: {
         userId: userId,
         habit: {
-          deleted: false
-        }
+          deleted: false,
+        },
       },
       include: {
-        habit: true
+        habit: true,
       },
       orderBy: {
-        date: 'desc'
-      }
-    })
-  }
+        date: "desc",
+      },
+    });
+  };
+
+  static getMarkedHabitsBetweenDates = async (userId: string) => {
+    return prisma.markedHabit.findMany({
+      where: {
+        userId: userId,
+        habit: {
+          deleted: false,
+        },
+      },
+      include: {
+        habit: true,
+      },
+      orderBy: {
+        date: "desc",
+      },
+    });
+  };
 }
 
 export class HabitQueries {
@@ -66,26 +85,41 @@ export class HabitQueries {
       where: {
         userId: userId,
         deleted: false,
-        private: false
-      }
-    })
-  }
+        private: false,
+      },
+    });
+  };
   static getUserAllHabits = async (userId: string) => {
     return prisma.habit.findMany({
       where: {
         userId: userId,
-        deleted: false
-      }
-    })
-  }
+        deleted: false,
+      },
+    });
+  };
 }
 
 export class UserFeatureFlagQueries {
   static getUsersFeatureFlags = async (userId: string) => {
     return prisma.userFeatureFlag.findMany({
       where: {
-        userId: userId
-      }
-    })
-  }
+        userId: userId,
+      },
+    });
+  };
+
+  static showPrivateHabitsEnabled = async (
+    userId: string
+  ): Promise<boolean> => {
+    const userFeatureFlags = await UserFeatureFlagQueries.getUsersFeatureFlags(
+      userId
+    );
+    const showPrivateHabits = getFeatureFlagEnabledWithDefaultValue({
+      featureFlagId: FEATURE_FLAGS.VIEW_PRIVATE_HABITS_BY_DEFAULT,
+      flags: userFeatureFlags,
+      defaultValue: false,
+    });
+
+    return !!showPrivateHabits;
+  };
 }
