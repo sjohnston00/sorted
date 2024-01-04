@@ -10,10 +10,8 @@
     "setup:db": "prisma migrate dev",
     "deploy:db": "prisma migrate deploy",
     "build:remix": "remix build",
-    "build:worker": "remix-pwa build",
     "dev": "run-p dev:*",
-    "dev:remix": "remix dev",
-    "dev:worker": "remix-pwa dev"
+    "dev:remix": "remix dev"
   },
   "dependencies": {
     "@clerk/remix": "^3.1.12",
