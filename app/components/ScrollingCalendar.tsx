@@ -1,11 +1,21 @@
-import React, { useEffect, useRef, useState, Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { Habit, MarkedHabit } from "@prisma/client";
+import { SerializeFrom } from "@remix-run/node";
+import { useFetcher, useFetchers } from "@remix-run/react";
 import {
   addMonths,
   eachDayOfInterval,
+  endOfDay,
   endOfMonth,
   endOfWeek,
   format,
   getDay,
+  isAfter,
   isEqual,
   isSameDay,
   isSameMonth,
@@ -16,28 +26,19 @@ import {
   startOfWeek,
   subMonths,
 } from "date-fns";
-import { classNames } from "~/utils";
-import { twMerge } from "tailwind-merge";
-import { AutoSizer, List } from "react-virtualized";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
-import Button from "./Button";
 import { AnimatePresence, motion } from "framer-motion";
-import { useFetcher, useFetchers } from "@remix-run/react";
-import MarkedHabitRow from "./Calendar/MarkedHabitRow";
-import HabitButton from "./Calendar/HabitButton";
-import { SerializeFrom } from "@remix-run/node";
-import { Habit, MarkedHabit } from "@prisma/client";
-import { Dialog, Transition } from "@headlessui/react";
-import Input, { Textarea } from "./Input";
+import React, { Fragment, useEffect, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
+import { classNames } from "~/utils";
 import {
   FORM_ACTIONS,
   SCROLLING_CALENDAR_MONTHS_NEXT_DEFAULT,
   SCROLLING_CALENDAR_MONTHS_PREVIOUS_DEFAULT,
 } from "~/utils/constants";
+import Button from "./Button";
+import HabitButton from "./Calendar/HabitButton";
+import MarkedHabitRow from "./Calendar/MarkedHabitRow";
+import Input, { Textarea } from "./Input";
 
 type ScrollingCalendarProps = {
   indicators?: any[];
@@ -162,6 +163,7 @@ export default function ScrollingCalendar({
                         const dayIndicators = monthIndicators
                           ?.filter((m) => isSameDay(parseISO(m.date), day))
                           .slice(0, 3);
+                        const isAfterToday = isAfter(day, endOfDay(today));
                         return (
                           <div
                             key={day.toString()}
@@ -171,11 +173,12 @@ export default function ScrollingCalendar({
                             )}
                           >
                             <button
+                              disabled={isAfterToday}
                               type="submit"
                               name="date"
                               value={format(day, "yyyy-MM-dd")}
                               className={twMerge(
-                                "mx-auto flex h-8 w-8 items-center justify-center rounded-full",
+                                "mx-auto flex h-8 w-8 items-center justify-center rounded-full disabled:!text-gray-400 disabled:pointer-events-none",
                                 isEqual(day, selectedDay) && "text-white",
                                 !isEqual(day, selectedDay) &&
                                   isToday(day) &&
@@ -188,6 +191,7 @@ export default function ScrollingCalendar({
                                   !isToday(day) &&
                                   !isSameMonth(day, month) &&
                                   "text-gray-400",
+
                                 isEqual(day, selectedDay) &&
                                   isToday(day) &&
                                   "bg-red-500",
