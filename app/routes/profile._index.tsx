@@ -473,7 +473,10 @@ function ChildrenFeatureFlagRow({
   return (
     <fetcher.Form
       method="post"
-      onChange={(e) => {
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+      onBlur={(e) => {
         submit(e.currentTarget, {
           replace: true,
           navigate: false,
