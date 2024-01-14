@@ -107,3 +107,14 @@ model UserFeatureFlag {
   featureFlagId Int
   featureFlag   FeatureFlag @relation(fields: [featureFlagId], references: [id])
 }
+
+model User {
+  id       Int     @id @default(autoincrement())
+  username String  @unique
+  password String
+  email    String? @unique
+  enabled  Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

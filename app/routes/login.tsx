@@ -10,13 +10,20 @@ import {
   useActionData,
   useNavigation,
 } from "@remix-run/react";
+import { z } from "zod";
 import Button from "~/components/Button";
 import ErrorAlert from "~/components/ErrorAlert";
 import Input from "~/components/Input";
 import Spinner from "~/components/icons/Spinner";
 import { isLoggedIn } from "~/utils/auth.server";
+import bcrypt from "bcryptjs";
+import { prisma } from "~/db.server";
+import { authenticator } from "~/services/auth.server";
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  // return await authenticator.isAuthenticated(args.request, {
+  //   successRedirect: "/",
+  // })
   const loggedIn = await isLoggedIn(args);
   if (loggedIn) {
     throw redirect("/");
@@ -24,27 +31,28 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return null;
 };
 
-export const action = async (args: ActionFunctionArgs) => {
+export const action = async (
+  args: ActionFunctionArgs
+): Promise<{ error: string }> => {
   const loggedIn = await isLoggedIn(args);
   if (loggedIn) {
     throw redirect("/");
   }
 
-  const formData = await args.request.formData();
-  const data = Object.fromEntries(formData);
-
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  if (1 === 2) {
-    throw redirect("/", {
-      headers: {
-        "Set-Cookie": "some-cookie=some-value",
-      },
+  try {
+    return await authenticator.authenticate("form", args.request, {
+      successRedirect: "/",
+      throwOnError: true,
     });
-  }
+  } catch (error) {
+    if (error instanceof Response && error.status === 302) {
+      throw error; //if its a redirect, throw it
+    }
 
-  return {
-    error: "Username or password is incorrect",
-  };
+    return {
+      error: String(error),
+    };
+  }
 };
 export const meta: MetaFunction = () => {
   return [
@@ -67,11 +75,7 @@ export default function Login() {
           <ErrorAlert>{actionData.error}</ErrorAlert>
         </div>
       ) : null}
-      <Form
-        method="POST"
-        className="w-full"
-        onSubmit={(e) => e.currentTarget.reset()}
-      >
+      <Form method="POST" className="w-full">
         <fieldset disabled={isNavigating}>
           <Input
             label="Username"

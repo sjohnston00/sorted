@@ -15,8 +15,15 @@ import ErrorAlert from "~/components/ErrorAlert";
 import Input from "~/components/Input";
 import Spinner from "~/components/icons/Spinner";
 import { isLoggedIn } from "~/utils/auth.server";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+import { prisma } from "~/db.server";
+import { authenticator } from "~/services/auth.server";
 
 export const loader = async (args: LoaderFunctionArgs) => {
+  // return await authenticator.isAuthenticated(args.request, {
+  //   successRedirect: "/",
+  // })
   const loggedIn = await isLoggedIn(args);
   if (loggedIn) {
     throw redirect("/");
@@ -24,27 +31,60 @@ export const loader = async (args: LoaderFunctionArgs) => {
   return null;
 };
 
-export const action = async (args: ActionFunctionArgs) => {
+export const action = async (
+  args: ActionFunctionArgs
+): Promise<{ error: string }> => {
   const loggedIn = await isLoggedIn(args);
   if (loggedIn) {
     throw redirect("/");
   }
 
-  const formData = await args.request.formData();
-  const data = Object.fromEntries(formData);
+  const request = args.request.clone();
+  const formData = await request.formData();
 
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  if (1 === 2) {
-    throw redirect("/", {
-      headers: {
-        "Set-Cookie": "some-cookie=some-value",
-      },
-    });
+  const data = z
+    .object({
+      username: z
+        .string()
+        .min(3, "Username must be at least 3 characters long"),
+      password: z
+        .string()
+        .min(8, "Password must be at least 8 characters long"),
+    })
+    .parse(Object.fromEntries(formData));
+
+  const foundUsersWithSameUsername = await prisma.user.count({
+    where: {
+      username: data.username,
+    },
+  });
+
+  if (foundUsersWithSameUsername > 0) {
+    return {
+      error: "Username is taken",
+    };
   }
 
-  return {
-    error: "Something went wrong",
-  };
+  //check password requirements
+  if (data.password.length < 8) {
+    return {
+      error: "Password must be at least 8 characters long",
+    };
+  }
+
+  const hashedPassword = await bcrypt.hash(data.password, 10);
+
+  await prisma.user.create({
+    data: {
+      username: data.username,
+      password: hashedPassword,
+    },
+  });
+
+  return authenticator.authenticate("form", args.request, {
+    successRedirect: "/",
+    failureRedirect: "/register",
+  });
 };
 export const meta: MetaFunction = () => {
   return [
@@ -67,11 +107,7 @@ export default function Register() {
           <ErrorAlert>{actionData.error}</ErrorAlert>
         </div>
       ) : null}
-      <Form
-        method="POST"
-        className="w-full"
-        onSubmit={(e) => e.currentTarget.reset()}
-      >
+      <Form method="POST" className="w-full">
         <fieldset disabled={isNavigating}>
           <Input
             label="Username"
@@ -82,7 +118,7 @@ export default function Register() {
             required
           />
           <Input
-            label="Password"
+            label="New Password"
             type="password"
             name="password"
             id="password"
