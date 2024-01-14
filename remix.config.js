@@ -7,6 +7,7 @@ module.exports = {
   // publicPath: "/build/",
   // serverDependenciesToBundle: 'all',
   serverDependenciesToBundle: [/@remix-pwa\/.*/],
+  browserNodeBuiltinsPolyfill: { modules: { crypto: true } },
   serverModuleFormat: "cjs",
   tailwind: true,
 };
