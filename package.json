@@ -1,7 +1,7 @@
 {
   "private": true,
   "sideEffects": false,
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "run-s build:*",
     "start": "remix-serve build/index.js",
@@ -39,6 +39,7 @@
     "react-virtualized": "github:samarai-project/react-virtualized-fixed",
     "remix-auth": "^3.6.0",
     "remix-auth-form": "^1.4.0",
+    "remix-auth-webauthn": "^0.1.0",
     "remix-development-tools": "^3.7.1",
     "tailwind-merge": "^2.2.0",
     "zod": "^3.22.4"

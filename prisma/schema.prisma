@@ -109,7 +109,7 @@ model UserFeatureFlag {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
+  id       String  @id @default(cuid())
   username String  @unique
   password String
   email    String? @unique
@@ -117,4 +117,18 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  passKeyAuthenticators PassKeyAuthenticator[]
+}
+
+model PassKeyAuthenticator {
+  id                   String  @id @default(cuid())
+  userId               String
+  user                 User    @relation(fields: [userId], references: [id])
+  credentialID         String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String
 }

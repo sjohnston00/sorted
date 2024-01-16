@@ -36,30 +36,24 @@ export const loader = async (args: LoaderFunctionArgs) => {
 export const action = async (
   args: ActionFunctionArgs
 ): Promise<{ error: string | null }> => {
-  // const loggedIn = await isLoggedIn(args);
-  // if (loggedIn) {
-  //   throw redirect("/");
-  // }
-
   try {
-    return await authenticator.authenticate("form", args.request, {
+    await authenticator.authenticate("webauthn", args.request, {
       successRedirect: "/",
-      throwOnError: true,
     });
+    return { error: null };
   } catch (error) {
-    if (error instanceof Response && error.status === 302) {
-      throw error; //if its a redirect, throw it
+    // This allows us to return errors to the page without triggering the error boundary.
+    if (error instanceof Response && error.status >= 400) {
+      const errorMessage = (await error.json()) as { message: string };
+      return { error: errorMessage.message };
     }
-
-    return {
-      error: String(error),
-    };
+    throw error;
   }
 };
 export const meta: MetaFunction = () => {
   return [
     {
-      title: "Login",
+      title: "Login with Passkey",
     },
   ];
 };
@@ -78,7 +72,11 @@ export default function Login() {
           <ErrorAlert>{actionData.error}</ErrorAlert>
         </div>
       ) : null}
-      <Form method="POST" className="w-full">
+      <Form
+        method="POST"
+        onSubmit={handleFormSubmit(options)}
+        className="w-full"
+      >
         <fieldset disabled={isNavigating}>
           <Input
             label="Username"
@@ -88,28 +86,22 @@ export default function Login() {
             minLength={3}
             required
           />
-          <Input
-            label="Password"
-            type="password"
-            name="password"
-            id="password"
-            minLength={8}
-            required
-          />
+          {/* <button formMethod="GET">Check Username</button> */}
           <div className="flex items-center justify-center gap-4 w-full">
-            <Button type="submit" className="flex-1">
-              Login
-              {isNavigating ? <Spinner /> : null}
+            <Button
+              name="intent"
+              value="registration"
+              className="btn-neutral flex-1"
+              disabled={options.usernameAvailable !== true}
+            >
+              Register with Passkey
             </Button>
-            <LinkButton to={"/register"} className="flex-1 btn-ghost">
-              Register
-            </LinkButton>
+            <Button name="intent" value="authentication" className="flex-1">
+              Login with Passkey
+            </Button>
           </div>
-          <LinkButton
-            to={"/login-passkey"}
-            className="btn-block mt-4 btn-secondary"
-          >
-            Login with Passkey
+          <LinkButton to={"/login"} className="btn-block mt-4 btn-secondary">
+            Login with Username and Password
           </LinkButton>
         </fieldset>
       </Form>

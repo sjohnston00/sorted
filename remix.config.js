@@ -1,5 +1,5 @@
 /** @type {import('@remix-pwa/dev').WorkerConfig} */
-module.exports = {
+export default {
   ignoredRouteFiles: ["**/.*"],
   // appDirectory: "app",
   // assetsBuildDirectory: "public/build",
@@ -8,6 +8,6 @@ module.exports = {
   // serverDependenciesToBundle: 'all',
   serverDependenciesToBundle: [/@remix-pwa\/.*/],
   browserNodeBuiltinsPolyfill: { modules: { crypto: true } },
-  serverModuleFormat: "cjs",
+  // serverModuleFormat: "cjs",
   tailwind: true,
 };

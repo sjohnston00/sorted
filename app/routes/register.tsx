@@ -19,6 +19,7 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "~/db.server";
 import { authenticator } from "~/services/auth.server";
+import LinkButton from "~/components/LinkButton";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   // return await authenticator.isAuthenticated(args.request, {
@@ -126,14 +127,20 @@ export default function Register() {
             required
           />
           <div className="flex items-center justify-center gap-4 w-full">
-            <Link to={"/login"} className="flex-1 text-center">
+            <LinkButton to={"/login"} className="flex-1 btn-ghost">
               Login
-            </Link>
+            </LinkButton>
             <Button type="submit" className="flex-1">
               Register
               {isNavigating ? <Spinner /> : null}
             </Button>
           </div>
+          <LinkButton
+            to={"/login-passkey"}
+            className="btn-block mt-4 btn-secondary"
+          >
+            Register with Passkey
+          </LinkButton>
         </fieldset>
       </Form>
     </div>
