@@ -19,6 +19,7 @@ import {
 import { z } from "zod";
 import LinkButton from "~/components/LinkButton";
 import { prisma } from "~/db.server";
+import { getClerkUsersByIDs } from "~/utils";
 import { getUser } from "~/utils/auth.server";
 import { UserFeatureFlagQueries } from "~/utils/queries.server";
 
@@ -175,7 +176,11 @@ export const loader = async (args: LoaderFunctionArgs) => {
     habit: habits.find((habit) => habit.id === mostTrackedHabitAmount?.habitId),
   };
 
+  const [user] = await getClerkUsersByIDs([userId]);
+  const accountCreated = new Date(user.createdAt);
+
   return {
+    accountCreated,
     markedHabits,
     markedHabitCountByHabit,
     habits,
@@ -237,6 +242,7 @@ export default function Route() {
       {isMonthTab ? <MonthPicker /> : null}
       {isWeekTab ? <WeekPicker /> : null}
       {isYearTab ? <YearPicker /> : null}
+      {isAllTimeTab ? <AllTimeInfo /> : null}
 
       {markedHabitCountByHabit.length > 0 ? (
         <div className="flex flex-col lg:items-start lg:flex-row lg:gap-8 gap-4">
@@ -408,6 +414,20 @@ function YearPicker() {
       >
         <ChevronRightIcon className="w-5 h-5" />
       </LinkButton>
+    </div>
+  );
+}
+
+function AllTimeInfo() {
+  const { parsedURL, accountCreated } = useLoaderData<LoaderData>();
+  if (parsedURL.tab !== "all-time") return null;
+
+  return (
+    <div className="mt-8 flex items-center justify-center gap-2 text-sm">
+      <span>Account created: </span>
+      <span className="font-semibold">
+        {format(new Date(accountCreated), "MMMM yyyy")}
+      </span>
     </div>
   );
 }
