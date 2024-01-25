@@ -21,6 +21,7 @@ import { authenticator, webAuthnStrategy } from "~/services/auth.server";
 import { sessionStorage } from "~/services/session.server";
 import { handleFormSubmit } from "remix-auth-webauthn";
 import LinkButton from "~/components/LinkButton";
+import { isClerkAPIResponseError, useSignIn } from "@clerk/remix";
 
 export const loader = async (args: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(args.request);
@@ -68,6 +69,7 @@ export default function Login() {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
   const options = useLoaderData<typeof loader>();
+  const { isLoaded, setActive, signIn } = useSignIn();
   const isNavigating = navigation.state === "submitting";
 
   return (
@@ -78,7 +80,56 @@ export default function Login() {
           <ErrorAlert>{actionData.error}</ErrorAlert>
         </div>
       ) : null}
-      <Form method="POST" className="w-full">
+      <Form
+        method="POST"
+        // onSubmit={async (e) => {
+        //   e.preventDefault();
+        //   if (!signIn) return;
+        //   const formData = new FormData(
+        //     e.currentTarget,
+        //     e.currentTarget.querySelector("button:focus") as HTMLElement
+        //   );
+        //   console.log({
+        //     data: Object.fromEntries(formData),
+        //   });
+
+        //   const username = formData.get("username") as string;
+        //   const password = formData.get("password") as string;
+        //   const strategy = formData.get("strategy") as
+        //     | "password"
+        //     | "oauth_google";
+        //   console.log({
+        //     username,
+        //     password,
+        //     strategy,
+        //   });
+        //   let signInParams;
+        //   if (strategy === "password") {
+        //     signInParams = {
+        //       identifier: username,
+        //       password,
+        //       strategy,
+        //     };
+        //   } else {
+        //     signInParams = {
+        //       identifier: username,
+        //       redirectUrl: "/",
+        //       strategy,
+        //     };
+        //   }
+
+        //   try {
+        //     const result = await signIn.create(signInParams);
+        //     console.log({ result });
+        //   } catch (error) {
+        //     if (isClerkAPIResponseError(error)) {
+        //       console.error("Error signing in: ", error.errors[0]);
+        //     }
+        //     console.error("Error signing in: ", error);
+        //   }
+        // }}
+        className="w-full"
+      >
         <fieldset disabled={isNavigating}>
           <Input
             label="Username"
@@ -97,7 +148,12 @@ export default function Login() {
             required
           />
           <div className="flex items-center justify-center gap-4 w-full">
-            <Button type="submit" className="flex-1">
+            <Button
+              type="submit"
+              name="strategy"
+              value="password"
+              className="flex-1"
+            >
               Login
               {isNavigating ? <Spinner /> : null}
             </Button>
@@ -105,6 +161,14 @@ export default function Login() {
               Register
             </LinkButton>
           </div>
+          {/* <Button
+            type="submit"
+            name="strategy"
+            value="oauth_google"
+            className="btn-block mt-4 bg-white text-black"
+          >
+            Login with Google
+          </Button> */}
           <LinkButton
             to={"/login-passkey"}
             className="btn-block mt-4 btn-secondary"
