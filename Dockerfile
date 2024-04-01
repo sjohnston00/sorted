@@ -35,7 +35,6 @@ ADD prisma .
 RUN npx prisma generate
 
 ADD . .
-RUN npm run postinstall
 RUN npm run build
 
 # Run migrations

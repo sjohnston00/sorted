@@ -22,6 +22,9 @@ model Habit {
   private   Boolean   @default(false)
 
   habits MarkedHabit[]
+
+  @@index([userId], name: "habit_userId")
+  @@index([deleted], name: "habit_deleted")
 }
 
 model MarkedHabit {
@@ -34,6 +37,9 @@ model MarkedHabit {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId], name: "markedHabit_userId")
+  @@index([habitId], name: "markedHabit_habitId")
 }
 
 model UserFriends {

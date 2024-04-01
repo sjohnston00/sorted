@@ -5,6 +5,7 @@ import {
   redirect,
   type LoaderFunctionArgs,
   type MetaFunction,
+  json,
 } from "@remix-run/node";
 import { useLoaderData, useRouteLoaderData } from "@remix-run/react";
 import { format } from "date-fns";
@@ -46,8 +47,14 @@ type LoaderData = {
 };
 
 export type IndexLoaderData = typeof loader;
-export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
+export const loader = async (args: LoaderFunctionArgs) => {
+  let now = Date.now();
+
   const { userId } = await getUser(args, "/sign-in");
+
+  console.log({
+    timeToGetUser: Date.now() - now,
+  });
 
   const url = new URL(args.request.url);
   const { friend } = URLSearchParamsSchemas.friend(
@@ -78,11 +85,11 @@ export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
       HabitQueries.getUserPublicHabits(userFriendId),
     ]);
 
-    return {
+    return json({
       markedHabits: friendsMarkedHabits,
       habits: friendsHabits,
       isLoadingFriendsHabits: true,
-    };
+    });
   }
 
   const userFeatureFlags = await UserFeatureFlagQueries.getUsersFeatureFlags(
@@ -94,16 +101,34 @@ export const loader = async (args: LoaderFunctionArgs): Promise<LoaderData> => {
     defaultValue: false,
   });
 
-  const [markedHabits, habits] = await Promise.all([
-    showPrivateHabits
-      ? MarkedHabitQueries.getUserAllMarkedHabits(userId)
-      : MarkedHabitQueries.getUserPublicMarkedHabits(userId),
-    showPrivateHabits
-      ? HabitQueries.getUserAllHabits(userId)
-      : HabitQueries.getUserPublicHabits(userId),
-  ]);
+  now = Date.now();
 
-  return { markedHabits, habits, isLoadingFriendsHabits: false };
+  const markedHabits = await (showPrivateHabits
+    ? MarkedHabitQueries.getUserAllMarkedHabits(userId)
+    : MarkedHabitQueries.getUserPublicMarkedHabits(userId));
+
+  console.log({
+    timeToMarkedHabits: Date.now() - now,
+  });
+
+  now = Date.now();
+
+  const habits = await (showPrivateHabits
+    ? HabitQueries.getUserAllHabits(userId)
+    : HabitQueries.getUserPublicHabits(userId));
+
+  console.log({
+    timeToHabits: Date.now() - now,
+  });
+
+  return json(
+    { markedHabits, habits, isLoadingFriendsHabits: false },
+    {
+      headers: {
+        "Cache-Control": "max-age=60, s-maxage=60, stale-while-revalidate=30",
+      },
+    }
+  );
 };
 
 export const action = async (args: ActionFunctionArgs) => {
