@@ -1,8 +1,5 @@
 # base node image
-FROM node:18-bullseye-slim as base
-
-# set for base and all layer that inherit from it
-ENV NODE_ENV production
+FROM node:21-bullseye-slim as base
 
 # Install openssl for Prisma
 RUN apt-get update && apt-get install -y openssl
@@ -13,7 +10,8 @@ FROM base as deps
 WORKDIR /myapp
 
 ADD package.json package-lock.json ./
-RUN npm install --force --production=false
+RUN npm install
+ENV NODE_ENV production
 
 # Setup production node_modules
 FROM base as production-deps
