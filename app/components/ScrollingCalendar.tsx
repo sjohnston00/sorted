@@ -29,7 +29,6 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
-import { classNames } from "~/utils";
 import {
   FORM_ACTIONS,
   SCROLLING_CALENDAR_MONTHS_NEXT_DEFAULT,
@@ -39,6 +38,9 @@ import Button from "./Button";
 import HabitButton from "./Calendar/HabitButton";
 import MarkedHabitRow from "./Calendar/MarkedHabitRow";
 import Input, { Textarea } from "./Input";
+import CalendarWeekHeader from "./Calendar/CalendarWeekHeader";
+import CalendarDayButton from "./Calendar/CalendarDayButton";
+import CalendarDays from "./Calendar/CalendarDays";
 
 type ScrollingCalendarProps = {
   indicators?: any[];
@@ -92,21 +94,12 @@ export default function ScrollingCalendar({
     nextMonths.push(addMonths(firstDayCurrentMonth, index + 1));
   }
 
-  const monhts = [...previousMonths, firstDayCurrentMonth, ...nextMonths];
+  const months = [...previousMonths, firstDayCurrentMonth, ...nextMonths];
 
   const selectedDayMarkedHabits = markedHabits.filter((m) =>
     isSameDay(new Date(m.date), selectedDay)
   );
 
-  let colStartClasses = [
-    "",
-    "col-start-2",
-    "col-start-3",
-    "col-start-4",
-    "col-start-5",
-    "col-start-6",
-    "col-start-7",
-  ];
   return (
     <>
       <div className="md:grid md:grid-cols-2">
@@ -121,7 +114,7 @@ export default function ScrollingCalendar({
               className="flex gap-8 overflow-x-auto snap-x snap-mandatory [-webkit-overflow-scrolling:touch] scroll-smooth"
               ref={calendarRef}
             >
-              {monhts.map((month, i) => {
+              {months.map((month, i) => {
                 const days = eachDayOfInterval({
                   start: startOfWeek(month, {
                     weekStartsOn: 1,
@@ -149,84 +142,14 @@ export default function ScrollingCalendar({
                     <span className="text-xl font-bold ml-2">
                       {format(month, "MMMM yyyy")}
                     </span>
-                    <div className="grid grid-cols-7 mt-10 text-xs leading-6 text-center text-gray-500">
-                      <div>M</div>
-                      <div>T</div>
-                      <div>W</div>
-                      <div>T</div>
-                      <div>F</div>
-                      <div>S</div>
-                      <div>S</div>
-                    </div>
-                    <div className="grid grid-cols-7 mt-2 text-sm">
-                      {days.map((day, dayIdx) => {
-                        const dayIndicators = monthIndicators?.filter((m) =>
-                          isSameDay(parseISO(m.date), day)
-                        );
-                        // .slice(0, 3);
-                        const isAfterToday = isAfter(day, endOfDay(today));
-                        return (
-                          <div
-                            key={day.toString()}
-                            className={classNames(
-                              dayIdx === 0 && colStartClasses[getDay(day) - 1],
-                              "py-1.5"
-                            )}
-                          >
-                            <button
-                              disabled={isAfterToday}
-                              type="submit"
-                              name="date"
-                              value={format(day, "yyyy-MM-dd")}
-                              className={twMerge(
-                                "mx-auto flex h-8 w-8 items-center justify-center rounded-full disabled:!text-gray-400 disabled:pointer-events-none",
-                                isEqual(day, selectedDay) && "text-white",
-                                !isEqual(day, selectedDay) &&
-                                  isToday(day) &&
-                                  "text-red-500",
-                                !isEqual(day, selectedDay) &&
-                                  !isToday(day) &&
-                                  isSameMonth(day, month) &&
-                                  "text-gray-900 dark:text-gray-300",
-                                !isEqual(day, selectedDay) &&
-                                  !isToday(day) &&
-                                  !isSameMonth(day, month) &&
-                                  "text-gray-400",
-
-                                isEqual(day, selectedDay) &&
-                                  isToday(day) &&
-                                  "bg-red-500",
-                                isEqual(day, selectedDay) &&
-                                  !isToday(day) &&
-                                  "bg-gray-900",
-                                !isEqual(day, selectedDay) &&
-                                  "hover:bg-gray-200 dark:hover:bg-gray-700",
-                                (isEqual(day, selectedDay) || isToday(day)) &&
-                                  "font-semibold"
-                              )}
-                              onClick={() => {
-                                setSelectedDay(day);
-                              }}
-                            >
-                              <time dateTime={format(day, "yyyy-MM-dd")}>
-                                {format(day, "d")}
-                              </time>
-                            </button>
-                            <div className="grid grid-cols-3 min-h-1.5 w-fit gap-0.5 mx-auto mt-1">
-                              {dayIndicators?.map((m) => (
-                                <div
-                                  key={`calendar-${m.id}`}
-                                  className="w-1.5 h-1.5 rounded-full"
-                                  style={{
-                                    backgroundColor: m.habit.colour,
-                                  }}
-                                ></div>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    <CalendarWeekHeader />
+                    <CalendarDays
+                      days={days}
+                      month={month}
+                      monthIndicators={monthIndicators}
+                      selectedDay={selectedDay}
+                      setSelectedDay={setSelectedDay}
+                    />
                   </div>
                 );
               })}

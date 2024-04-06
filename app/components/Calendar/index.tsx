@@ -28,6 +28,8 @@ import { Dialog, Transition } from "@headlessui/react";
 import Input, { Textarea } from "../Input";
 import Button from "../Button";
 import { FORM_ACTIONS } from "~/utils/constants";
+import CalendarWeekHeader from "./CalendarWeekHeader";
+import CalendarDays from "./CalendarDays";
 
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>;
@@ -85,6 +87,10 @@ export default function Calendar({
 
   const selectedDayMarkedHabits = markedHabits.filter((m) =>
     isSameDay(new Date(m.date), selectedDay)
+  );
+
+  const monthIndicators = markedHabits.filter((m) =>
+    isSameMonth(parseISO(m.date), currentMonth)
   );
 
   const [isOpen, setIsOpen] = useState(false);
@@ -146,88 +152,14 @@ export default function Calendar({
               <Chevron direction="right" />
             </button>
           </div>
-          <div className="grid grid-cols-7 mt-10 text-xs leading-6 text-center text-gray-500">
-            {startWeekMonday ? null : <div>S</div>}
-            <div>M</div>
-            <div>T</div>
-            <div>W</div>
-            <div>T</div>
-            <div>F</div>
-            <div>S</div>
-            {startWeekMonday ? <div>S</div> : null}
-          </div>
-          <div className="grid grid-cols-7 mt-2 text-sm">
-            {days.map((day, dayIdx) => (
-              <div
-                key={day.toString()}
-                className={classNames(
-                  dayIdx === 0 &&
-                    colStartClasses[
-                      startWeekMonday ? getDay(day) - 1 : getDay(day)
-                    ],
-                  "py-1.5"
-                )}
-              >
-                <button
-                  type="submit"
-                  name="date"
-                  value={format(day, "yyyy-MM-dd")}
-                  onClick={() => {
-                    setSearchParams(
-                      (prevParams) => {
-                        prevParams.set("d", format(day, "yyyy-MM-dd"));
-                        return prevParams;
-                      },
-                      {
-                        replace: true,
-                        preventScrollReset: true,
-                      }
-                    );
-                    setSelectedDay(day);
-                  }}
-                  className={classNames(
-                    isEqual(day, selectedDay) && "text-white",
-                    !isEqual(day, selectedDay) &&
-                      isToday(day) &&
-                      "text-red-500",
-                    !isEqual(day, selectedDay) &&
-                      !isToday(day) &&
-                      isSameMonth(day, firstDayCurrentMonth) &&
-                      "text-gray-900 dark:text-gray-300",
-                    !isEqual(day, selectedDay) &&
-                      !isToday(day) &&
-                      !isSameMonth(day, firstDayCurrentMonth) &&
-                      "text-gray-400",
-                    isEqual(day, selectedDay) && isToday(day) && "bg-red-500",
-                    isEqual(day, selectedDay) && !isToday(day) && "bg-gray-900",
-                    !isEqual(day, selectedDay) &&
-                      "hover:bg-gray-200 dark:hover:bg-gray-700",
-                    (isEqual(day, selectedDay) || isToday(day)) &&
-                      "font-semibold",
-                    "mx-auto flex h-8 w-8 items-center justify-center rounded-full"
-                  )}
-                >
-                  <time dateTime={format(day, "yyyy-MM-dd")}>
-                    {format(day, "d")}
-                  </time>
-                </button>
-                <div className="flex h-1 w-fit gap-px mx-auto mt-1">
-                  {markedHabits
-                    .filter((m) => isSameDay(parseISO(m.date), day))
-                    .slice(0, 3)
-                    .map((m) => (
-                      <div
-                        key={`calendar-${m.id}`}
-                        className="w-1 h-1 rounded-full"
-                        style={{
-                          backgroundColor: m.habit.colour,
-                        }}
-                      ></div>
-                    ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <CalendarWeekHeader />
+          <CalendarDays
+            days={days}
+            month={firstDayCurrentMonth}
+            monthIndicators={monthIndicators}
+            selectedDay={selectedDay}
+            setSelectedDay={setSelectedDay}
+          />
         </div>
         <div className="p-4 md:pt-0 border-t md:border-t-0 md:border-l border-gray-200">
           <div className="min-h-40">
