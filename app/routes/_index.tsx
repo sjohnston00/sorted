@@ -121,14 +121,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     timeToHabits: Date.now() - now,
   });
 
-  return json(
-    { markedHabits, habits, isLoadingFriendsHabits: false },
-    {
-      headers: {
-        "Cache-Control": "max-age=60, s-maxage=60, stale-while-revalidate=30",
-      },
-    }
-  );
+  return json({ markedHabits, habits, isLoadingFriendsHabits: false });
 };
 
 export const action = async (args: ActionFunctionArgs) => {
