@@ -160,9 +160,10 @@ export default function ScrollingCalendar({
                     </div>
                     <div className="grid grid-cols-7 mt-2 text-sm">
                       {days.map((day, dayIdx) => {
-                        const dayIndicators = monthIndicators
-                          ?.filter((m) => isSameDay(parseISO(m.date), day))
-                          .slice(0, 3);
+                        const dayIndicators = monthIndicators?.filter((m) =>
+                          isSameDay(parseISO(m.date), day)
+                        );
+                        // .slice(0, 3);
                         const isAfterToday = isAfter(day, endOfDay(today));
                         return (
                           <div
@@ -211,11 +212,11 @@ export default function ScrollingCalendar({
                                 {format(day, "d")}
                               </time>
                             </button>
-                            <div className="flex h-1 w-fit gap-px mx-auto mt-1">
+                            <div className="grid grid-cols-3 min-h-1.5 w-fit gap-0.5 mx-auto mt-1">
                               {dayIndicators?.map((m) => (
                                 <div
                                   key={`calendar-${m.id}`}
-                                  className="w-1 h-1 rounded-full"
+                                  className="w-1.5 h-1.5 rounded-full"
                                   style={{
                                     backgroundColor: m.habit.colour,
                                   }}
