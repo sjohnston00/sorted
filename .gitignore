@@ -12,3 +12,5 @@ node_modules
 /cypress/videos
 /prisma/data.db
 /prisma/data.db-journal
+
+POSTGRES_PASSWORD.txt
