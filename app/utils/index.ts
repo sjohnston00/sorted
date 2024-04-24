@@ -1,21 +1,21 @@
-import { prisma } from '~/db.server'
-import { clerkClient } from './auth.server'
-import { SignedInAuthObject } from '@clerk/remix/api/index'
+import { prisma } from "~/db.server";
+import { clerkClient } from "./auth.server";
+import { SignedInAuthObject } from "@clerk/remix/api/index";
 
 export function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
 
 export async function getClerkUser(search: string) {
   const users = await clerkClient.users.getUserList({
-    query: search
-  })
+    query: search,
+  });
 
   if (users.length === 0) {
-    return undefined
+    return undefined;
   }
 
-  const u = users[0]
+  const u = users[0];
 
   return {
     id: u.id,
@@ -25,16 +25,16 @@ export async function getClerkUser(search: string) {
     hasImage: u.hasImage,
     username: u.username,
     firstName: u.firstName,
-    lastName: u.lastName
-  }
+    lastName: u.lastName,
+  };
 }
 
 export async function getClerkUsersByIDs(userIDs: string[]) {
   const users = await clerkClient.users.getUserList({
-    userId: [...userIDs]
-  })
+    userId: [...userIDs],
+  });
 
-  return users.map((u) => ({
+  return users.data.map((u) => ({
     id: u.id,
     createdAt: u.createdAt,
     updatedAt: u.updatedAt,
@@ -42,8 +42,8 @@ export async function getClerkUsersByIDs(userIDs: string[]) {
     hasImage: u.hasImage,
     username: u.username,
     firstName: u.firstName,
-    lastName: u.lastName
-  }))
+    lastName: u.lastName,
+  }));
 }
 
 export async function getUsersFriendRequests(user: SignedInAuthObject) {
@@ -51,39 +51,39 @@ export async function getUsersFriendRequests(user: SignedInAuthObject) {
     where: {
       OR: [
         {
-          friendRequestFrom: user.userId
+          friendRequestFrom: user.userId,
         },
         {
-          friendRequestTo: user.userId
-        }
+          friendRequestTo: user.userId,
+        },
       ],
-      status: 'PENDING'
-    }
-  })
+      status: "PENDING",
+    },
+  });
 
   const mySentFriendRequests = friendRequests.filter(
     (f) => f.friendRequestFrom === user.userId
-  )
+  );
   const myReceivedFriendRequests = friendRequests.filter(
     (f) => f.friendRequestTo === user.userId
-  )
+  );
 
   const userIDs = new Set([
     ...myReceivedFriendRequests.map((f) => f.friendRequestFrom),
-    ...mySentFriendRequests.map((f) => f.friendRequestTo)
-  ])
+    ...mySentFriendRequests.map((f) => f.friendRequestTo),
+  ]);
 
-  const users = await getClerkUsersByIDs([...userIDs])
+  const users = await getClerkUsersByIDs([...userIDs]);
 
   return {
     friendRequests,
     myReceivedFriendRequests: myReceivedFriendRequests.map((f) => ({
       ...f,
-      user: users.find((u) => u.id === f.friendRequestFrom)
+      user: users.find((u) => u.id === f.friendRequestFrom),
     })),
     mySentFriendRequests: mySentFriendRequests.map((f) => ({
       ...f,
-      user: users.find((u) => u.id === f.friendRequestTo)
-    }))
-  }
+      user: users.find((u) => u.id === f.friendRequestTo),
+    })),
+  };
 }

@@ -19,7 +19,7 @@ import Spinner from "~/components/icons/Spinner";
 import { isLoggedIn } from "~/utils/auth.server";
 import { authenticator, webAuthnStrategy } from "~/services/auth.server";
 import { sessionStorage } from "~/services/session.server";
-import { handleFormSubmit } from "remix-auth-webauthn";
+// import { handleFormSubmit } from "remix-auth-webauthn";
 import LinkButton from "~/components/LinkButton";
 
 export const loader = async (args: LoaderFunctionArgs) => {
@@ -74,7 +74,7 @@ export default function Login() {
       ) : null}
       <Form
         method="POST"
-        onSubmit={handleFormSubmit(options)}
+        // onSubmit={handleFormSubmit(options)}
         className="w-full"
       >
         <fieldset disabled={isNavigating}>

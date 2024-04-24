@@ -1,4 +1,4 @@
-import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
+import { ClerkApp } from "@clerk/remix";
 import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
@@ -16,7 +16,7 @@ import BottomNavbar from "./components/BottomNavbar";
 import { prisma } from "./db.server";
 import { getUser } from "./utils/auth.server";
 import { getClerkUsersByIDs, getUsersFriendRequests } from "./utils";
-import { useSWEffect, LiveReload } from "@remix-pwa/sw";
+import { useSWEffect } from "@remix-pwa/sw";
 // const RemixDevTools =
 //   process.env.NODE_ENV === "development"
 //     ? React.lazy(() => import("remix-development-tools"))
@@ -168,7 +168,6 @@ function Layout({ children }: LayoutProps) {
         {/* <Navbar /> */}
         {children}
         <ScrollRestoration />
-        {process.env.NODE_ENV === "development" ? <LiveReload /> : null}
         {/* {RemixDevTools && (
           <Suspense>
             <RemixDevTools />
@@ -214,5 +213,3 @@ function RootErrorBoundary() {
 }
 
 export default ClerkApp(App);
-
-export const ErrorBoundary = ClerkErrorBoundary(RootErrorBoundary);
