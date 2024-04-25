@@ -190,12 +190,10 @@ function App() {
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  console.error({ error });
-
   let message = "Unknown Error";
   if (isRouteErrorResponse(error)) {
-    if (process.env.NODE_ENV === "development" && error.error) {
-      message = error.error.stack || error.error.message;
+    if (process.env.NODE_ENV === "development") {
+      message = JSON.stringify(error, null, 2);
     } else {
       message = error.data;
     }
