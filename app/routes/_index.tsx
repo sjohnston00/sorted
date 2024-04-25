@@ -14,7 +14,7 @@ import FriendsRow from "~/components/FriendsRow";
 import ScrollingCalendar from "~/components/ScrollingCalendar";
 import { prisma } from "~/db.server";
 import { RootLoaderData } from "~/root";
-import { getClerkUser } from "~/utils";
+import { getClerkUser } from "~/utils/index.server";
 import { getUser } from "~/utils/auth.server";
 import {
   CHILDREN_FEATURE_FLAGS,

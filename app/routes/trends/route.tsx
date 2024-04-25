@@ -19,7 +19,7 @@ import {
 import { z } from "zod";
 import LinkButton from "~/components/LinkButton";
 import { prisma } from "~/db.server";
-import { getClerkUsersByIDs } from "~/utils";
+import { getClerkUsersByIDs } from "~/utils/index.server";
 import { getUser } from "~/utils/auth.server";
 import { UserFeatureFlagQueries } from "~/utils/queries.server";
 

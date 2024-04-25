@@ -19,7 +19,7 @@ import {
 } from "date-fns";
 import { Habit, MarkedHabit } from "@prisma/client";
 import Chevron from "../icons/Chevron";
-import { classNames } from "~/utils";
+import { classNames } from "~/utils/index.server";
 import { SerializeFrom } from "@remix-run/node";
 import HabitButton from "./HabitButton";
 import Trash from "../icons/Trash";

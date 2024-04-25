@@ -3,14 +3,10 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "run-s build:*",
-    "start": "remix-serve build/index.js",
+    "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "setup:db": "prisma migrate dev",
-    "deploy:db": "prisma migrate deploy",
-    "build:remix": "remix build",
-    "dev": "run-p dev:*",
-    "dev:remix": "remix dev"
+    "build": "remix vite:build",
+    "dev": "remix vite:dev"
   },
   "dependencies": {
     "@clerk/remix": "^3.2.1",
@@ -51,16 +47,19 @@
     "@types/randomcolor": "^0.5.9",
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.23",
+    "autoprefixer": "^10.4.19",
     "daisyui": "^4.9.0",
     "eslint": "^8.57.0",
     "glob": "^10.3.12",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.38",
     "prisma": "^5.11.0",
     "remix-pwa": "^3.0.19",
     "tailwindcss": "^3.4.3",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.4.3",
-    "vite": "^5.2.10"
+    "vite": "^5.2.10",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "engines": {
     "node": ">=14.0.0"

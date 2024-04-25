@@ -10,13 +10,14 @@ import {
   isRouteErrorResponse,
   useRouteError,
 } from "@remix-run/react";
-import React, { Suspense } from "react";
-import styles from "~/styles/tailwind.css";
+import React from "react";
+import styles from "~/styles/tailwind.css?url";
 import BottomNavbar from "./components/BottomNavbar";
 import { prisma } from "./db.server";
-import { getUser } from "./utils/auth.server";
-import { getClerkUsersByIDs, getUsersFriendRequests } from "./utils";
-import { useSWEffect } from "@remix-pwa/sw";
+import {
+  getClerkUsersByIDs,
+  getUsersFriendRequests,
+} from "./utils/index.server";
 // const RemixDevTools =
 //   process.env.NODE_ENV === "development"
 //     ? React.lazy(() => import("remix-development-tools"))
@@ -41,8 +42,8 @@ export const links: LinksFunction = () => [
 export type RootLoaderData = typeof loader;
 
 export const loader = async (args: LoaderFunctionArgs) => {
-  const user = await getAuth(args);
   return rootAuthLoader(args, async ({ request }) => {
+    const user = await getAuth(args);
     if (!user.userId) {
       return null;
     }
@@ -98,7 +99,6 @@ type LayoutProps = {
 };
 
 function Layout({ children }: LayoutProps) {
-  useSWEffect();
   return (
     <html lang="en">
       <head>
@@ -188,9 +188,9 @@ function App() {
   );
 }
 
-function RootErrorBoundary() {
+export function ErrorBoundary() {
   const error = useRouteError();
-  console.log({ error });
+  console.error({ error });
 
   let message = "Unknown Error";
   if (isRouteErrorResponse(error)) {

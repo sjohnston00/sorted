@@ -14,7 +14,10 @@ import { z } from "zod";
 import Spinner from "~/components/icons/Spinner";
 import { clerkClient, getUser } from "~/utils/auth.server";
 import { prisma } from "~/db.server";
-import { getClerkUsersByIDs, getUsersFriendRequests } from "~/utils";
+import {
+  getClerkUsersByIDs,
+  getUsersFriendRequests,
+} from "~/utils/index.server";
 import { RootLoaderData } from "~/root";
 import Switch from "~/components/Switch";
 import { ChildrenFeatureFlag, FeatureFlag } from "@prisma/client";

@@ -1,10 +1,6 @@
 import { prisma } from "~/db.server";
 import { clerkClient } from "./auth.server";
-import { SignedInAuthObject } from "@clerk/remix/api/index";
-
-export function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
+import { SignedInAuthObject } from "@clerk/remix/api.server";
 
 export async function getClerkUser(search: string) {
   const users = await clerkClient.users.getUserList({
