@@ -6,6 +6,7 @@ import {
   useNavigation,
 } from "@remix-run/react";
 import Button from "~/components/Button";
+import ContinueWithGoogleButton from "~/components/ContinueWithGoogleButton";
 import ErrorAlert from "~/components/ErrorAlert";
 import Input from "~/components/Input";
 import LinkButton from "~/components/LinkButton";
@@ -94,18 +95,8 @@ export default function Login() {
               Register
             </LinkButton>
           </div>
-          {/* <Button
-            type="submit"
-            name="strategy"
-            value="oauth_google"
-            className="btn-block mt-4 bg-white text-black"
-          >
-            Login with Google
-          </Button> */}
-          <Form action="/login/google" method="post">
-            <Button className="btn-block mt-4 bg-white text-black">
-              Login with Google
-            </Button>
+          <Form action="/login/google" method="post" className="w-full mt-4">
+            <ContinueWithGoogleButton />
           </Form>
           <LinkButton
             to={"/login-passkey"}

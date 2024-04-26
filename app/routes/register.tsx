@@ -8,6 +8,7 @@ import {
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import Button from "~/components/Button";
+import ContinueWithGoogleButton from "~/components/ContinueWithGoogleButton";
 import ErrorAlert from "~/components/ErrorAlert";
 import Input from "~/components/Input";
 import LinkButton from "~/components/LinkButton";
@@ -142,6 +143,9 @@ export default function Register() {
               {isNavigating ? <Spinner /> : null}
             </Button>
           </div>
+          <Form action="/login/google" method="post" className="w-full mt-4">
+            <ContinueWithGoogleButton />
+          </Form>
           <LinkButton
             to={"/login-passkey"}
             className="btn-block mt-4 btn-secondary"
