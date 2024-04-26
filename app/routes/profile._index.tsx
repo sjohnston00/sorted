@@ -19,6 +19,7 @@ import { RootLoaderData } from "~/root";
 import { loader as searchUsersLoader } from "~/routes/api.users";
 import { authenticator } from "~/services/auth.server";
 import { getUsersFriendRequests } from "~/utils/friendRequests/queries.server";
+import { getUsersFriends } from "~/utils/friends/queries.server";
 import { getUsersByIDs } from "~/utils/users/queries.server";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -29,27 +30,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { myReceivedFriendRequests, mySentFriendRequests, friendRequests } =
     await getUsersFriendRequests(user.id);
 
-  const friends = await prisma.userFriends.findMany({
-    where: {
-      OR: [
-        {
-          friendIdFrom: user.id,
-        },
-        {
-          friendIdTo: user.id,
-        },
-      ],
-    },
-  });
-
-  const userIDs = new Set([
-    ...myReceivedFriendRequests.map((f) => f.friendRequestFrom),
-    ...mySentFriendRequests.map((f) => f.friendRequestTo),
-    ...friends.map((f) => f.friendIdFrom),
-    ...friends.map((f) => f.friendIdTo),
-  ]);
-
-  const users = await getUsersByIDs([...userIDs]);
+  const friends = await getUsersFriends(user.id);
 
   const featureFlags = await prisma.featureFlag.findMany({
     where: {
@@ -72,11 +53,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     friendRequests,
     myReceivedFriendRequests,
     mySentFriendRequests,
-    friends: friends.map((f) => ({
-      ...f,
-      userFrom: users.find((u) => u.id === f.friendIdFrom),
-      userTo: users.find((u) => u.id === f.friendIdTo),
-    })),
+    friends,
     featureFlags,
   };
 };

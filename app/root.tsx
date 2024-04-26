@@ -14,7 +14,7 @@ import BottomNavbar from "./components/BottomNavbar";
 import { prisma } from "./db.server";
 import { authenticator } from "./services/auth.server";
 import { getUsersFriendRequests } from "./utils/friendRequests/queries.server";
-import { getUsersByIDs } from "./utils/users/queries.server";
+import { getUsersFriends } from "./utils/friends/queries.server";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
   {
@@ -39,25 +39,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (!user) {
     return null;
   }
-  const friends = await prisma.userFriends.findMany({
-    where: {
-      OR: [
-        {
-          friendIdFrom: user.id,
-        },
-        {
-          friendIdTo: user.id,
-        },
-      ],
-    },
-  });
-
-  const userIDs = new Set([
-    ...friends.map((f) => f.friendIdFrom),
-    ...friends.map((f) => f.friendIdTo),
-  ]);
-
-  const users = await getUsersByIDs([...userIDs]);
+  const friends = await getUsersFriends(user.id);
   const { myReceivedFriendRequests } = await getUsersFriendRequests(user.id);
 
   const userFeatureFlags = await prisma.userFeatureFlag.findMany({
@@ -79,11 +61,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     userFeatureFlags,
     userChildrenFeatureFlag,
     myReceivedFriendRequests,
-    friends: friends.map((f) => ({
-      ...f,
-      userFrom: users.find((u) => u.id === f.friendIdFrom),
-      userTo: users.find((u) => u.id === f.friendIdTo),
-    })),
+    friends,
   };
 };
 
