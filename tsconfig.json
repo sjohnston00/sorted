@@ -1,5 +1,11 @@
 {
-  "include": ["env.d.ts", "**/*.ts", "**/*.tsx", "postcss.config.mjs"],
+  "include": [
+    "env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "postcss.config.mjs",
+    "node_modules/@remix-run/react/future/single-fetch.d.ts"
+  ],
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "Bundler",

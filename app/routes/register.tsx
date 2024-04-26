@@ -1,46 +1,35 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Form,
-  Link,
   MetaFunction,
   useActionData,
   useNavigation,
 } from "@remix-run/react";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
 import Button from "~/components/Button";
 import ErrorAlert from "~/components/ErrorAlert";
 import Input from "~/components/Input";
+import LinkButton from "~/components/LinkButton";
 import Spinner from "~/components/icons/Spinner";
-import { isLoggedIn } from "~/utils/auth.server";
-import bcrypt from "bcryptjs";
-import { z } from "zod";
 import { prisma } from "~/db.server";
 import { authenticator } from "~/services/auth.server";
-import LinkButton from "~/components/LinkButton";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  // return await authenticator.isAuthenticated(args.request, {
-  //   successRedirect: "/",
-  // })
-  const loggedIn = await isLoggedIn(args);
-  if (loggedIn) {
-    throw redirect("/");
-  }
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await authenticator.isAuthenticated(request, {
+    successRedirect: "/",
+  });
   return null;
 };
 
-export const action = async (
-  args: ActionFunctionArgs
-): Promise<{ error: string }> => {
-  const loggedIn = await isLoggedIn(args);
-  if (loggedIn) {
-    throw redirect("/");
-  }
+export const action = async ({
+  request,
+}: ActionFunctionArgs): Promise<{ error: string }> => {
+  await authenticator.isAuthenticated(request, {
+    successRedirect: "/",
+  });
 
-  const request = args.request.clone();
+  const clonedRequest = request.clone();
   const formData = await request.formData();
 
   const data = z
@@ -75,14 +64,32 @@ export const action = async (
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  await prisma.user.create({
+  const { id } = await prisma.user.create({
     data: {
       username: data.username,
-      password: hashedPassword,
+    },
+    select: {
+      id: true,
     },
   });
 
-  return authenticator.authenticate("form", args.request, {
+  const { id: passwordId } = await prisma.userPassword.create({
+    data: {
+      userId: id,
+      passwordHash: hashedPassword,
+    },
+  });
+
+  await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      userPasswordId: passwordId,
+    },
+  });
+
+  return authenticator.authenticate("form", clonedRequest, {
     successRedirect: "/",
     failureRedirect: "/register",
   });

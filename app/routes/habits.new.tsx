@@ -13,15 +13,20 @@ import Button from "~/components/Button";
 import Checkbox from "~/components/Form/Checkbox";
 import Input, { Textarea } from "~/components/Input";
 import { prisma } from "~/db.server";
+import { authenticator } from "~/services/auth.server";
 import { getUser } from "~/utils/auth.server";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  await getUser(args);
-  return {};
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+  return null;
 };
-export const action = async (args: ActionFunctionArgs) => {
-  const { userId } = await getUser(args);
-  const formData = await args.request.formData();
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+  const formData = await request.formData();
   const { name, colour, description, privateHabit } =
     Object.fromEntries(formData);
 
@@ -30,14 +35,13 @@ export const action = async (args: ActionFunctionArgs) => {
       name: name.toString()!,
       colour: colour.toString()!,
       private: !!privateHabit,
-      userId,
+      userId: user.id,
       days: formData.getAll("days").map((d) => String(d)),
       description: description.toString(),
     },
   });
 
   throw redirect("/habits");
-  return {};
 };
 
 export const meta: MetaFunction = () => {
@@ -49,7 +53,6 @@ export default function NewHabit() {
   const isSubmitting = navigation.state === "submitting";
   const isLoading = navigation.state === "loading";
   const [colour, setColour] = useState(randomColour());
-  // const icons = Object.entries(Icons)
 
   return (
     <div className="max-w-md mx-auto">

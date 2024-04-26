@@ -1,105 +1,97 @@
-import {
-  ActionFunctionArgs,
-  json,
-  type LoaderFunctionArgs
-} from '@remix-run/node'
-import { z } from 'zod'
-import { prisma } from '~/db.server'
-import { clerkClient, getUser, isLoggedIn } from '~/utils/auth.server'
-
-export const action = async (args: ActionFunctionArgs) => {
-  const userLoggedIn = await isLoggedIn(args)
-  if (!userLoggedIn) {
+import { ActionFunctionArgs, json } from "@remix-run/node";
+import { z } from "zod";
+import { prisma } from "~/db.server";
+import { authenticator } from "~/services/auth.server";
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request);
+  if (!user) {
     return json(
       {
-        error: 'Not logged in'
+        error: "Not logged in",
       },
       401
-    )
+    );
   }
 
-  const user = await getUser(args)
-
-  const formData = await args.request.formData()
-  console.log({ method: args.request.method })
+  const formData = await request.formData();
+  console.log({ method: request.method });
 
   if (
-    args.request.method === 'PUT' &&
-    formData.get('_action')?.toString() === 'updateFriendRequest'
+    request.method === "PUT" &&
+    formData.get("_action")?.toString() === "updateFriendRequest"
   ) {
-    console.log('updateFriendRequest')
+    console.log("updateFriendRequest");
 
     const { friendRequestId, value } = z
       .object({
         friendRequestId: z.string(),
         _action: z.string(),
-        value: z.literal('accept').or(z.literal('decline'))
+        value: z.literal("accept").or(z.literal("decline")),
       })
-      .parse(Object.fromEntries(formData))
+      .parse(Object.fromEntries(formData));
 
     const friendRequestToUpdate = await prisma.userFriendRequest.findUnique({
       where: {
-        id: friendRequestId
-      }
-    })
+        id: friendRequestId,
+      },
+    });
 
     if (!friendRequestToUpdate) {
       return json(
         {
-          message: 'Friend Request not found'
+          message: "Friend Request not found",
         },
         400
-      )
+      );
     }
 
-    if (value === 'accept') {
+    if (value === "accept") {
       await prisma.userFriendRequest.update({
         where: {
-          id: friendRequestId
+          id: friendRequestId,
         },
         data: {
-          status: 'ACCEPTED'
-        }
-      })
+          status: "ACCEPTED",
+        },
+      });
 
       await prisma.userFriends.create({
         data: {
           friendIdFrom: friendRequestToUpdate.friendRequestFrom,
-          friendIdTo: user.userId
-        }
-      })
+          friendIdTo: user.id,
+        },
+      });
     } else {
       await prisma.userFriendRequest.update({
         where: {
-          id: friendRequestId
+          id: friendRequestId,
         },
         data: {
-          status: 'DECLINED'
-        }
-      })
+          status: "DECLINED",
+        },
+      });
     }
 
     return {
-      message: 'Friend requested updated'
-    }
+      message: "Friend requested updated",
+    };
   }
 
   const data = z
     .object({
-      friendIdTo: z.string()
+      friendIdTo: z.string(),
     })
-    .parse(Object.fromEntries(formData))
+    .parse(Object.fromEntries(formData));
 
-  //TODO: check userId exists with clerkClient
   await prisma.userFriendRequest.create({
     data: {
-      friendRequestFrom: user.userId,
+      friendRequestFrom: user.id,
       friendRequestTo: data.friendIdTo,
-      status: 'PENDING'
-    }
-  })
+      status: "PENDING",
+    },
+  });
 
   return {
-    message: 'Friend Request Sent'
-  }
-}
+    message: "Friend Request Sent",
+  };
+};

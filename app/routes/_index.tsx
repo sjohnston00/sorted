@@ -1,4 +1,3 @@
-import { useUser } from "@clerk/remix";
 import { Habit, MarkedHabit } from "@prisma/client";
 import {
   ActionFunctionArgs,
@@ -14,8 +13,6 @@ import FriendsRow from "~/components/FriendsRow";
 import ScrollingCalendar from "~/components/ScrollingCalendar";
 import { prisma } from "~/db.server";
 import { RootLoaderData } from "~/root";
-import { getClerkUser } from "~/utils/index.server";
-import { getUser } from "~/utils/auth.server";
 import {
   CHILDREN_FEATURE_FLAGS,
   FEATURE_FLAGS,
@@ -37,6 +34,8 @@ import {
   MarkedHabitSchemas,
   URLSearchParamsSchemas,
 } from "~/utils/schemas.server";
+import { authenticator } from "~/services/auth.server";
+import { getUserById } from "~/utils/users/queries.server";
 
 type LoaderData = {
   markedHabits: (MarkedHabit & {
@@ -47,28 +46,24 @@ type LoaderData = {
 };
 
 export type IndexLoaderData = typeof loader;
-export const loader = async (args: LoaderFunctionArgs) => {
-  let now = Date.now();
-
-  const { userId } = await getUser(args, "/sign-in");
-
-  console.log({
-    timeToGetUser: Date.now() - now,
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
   });
 
-  const url = new URL(args.request.url);
-  const { friend } = URLSearchParamsSchemas.friend(
+  const url = new URL(request.url);
+  const { friend: friendId } = URLSearchParamsSchemas.friend(
     Object.fromEntries(url.searchParams)
   );
 
-  if (friend) {
-    const friendData = await getClerkUser(friend);
+  if (friendId) {
+    const friendData = await getUserById(friendId);
     if (!friendData) {
       throw redirect("/");
     }
 
     const userFriend = await UserFriendQueries.getUserFriend(
-      userId,
+      user.id,
       friendData.id
     ).catch(() => {
       console.log("users are not friends");
@@ -76,7 +71,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     });
 
     const userFriendId =
-      userFriend.friendIdFrom === userId
+      userFriend.friendIdFrom === user.id
         ? userFriend.friendIdTo
         : userFriend.friendIdFrom;
 
@@ -93,7 +88,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   }
 
   const userFeatureFlags = await UserFeatureFlagQueries.getUsersFeatureFlags(
-    userId
+    user.id
   );
   const showPrivateHabits = getFeatureFlagEnabledWithDefaultValue({
     featureFlagId: FEATURE_FLAGS.VIEW_PRIVATE_HABITS_BY_DEFAULT,
@@ -101,39 +96,29 @@ export const loader = async (args: LoaderFunctionArgs) => {
     defaultValue: false,
   });
 
-  now = Date.now();
-
   const markedHabits = await (showPrivateHabits
-    ? MarkedHabitQueries.getUserAllMarkedHabits(userId)
-    : MarkedHabitQueries.getUserPublicMarkedHabits(userId));
-
-  console.log({
-    timeToMarkedHabits: Date.now() - now,
-  });
-
-  now = Date.now();
+    ? MarkedHabitQueries.getUserAllMarkedHabits(user.id)
+    : MarkedHabitQueries.getUserPublicMarkedHabits(user.id));
 
   const habits = await (showPrivateHabits
-    ? HabitQueries.getUserAllHabits(userId)
-    : HabitQueries.getUserPublicHabits(userId));
-
-  console.log({
-    timeToHabits: Date.now() - now,
-  });
+    ? HabitQueries.getUserAllHabits(user.id)
+    : HabitQueries.getUserPublicHabits(user.id));
 
   return json({ markedHabits, habits, isLoadingFriendsHabits: false });
 };
 
-export const action = async (args: ActionFunctionArgs) => {
-  const { userId } = await getUser(args);
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
 
-  const formData = await args.request.formData();
+  const formData = await request.formData();
   if (formData.get("_action") === FORM_ACTIONS.MARK_DATE) {
     const { date, habitId } = MarkedHabitSchemas.addMarkedHabit(formData);
     await prisma.markedHabit.create({
       data: {
         date: new Date(`${date}T${format(new Date(), "HH:mm")}`),
-        userId,
+        userId: user.id,
         habitId,
       },
     });
@@ -158,7 +143,7 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  const { isLoaded, isSignedIn } = useUser();
+  // const { isLoaded, isSignedIn } = useUser();
   const { markedHabits, habits, isLoadingFriendsHabits } =
     useLoaderData<typeof loader>();
   const loggedInUser = useRouteLoaderData<RootLoaderData>("root");
@@ -205,9 +190,9 @@ export default function Index() {
   //   )?.value || SCROLLING_CALENDAR_MONTHS_NEXT_DEFAULT
   // );
 
-  if (!isLoaded || !isSignedIn) {
-    return null;
-  }
+  // if (!isLoaded || !isSignedIn) {
+  //   return null;
+  // }
 
   return (
     <div>

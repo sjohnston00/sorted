@@ -1,8 +1,3 @@
-# Remix app with Clerk Auth
+# \_sorted
 
-# TODO
-
-[x] Move into a docker container and deploy to [railway](https://railway.app/)
-
-Currently migration to Vite
-https://remix.run/docs/en/main/guides/vite#migrating-from-remix-app-server
+A web app for tracking habits

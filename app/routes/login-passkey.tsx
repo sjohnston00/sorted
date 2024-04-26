@@ -1,43 +1,34 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Form,
-  Link,
   MetaFunction,
   useActionData,
   useLoaderData,
   useNavigation,
 } from "@remix-run/react";
-import { z } from "zod";
 import Button from "~/components/Button";
 import ErrorAlert from "~/components/ErrorAlert";
 import Input from "~/components/Input";
-import Spinner from "~/components/icons/Spinner";
-import { isLoggedIn } from "~/utils/auth.server";
 import { authenticator, webAuthnStrategy } from "~/services/auth.server";
 import { sessionStorage } from "~/services/session.server";
 // import { handleFormSubmit } from "remix-auth-webauthn";
 import LinkButton from "~/components/LinkButton";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  const user = await authenticator.isAuthenticated(args.request);
-  return webAuthnStrategy.generateOptions(args.request, sessionStorage, user);
-
-  // const loggedIn = await isLoggedIn(args);
-  // if (loggedIn) {
-  //   throw redirect("/");
-  // }
-  // return null;
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    successRedirect: "/",
+  });
+  return webAuthnStrategy.generateOptions(request, sessionStorage, user);
 };
 
-export const action = async (
-  args: ActionFunctionArgs
-): Promise<{ error: string | null }> => {
+export const action = async ({
+  request,
+}: ActionFunctionArgs): Promise<{ error: string | null }> => {
+  await authenticator.isAuthenticated(request, {
+    successRedirect: "/",
+  });
   try {
-    await authenticator.authenticate("webauthn", args.request, {
+    await authenticator.authenticate("webauthn", request, {
       successRedirect: "/",
     });
     return { error: null };

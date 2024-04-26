@@ -1,42 +1,42 @@
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { ChildrenFeatureFlag, FeatureFlag } from "@prisma/client";
 import type { LoaderFunctionArgs, SerializeFrom } from "@remix-run/node";
-import React from "react";
-import { UserProfile, useClerk } from "@clerk/remix";
-import Button from "~/components/Button";
 import {
+  Form,
   useFetcher,
   useLoaderData,
   useRouteLoaderData,
   useSubmit,
 } from "@remix-run/react";
-import Input from "~/components/Input";
-import { loader as searchUsersLoader } from "~/routes/api.users";
+import React from "react";
 import { z } from "zod";
-import Spinner from "~/components/icons/Spinner";
-import { clerkClient, getUser } from "~/utils/auth.server";
-import { prisma } from "~/db.server";
-import {
-  getClerkUsersByIDs,
-  getUsersFriendRequests,
-} from "~/utils/index.server";
-import { RootLoaderData } from "~/root";
+import Button from "~/components/Button";
+import Input from "~/components/Input";
 import Switch from "~/components/Switch";
-import { ChildrenFeatureFlag, FeatureFlag } from "@prisma/client";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import Spinner from "~/components/icons/Spinner";
+import { prisma } from "~/db.server";
+import { RootLoaderData } from "~/root";
+import { loader as searchUsersLoader } from "~/routes/api.users";
+import { authenticator } from "~/services/auth.server";
+import { getUsersFriendRequests } from "~/utils/friendRequests/queries.server";
+import { getUsersByIDs } from "~/utils/users/queries.server";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  const user = await getUser(args);
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
 
   const { myReceivedFriendRequests, mySentFriendRequests, friendRequests } =
-    await getUsersFriendRequests(user);
+    await getUsersFriendRequests(user.id);
 
   const friends = await prisma.userFriends.findMany({
     where: {
       OR: [
         {
-          friendIdFrom: user.userId,
+          friendIdFrom: user.id,
         },
         {
-          friendIdTo: user.userId,
+          friendIdTo: user.id,
         },
       ],
     },
@@ -49,7 +49,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     ...friends.map((f) => f.friendIdTo),
   ]);
 
-  const users = await getClerkUsersByIDs([...userIDs]);
+  const users = await getUsersByIDs([...userIDs]);
 
   const featureFlags = await prisma.featureFlag.findMany({
     where: {
@@ -68,6 +68,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   });
 
   return {
+    user,
     friendRequests,
     myReceivedFriendRequests,
     mySentFriendRequests,
@@ -81,20 +82,13 @@ export const loader = async (args: LoaderFunctionArgs) => {
 };
 
 export default function Profile() {
-  const { signOut } = useClerk();
   return (
     <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 my-8">
       <h1 className="text-2xl tracking-tight font-bold">Profile</h1>
       <div className="mt-4">
-        <Button
-          onClick={() =>
-            signOut(() => {
-              window.location.pathname = "/";
-            })
-          }
-        >
-          Logout
-        </Button>
+        <Form method="POST" action="/logout">
+          <Button>Logout</Button>
+        </Form>
 
         <div className="my-8">
           <Friends />
@@ -108,25 +102,14 @@ export default function Profile() {
         <div className="my-8">
           <FeatureFlags />
         </div>
-        <UserProfile
-          appearance={{
-            elements: {
-              card: {
-                margin: 0,
-                marginTop: "2rem",
-              },
-            },
-          }}
-        />
       </div>
     </div>
   );
 }
 
 function Friends() {
-  const { friends } = useLoaderData<typeof loader>();
+  const { friends, user } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
-  const { user } = useClerk();
   return (
     <>
       <h1 className="text-xl font-bold tracking-tight mb-2">Friends</h1>
@@ -134,7 +117,7 @@ function Friends() {
       <div className="flex flex-col gap-2 mt-4">
         {friends.length > 0 ? (
           friends.map((f) => {
-            const friend = f.friendIdFrom === user?.id ? f.userTo : f.userFrom;
+            const friend = f.friendIdFrom === user.id ? f.userTo : f.userFrom;
             return (
               <div
                 key={f.id}
@@ -142,15 +125,12 @@ function Friends() {
               >
                 <div className="flex gap-2 items-center">
                   <img
-                    src={friend?.imageUrl}
+                    // src={friend?.imageUrl}
                     alt="friend request user profile image"
                     className="rounded-full h-10 w-10 md:h-12 md:w-12"
                   />
                   <div className="flex flex-col  text-sm tracking-wide">
                     <span>{friend?.username}</span>
-                    <span className="text-xs text-gray-400">
-                      {friend?.firstName} {friend?.lastName}
-                    </span>
                   </div>
                 </div>
                 <fetcher.Form
@@ -206,15 +186,12 @@ function ReceivedFriendRequests() {
             >
               <div className="flex gap-2 items-center">
                 <img
-                  src={f.user?.imageUrl}
+                  // src={f.user?.imageUrl}
                   alt="friend request user profile image"
                   className="rounded-full h-10 w-10 md:h-12 md:w-12"
                 />
                 <div className="flex flex-col  text-sm tracking-wide">
                   <span>{f.user?.username}</span>
-                  <span className="text-xs text-gray-400">
-                    {f.user?.firstName} {f.user?.lastName}
-                  </span>
                 </div>
               </div>
               <fetcher.Form
@@ -272,8 +249,8 @@ function isErrorObj(data: unknown): data is { error: string } {
 }
 
 function SearchUsers() {
+  const { user } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<typeof searchUsersLoader>();
-  const { user } = useClerk();
   const isLoading = fetcher.state === "loading";
 
   if (isErrorObj(fetcher.data)) {
@@ -337,7 +314,7 @@ type UserRowProps = {
 };
 
 function UserRow({ children, user }: UserRowProps) {
-  const { user: loggedInUser } = useClerk();
+  const { user: loggedInUser } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
   //TODO: if loggedInUser has this user has a friend then don't show the add friend button
   const {

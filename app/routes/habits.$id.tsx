@@ -12,11 +12,13 @@ import Button from "~/components/Button";
 import Checkbox from "~/components/Form/Checkbox";
 import Input, { Textarea } from "~/components/Input";
 import { prisma } from "~/db.server";
-import { getUser } from "~/utils/auth.server";
+import { authenticator } from "~/services/auth.server";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  const { userId } = await getUser(args);
-  const { id } = args.params;
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+  const { id } = params;
 
   const habit = await prisma.habit.findUnique({
     where: {
@@ -30,7 +32,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
     });
   }
 
-  if (habit.userId !== userId) {
+  if (habit.userId !== user.id) {
     throw new Response("Not Authorized", {
       status: 401,
     });
@@ -43,10 +45,12 @@ export const meta: MetaFunction = (args) => {
   return [{ title: `Sorted | My Habits | ${data.habit.name}` }];
 };
 
-export const action = async (args: ActionFunctionArgs) => {
-  const { userId } = await getUser(args);
-  const { id } = args.params;
-  const formData = await args.request.formData();
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+  const { id } = params;
+  const formData = await request.formData();
 
   const { _action } = z
     .object({
@@ -67,7 +71,7 @@ export const action = async (args: ActionFunctionArgs) => {
       });
     }
 
-    if (habit.userId !== userId) {
+    if (habit.userId !== user.id) {
       throw new Response("Not Authorized", {
         status: 401,
       });
@@ -97,7 +101,7 @@ export const action = async (args: ActionFunctionArgs) => {
       });
     }
 
-    if (habit.userId !== userId) {
+    if (habit.userId !== user.id) {
       throw new Response("Not Authorized", {
         status: 401,
       });

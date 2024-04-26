@@ -11,7 +11,7 @@ import {
   startOfToday,
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import { classNames } from "~/utils/index.client";
+import { classNames } from "~/utils";
 
 let colStartClasses = [
   "",

@@ -117,14 +117,14 @@ model UserFeatureFlag {
 model User {
   id             String  @id @default(cuid())
   username       String  @unique
-  userPasswordId String  @unique
+  userPasswordId String? @unique
   email          String? @unique
   enabled        Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  password              UserPassword           @relation(fields: [userPasswordId], references: [id])
+  password              UserPassword?          @relation(fields: [userPasswordId], references: [id])
   passKeyAuthenticators PassKeyAuthenticator[]
 }
 

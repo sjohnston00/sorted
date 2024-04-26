@@ -3,11 +3,21 @@ import { installGlobals } from "@remix-run/node";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-installGlobals();
+const isDev = process.env.NODE_ENV !== "production";
+installGlobals({
+  nativeFetch: isDev,
+});
 
 export default defineConfig({
   server: {
     port: 3000,
   },
-  plugins: [remix(), tsconfigPaths()],
+  plugins: [
+    remix({
+      future: {
+        unstable_singleFetch: isDev,
+      },
+    }),
+    tsconfigPaths(),
+  ],
 });

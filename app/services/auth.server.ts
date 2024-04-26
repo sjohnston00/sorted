@@ -15,7 +15,7 @@ import {
 } from "~/utils/authenticatorQueries";
 import { User } from "@prisma/client";
 
-type AuthenticatorUser = {
+export type AuthenticatorUser = {
   username: string;
   email?: string | null;
   id: string;
@@ -40,13 +40,19 @@ const formStrategy = new FormStrategy(async ({ form }) => {
       username: data.username,
       enabled: true,
     },
+    include: {
+      password: true,
+    },
   });
 
-  if (!user) {
+  if (!user || !user.password) {
     throw "Username or password incorrect";
   }
 
-  const isPasswordCorrect = await bcrypt.compare(data.password, user.password);
+  const isPasswordCorrect = await bcrypt.compare(
+    data.password,
+    user.password.passwordHash
+  );
 
   if (!isPasswordCorrect) {
     throw "Username or password incorrect";
