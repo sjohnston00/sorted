@@ -59,6 +59,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function Profile() {
+  const { user } = useLoaderData<typeof loader>();
   return (
     <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 my-8">
       <h1 className="text-2xl tracking-tight font-bold">Profile</h1>
@@ -79,6 +80,8 @@ export default function Profile() {
         <div className="my-8">
           <FeatureFlags />
         </div>
+        <pre className="mt-8">{JSON.stringify(user, null, 2)}</pre>
+        <img src={user.avatarUrl} className="rounded-full w-8 h-8" />
       </div>
     </div>
   );

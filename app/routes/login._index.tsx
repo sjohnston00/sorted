@@ -102,6 +102,11 @@ export default function Login() {
           >
             Login with Google
           </Button> */}
+          <Form action="/login/google" method="post">
+            <Button className="btn-block mt-4 bg-white text-black">
+              Login with Google
+            </Button>
+          </Form>
           <LinkButton
             to={"/login-passkey"}
             className="btn-block mt-4 btn-secondary"

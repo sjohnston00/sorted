@@ -36,6 +36,7 @@ import {
 } from "~/utils/schemas.server";
 import { authenticator } from "~/services/auth.server";
 import { getUserById } from "~/utils/users/queries.server";
+import { requireRequestUser } from "~/utils/auth/users";
 
 type LoaderData = {
   markedHabits: (MarkedHabit & {
@@ -47,9 +48,7 @@ type LoaderData = {
 
 export type IndexLoaderData = typeof loader;
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const user = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/login",
-  });
+  const user = await requireRequestUser(request);
 
   const url = new URL(request.url);
   const { friend: friendId } = URLSearchParamsSchemas.friend(

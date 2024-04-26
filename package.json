@@ -27,6 +27,7 @@
     "react-virtualized": "github:samarai-project/react-virtualized-fixed",
     "remix-auth": "^3.6.0",
     "remix-auth-form": "^1.5.0",
+    "remix-auth-google": "^2.0.0",
     "remix-auth-webauthn": "0.1.0",
     "tailwind-merge": "^2.3.0",
     "zod": "^3.23.4"

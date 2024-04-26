@@ -14,11 +14,13 @@ import {
   getUsersAuthenticators,
 } from "~/utils/authenticatorQueries";
 import { User } from "@prisma/client";
+import { GoogleStrategy } from "remix-auth-google";
 
 export type AuthenticatorUser = {
   username: string;
   email?: string | null;
   id: string;
+  avatarUrl?: string;
 };
 
 export let authenticator = new Authenticator<AuthenticatorUser>(sessionStorage);
@@ -139,5 +141,31 @@ export const webAuthnStrategy = new WebAuthnStrategy<AuthenticatorUser>(
   }
 );
 
+export const googleStrategy = new GoogleStrategy<AuthenticatorUser>(
+  {
+    clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_OAUTH_SECRET,
+    callbackURL: "/login/google/callback",
+  },
+  async ({ profile }) => {
+    //TODO: Update prisma schema with optional string of Google ID, and require email when signing up for app,
+    //TODO: If user is signing up for first time through google, make sure that they give a username as well
+    //TODO: If the user has a photo then display that too
+    const user = await prisma.user.findFirst({
+      where: {
+        email: profile.emails[0].value,
+      },
+    });
+
+    return {
+      id: profile.id,
+      email: profile.emails[0].value,
+      username: profile.displayName,
+      avatarUrl: profile.photos[0]?.value,
+    };
+  }
+);
+
 authenticator.use(formStrategy, "form");
+authenticator.use(googleStrategy, "google");
 authenticator.use(webAuthnStrategy);
