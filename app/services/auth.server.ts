@@ -60,6 +60,15 @@ const formStrategy = new FormStrategy(async ({ form }) => {
     throw "Username or password incorrect";
   }
 
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      lastLogin: new Date(),
+    },
+  });
+
   return {
     username: user.username,
     email: user.email,
@@ -148,14 +157,26 @@ export const googleStrategy = new GoogleStrategy<AuthenticatorUser>(
     callbackURL: "/login/google/callback",
   },
   async ({ profile }) => {
-    //TODO: Update prisma schema with optional string of Google ID, and require email when signing up for app,
-    //TODO: If user is signing up for first time through google, make sure that they give a username as well
-    //TODO: If the user has a photo then display that too
     const user = await prisma.user.findFirst({
       where: {
         email: profile.emails[0].value,
       },
     });
+
+    if (user) {
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          lastLogin: new Date(),
+          avatarUrl: profile.photos[0]?.value,
+          googleId: profile.id,
+        },
+      });
+    } else {
+      //TODO: If user is signing up for first time through google, make sure that they give a username as well
+    }
 
     return {
       id: profile.id,
