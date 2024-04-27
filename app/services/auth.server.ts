@@ -37,9 +37,16 @@ const formStrategy = new FormStrategy(async ({ form }) => {
     })
     .parse(Object.fromEntries(form));
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: {
-      username: data.username,
+      OR: [
+        {
+          email: data.username,
+        },
+        {
+          username: data.password,
+        },
+      ],
       enabled: true,
     },
     include: {
@@ -157,6 +164,8 @@ export const googleStrategy = new GoogleStrategy<AuthenticatorUser>(
     callbackURL: "/login/google/callback",
   },
   async ({ profile }) => {
+    console.log({ profile });
+
     const user = await prisma.user.findFirst({
       where: {
         email: profile.emails[0].value,

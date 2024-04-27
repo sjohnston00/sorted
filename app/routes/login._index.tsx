@@ -66,7 +66,7 @@ export default function Login() {
       <Form method="POST" className="w-full">
         <fieldset disabled={isNavigating}>
           <Input
-            label="Username"
+            label="Username or Email"
             type="text"
             name="username"
             id="username"
