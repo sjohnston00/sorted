@@ -38,6 +38,10 @@ export const action = async ({
       username: z
         .string()
         .min(3, "Username must be at least 3 characters long"),
+      email: z
+        .string()
+        .email("Invalid email address")
+        .min(3, "Email must be at least 3 characters long"),
       password: z
         .string()
         .min(8, "Password must be at least 8 characters long"),
@@ -56,6 +60,18 @@ export const action = async ({
     };
   }
 
+  const foundUsersWithSameEmail = await prisma.user.count({
+    where: {
+      email: data.email,
+    },
+  });
+
+  if (foundUsersWithSameEmail > 0) {
+    return {
+      error: "Email is taken",
+    };
+  }
+
   //check password requirements
   if (data.password.length < 8) {
     return {
@@ -68,6 +84,7 @@ export const action = async ({
   const { id } = await prisma.user.create({
     data: {
       username: data.username,
+      email: data.email,
     },
     select: {
       id: true,
@@ -123,6 +140,14 @@ export default function Register() {
             type="text"
             name="username"
             id="username"
+            minLength={3}
+            required
+          />
+          <Input
+            label="Email"
+            type="email"
+            name="email"
+            id="email"
             minLength={3}
             required
           />
