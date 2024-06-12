@@ -37,6 +37,7 @@ export default function FriendsRow() {
               f.friendIdFrom === rootLoaderData.user.id ? f.userTo : f.userFrom;
             const searchParamSameFriend =
               searchParams.get("friend") === friend?.username;
+            const avatarUrl = friend?.avatarUrl;
             return (
               <Link
                 className={twMerge(
@@ -51,8 +52,7 @@ export default function FriendsRow() {
                 }}
               >
                 <img
-                  // src={friend?.imageUrl}
-                  src={""}
+                  src={avatarUrl || "/images/dummy-profile-avatar.png"}
                   alt="user profile image"
                   className={`box-content relative rounded-full w-full shadow-sm`}
                 />
