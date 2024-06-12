@@ -19,6 +19,7 @@ import { RootLoaderData } from "~/root";
 import { loader as searchUsersLoader } from "~/routes/api.users";
 import { authenticator } from "~/services/auth.server";
 import { DUMMY_AVATAR_IMAGE_URL } from "~/utils/constants";
+import { getRelativeTime } from "~/utils/dates/formatting";
 import { getUsersFriendRequests } from "~/utils/friendRequests/queries.server";
 import { getUsersFriends } from "~/utils/friends/queries.server";
 import { getUsersByIDs } from "~/utils/users/queries.server";
@@ -27,6 +28,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await authenticator.isAuthenticated(request, {
     failureRedirect: "/login",
   });
+
+  const [userDetails] = await getUsersByIDs([user.id]);
 
   const { myReceivedFriendRequests, mySentFriendRequests, friendRequests } =
     await getUsersFriendRequests(user.id);
@@ -50,7 +53,11 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   });
 
   return {
-    user,
+    user: {
+      ...user,
+      createdAt: userDetails.createdAt,
+      lastLogin: userDetails.lastLogin,
+    },
     friendRequests,
     myReceivedFriendRequests,
     mySentFriendRequests,
@@ -61,14 +68,32 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Profile() {
   const { user } = useLoaderData<typeof loader>();
+
   return (
     <div className="max-w-md px-4 mx-auto sm:px-7 md:max-w-4xl md:px-6 my-8">
       <h1 className="text-2xl tracking-tight font-bold">Profile</h1>
-      <div className="mt-4">
+      <div className="mt-6 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <img
+            src={user.avatarUrl || DUMMY_AVATAR_IMAGE_URL}
+            className="rounded-full w-14 h-14"
+            referrerPolicy="no-referrer"
+          />
+          <div className="flex flex-col text-sm tracking-wide">
+            <span>{user.username}</span>
+            <code className="text-gray-600">{user.email}</code>
+            <span className="text-gray-600">
+              Joined {getRelativeTime(user.createdAt)}
+            </span>
+          </div>
+        </div>
+
         <Form method="POST" action="/logout">
           <Button>Logout</Button>
         </Form>
+      </div>
 
+      <div className="mt-4">
         <div className="my-8">
           <Friends />
         </div>
@@ -81,8 +106,6 @@ export default function Profile() {
         <div className="my-8">
           <FeatureFlags />
         </div>
-        <pre className="mt-8">{JSON.stringify(user, null, 2)}</pre>
-        <img src={user.avatarUrl} className="rounded-full w-8 h-8" />
       </div>
     </div>
   );
@@ -109,6 +132,7 @@ function Friends() {
                     src={friend?.avatarUrl || DUMMY_AVATAR_IMAGE_URL}
                     alt="friend request user profile image"
                     className="rounded-full h-10 w-10 md:h-12 md:w-12"
+                    referrerPolicy="no-referrer"
                   />
                   <div className="flex flex-col  text-sm tracking-wide">
                     <span>{friend?.username}</span>
@@ -170,6 +194,7 @@ function ReceivedFriendRequests() {
                   src={f.user?.avatarUrl || DUMMY_AVATAR_IMAGE_URL}
                   alt="friend request user profile image"
                   className="rounded-full h-10 w-10 md:h-12 md:w-12"
+                  referrerPolicy="no-referrer"
                 />
                 <div className="flex flex-col  text-sm tracking-wide">
                   <span>{f.user?.username}</span>
@@ -326,6 +351,7 @@ function UserRow({ children, user }: UserRowProps) {
           src={user.avatarUrl || DUMMY_AVATAR_IMAGE_URL}
           alt="user profile image"
           className="rounded-full h-10 w-10 md:h-12 md:w-12"
+          referrerPolicy="no-referrer"
         />
         <div className="flex flex-col text-sm tracking-wide">
           <span>{user.username}</span>

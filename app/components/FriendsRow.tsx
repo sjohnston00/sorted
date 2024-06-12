@@ -56,6 +56,7 @@ export default function FriendsRow() {
                   src={avatarUrl || DUMMY_AVATAR_IMAGE_URL}
                   alt="user profile image"
                   className={`box-content relative rounded-full w-full shadow-sm`}
+                  referrerPolicy="no-referrer"
                 />
                 <span
                   className={`text-xs w-full text-center overflow-ellipsis font-medium text-gray-400`}

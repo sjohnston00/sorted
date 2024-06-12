@@ -80,6 +80,7 @@ const formStrategy = new FormStrategy(async ({ form }) => {
     username: user.username,
     email: user.email,
     id: user.id,
+    avatarUrl: user.avatarUrl,
   };
 });
 
@@ -184,11 +185,12 @@ export const googleStrategy = new GoogleStrategy<AuthenticatorUser>(
         },
       });
     } else {
+      throw new Error("User not found");
       //TODO: If user is signing up for first time through google, make sure that they give a username as well
     }
 
     return {
-      id: profile.id,
+      id: user.id,
       email: profile.emails[0].value,
       username: profile.displayName,
       avatarUrl: profile.photos[0]?.value,
