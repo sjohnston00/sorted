@@ -8,6 +8,7 @@ import {
 import { twMerge } from "tailwind-merge";
 import { RootLoaderData } from "~/root";
 import { IndexLoaderData } from "~/routes/_index";
+import { DUMMY_AVATAR_IMAGE_URL } from "~/utils/constants";
 
 export default function FriendsRow() {
   const rootLoaderData = useRouteLoaderData<RootLoaderData>("root");
@@ -52,7 +53,7 @@ export default function FriendsRow() {
                 }}
               >
                 <img
-                  src={avatarUrl || "/images/dummy-profile-avatar.png"}
+                  src={avatarUrl || DUMMY_AVATAR_IMAGE_URL}
                   alt="user profile image"
                   className={`box-content relative rounded-full w-full shadow-sm`}
                 />

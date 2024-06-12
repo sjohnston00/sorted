@@ -18,6 +18,7 @@ import { prisma } from "~/db.server";
 import { RootLoaderData } from "~/root";
 import { loader as searchUsersLoader } from "~/routes/api.users";
 import { authenticator } from "~/services/auth.server";
+import { DUMMY_AVATAR_IMAGE_URL } from "~/utils/constants";
 import { getUsersFriendRequests } from "~/utils/friendRequests/queries.server";
 import { getUsersFriends } from "~/utils/friends/queries.server";
 import { getUsersByIDs } from "~/utils/users/queries.server";
@@ -105,7 +106,7 @@ function Friends() {
               >
                 <div className="flex gap-2 items-center">
                   <img
-                    // src={friend?.imageUrl}
+                    src={friend?.avatarUrl || DUMMY_AVATAR_IMAGE_URL}
                     alt="friend request user profile image"
                     className="rounded-full h-10 w-10 md:h-12 md:w-12"
                   />
@@ -166,7 +167,7 @@ function ReceivedFriendRequests() {
             >
               <div className="flex gap-2 items-center">
                 <img
-                  // src={f.user?.imageUrl}
+                  src={f.user?.avatarUrl || DUMMY_AVATAR_IMAGE_URL}
                   alt="friend request user profile image"
                   className="rounded-full h-10 w-10 md:h-12 md:w-12"
                 />
@@ -322,7 +323,7 @@ function UserRow({ children, user }: UserRowProps) {
     <div className="flex gap-2 items-center justify-between px-2 py-3 rounded-lg transition dark:hover:bg-slate-700">
       <div className="flex gap-2 justify-between text-gray-300 items-center">
         <img
-          src={user.imageUrl}
+          src={user.avatarUrl || DUMMY_AVATAR_IMAGE_URL}
           alt="user profile image"
           className="rounded-full h-10 w-10 md:h-12 md:w-12"
         />
