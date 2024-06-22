@@ -1,13 +1,10 @@
+import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
+import { NavLink, useRouteLoaderData } from "@remix-run/react";
 import React from "react";
-import Trash from "./icons/Trash";
-import { Link, NavLink, useRouteLoaderData } from "@remix-run/react";
-import Chevron from "./icons/Chevron";
-import Home from "./icons/Home";
+import { RootLoaderData } from "~/root";
 import CalendarDays from "./icons/CalendarDays";
 import Squares from "./icons/Squares";
 import UserCircle from "./icons/UserCircle";
-import { RootLoaderData } from "~/root";
-import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 
 export default function BottomNavbar() {
   const rootLoaderData = useRouteLoaderData<RootLoaderData>("root");

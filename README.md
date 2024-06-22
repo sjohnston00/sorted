@@ -1,5 +1,3 @@
-# Remix app with Clerk Auth
+# \_sorted
 
-# TODO
-
-[x] Move into a docker container and deploy to [railway](https://railway.app/)
+A web app for tracking habits

@@ -1,11 +1,13 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet, useLocation, useNavigation } from "@remix-run/react";
 import LinkButton from "~/components/LinkButton";
-import { getUser } from "~/utils/auth.server";
+import { authenticator } from "~/services/auth.server";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  await getUser(args);
-  return {};
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
+  return null;
 };
 
 export default function Habits() {

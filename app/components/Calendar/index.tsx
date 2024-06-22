@@ -1,5 +1,6 @@
-import React, { Fragment, useState } from "react";
-import MarkedHabitRow from "./MarkedHabitRow";
+import { Dialog, Transition } from "@headlessui/react";
+import { Habit, MarkedHabit } from "@prisma/client";
+import { SerializeFrom } from "@remix-run/node";
 import { useFetcher, useFetchers, useSearchParams } from "@remix-run/react";
 import {
   add,
@@ -7,8 +8,6 @@ import {
   endOfMonth,
   endOfWeek,
   format,
-  getDay,
-  isEqual,
   isSameDay,
   isSameMonth,
   isToday,
@@ -17,19 +16,17 @@ import {
   startOfToday,
   startOfWeek,
 } from "date-fns";
-import { Habit, MarkedHabit } from "@prisma/client";
-import Chevron from "../icons/Chevron";
-import { classNames } from "~/utils";
-import { SerializeFrom } from "@remix-run/node";
-import HabitButton from "./HabitButton";
-import Trash from "../icons/Trash";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dialog, Transition } from "@headlessui/react";
-import Input, { Textarea } from "../Input";
-import Button from "../Button";
+import { Fragment, useState } from "react";
 import { FORM_ACTIONS } from "~/utils/constants";
-import CalendarWeekHeader from "./CalendarWeekHeader";
+import Button from "../Button";
+import Input, { Textarea } from "../Input";
+import Chevron from "../icons/Chevron";
+import Trash from "../icons/Trash";
 import CalendarDays from "./CalendarDays";
+import CalendarWeekHeader from "./CalendarWeekHeader";
+import HabitButton from "./HabitButton";
+import MarkedHabitRow from "./MarkedHabitRow";
 
 type CalendarProps = {
   markedHabits: SerializeFrom<(MarkedHabit & { habit: Habit })[]>;

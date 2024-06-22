@@ -1,5 +1,3 @@
-import { ClerkApp, ClerkErrorBoundary } from "@clerk/remix";
-import { getAuth, rootAuthLoader } from "@clerk/remix/ssr.server";
 import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import {
   Links,
@@ -10,17 +8,13 @@ import {
   isRouteErrorResponse,
   useRouteError,
 } from "@remix-run/react";
-import React, { Suspense } from "react";
-import styles from "~/styles/tailwind.css";
+import React from "react";
+import styles from "~/styles/tailwind.css?url";
 import BottomNavbar from "./components/BottomNavbar";
 import { prisma } from "./db.server";
-import { getUser } from "./utils/auth.server";
-import { getClerkUsersByIDs, getUsersFriendRequests } from "./utils";
-import { useSWEffect, LiveReload } from "@remix-pwa/sw";
-// const RemixDevTools =
-//   process.env.NODE_ENV === "development"
-//     ? React.lazy(() => import("remix-development-tools"))
-//     : undefined;
+import { authenticator } from "./services/auth.server";
+import { getUsersFriendRequests } from "./utils/friendRequests/queries.server";
+import { getUsersFriends } from "./utils/friends/queries.server";
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
   {
@@ -40,57 +34,35 @@ export const links: LinksFunction = () => [
 
 export type RootLoaderData = typeof loader;
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  const user = await getAuth(args);
-  return rootAuthLoader(args, async ({ request }) => {
-    if (!user.userId) {
-      return null;
-    }
-    const friends = await prisma.userFriends.findMany({
-      where: {
-        OR: [
-          {
-            friendIdFrom: user.userId,
-          },
-          {
-            friendIdTo: user.userId,
-          },
-        ],
-      },
-    });
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request);
+  if (!user) {
+    return null;
+  }
+  const friends = await getUsersFriends(user.id);
+  const { myReceivedFriendRequests } = await getUsersFriendRequests(user.id);
 
-    const userIDs = new Set([
-      ...friends.map((f) => f.friendIdFrom),
-      ...friends.map((f) => f.friendIdTo),
-    ]);
-
-    const users = await getClerkUsersByIDs([...userIDs]);
-    const { myReceivedFriendRequests } = await getUsersFriendRequests(user);
-
-    const userFeatureFlags = await prisma.userFeatureFlag.findMany({
-      where: {
-        userId: user.userId,
-      },
-    });
-
-    const userChildrenFeatureFlag =
-      await prisma.userChildrenFeatureFlag.findMany({
-        where: {
-          userId: user.userId,
-        },
-      });
-
-    return {
-      userFeatureFlags,
-      userChildrenFeatureFlag,
-      myReceivedFriendRequests,
-      friends: friends.map((f) => ({
-        ...f,
-        userFrom: users.find((u) => u.id === f.friendIdFrom),
-        userTo: users.find((u) => u.id === f.friendIdTo),
-      })),
-    };
+  const userFeatureFlags = await prisma.userFeatureFlag.findMany({
+    where: {
+      userId: user.id,
+    },
   });
+
+  const userChildrenFeatureFlag = await prisma.userChildrenFeatureFlag.findMany(
+    {
+      where: {
+        userId: user.id,
+      },
+    }
+  );
+
+  return {
+    user,
+    userFeatureFlags,
+    userChildrenFeatureFlag,
+    myReceivedFriendRequests,
+    friends,
+  };
 };
 
 type LayoutProps = {
@@ -98,7 +70,6 @@ type LayoutProps = {
 };
 
 function Layout({ children }: LayoutProps) {
-  useSWEffect();
   return (
     <html lang="en">
       <head>
@@ -168,7 +139,6 @@ function Layout({ children }: LayoutProps) {
         {/* <Navbar /> */}
         {children}
         <ScrollRestoration />
-        {process.env.NODE_ENV === "development" ? <LiveReload /> : null}
         {/* {RemixDevTools && (
           <Suspense>
             <RemixDevTools />
@@ -189,14 +159,12 @@ function App() {
   );
 }
 
-function RootErrorBoundary() {
+export function ErrorBoundary() {
   const error = useRouteError();
-  console.log({ error });
-
   let message = "Unknown Error";
   if (isRouteErrorResponse(error)) {
-    if (process.env.NODE_ENV === "development" && error.error) {
-      message = error.error.stack || error.error.message;
+    if (process.env.NODE_ENV === "development") {
+      message = JSON.stringify(error, null, 2);
     } else {
       message = error.data;
     }
@@ -213,6 +181,4 @@ function RootErrorBoundary() {
   );
 }
 
-export default ClerkApp(App);
-
-export const ErrorBoundary = ClerkErrorBoundary(RootErrorBoundary);
+export default App;

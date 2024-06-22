@@ -14,11 +14,13 @@ import {
   getUsersAuthenticators,
 } from "~/utils/authenticatorQueries";
 import { User } from "@prisma/client";
+import { GoogleStrategy } from "remix-auth-google";
 
-type AuthenticatorUser = {
+export type AuthenticatorUser = {
   username: string;
   email?: string | null;
   id: string;
+  avatarUrl?: string;
 };
 
 export let authenticator = new Authenticator<AuthenticatorUser>(sessionStorage);
@@ -35,27 +37,50 @@ const formStrategy = new FormStrategy(async ({ form }) => {
     })
     .parse(Object.fromEntries(form));
 
-  const user = await prisma.user.findUnique({
+  const user = await prisma.user.findFirst({
     where: {
-      username: data.username,
+      OR: [
+        {
+          email: data.username,
+        },
+        {
+          username: data.password,
+        },
+      ],
       enabled: true,
+    },
+    include: {
+      password: true,
     },
   });
 
-  if (!user) {
+  if (!user || !user.password) {
     throw "Username or password incorrect";
   }
 
-  const isPasswordCorrect = await bcrypt.compare(data.password, user.password);
+  const isPasswordCorrect = await bcrypt.compare(
+    data.password,
+    user.password.passwordHash
+  );
 
   if (!isPasswordCorrect) {
     throw "Username or password incorrect";
   }
 
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      lastLogin: new Date(),
+    },
+  });
+
   return {
     username: user.username,
     email: user.email,
     id: user.id,
+    avatarUrl: user.avatarUrl,
   };
 });
 
@@ -133,5 +158,46 @@ export const webAuthnStrategy = new WebAuthnStrategy<AuthenticatorUser>(
   }
 );
 
+export const googleStrategy = new GoogleStrategy<AuthenticatorUser>(
+  {
+    clientID: process.env.GOOGLE_OAUTH_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_OAUTH_SECRET,
+    callbackURL: "/login/google/callback",
+  },
+  async ({ profile }) => {
+    console.log({ profile });
+
+    const user = await prisma.user.findFirst({
+      where: {
+        email: profile.emails[0].value,
+      },
+    });
+
+    if (user) {
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          lastLogin: new Date(),
+          avatarUrl: profile.photos[0]?.value,
+          googleId: profile.id,
+        },
+      });
+    } else {
+      throw new Error("User not found");
+      //TODO: If user is signing up for first time through google, make sure that they give a username as well
+    }
+
+    return {
+      id: user.id,
+      email: profile.emails[0].value,
+      username: profile.displayName,
+      avatarUrl: profile.photos[0]?.value,
+    };
+  }
+);
+
 authenticator.use(formStrategy, "form");
+authenticator.use(googleStrategy, "google");
 authenticator.use(webAuthnStrategy);

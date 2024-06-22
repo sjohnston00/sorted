@@ -1,12 +1,18 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "postcss.config.mjs",
+    "node_modules/@remix-run/react/future/single-fetch.d.ts"
+  ],
   "compilerOptions": {
-    "module": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "isolatedModules": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
     "resolveJsonModule": true,
     "target": "ES2019",
     "strict": true,
@@ -16,6 +22,7 @@
     "paths": {
       "~/*": ["./app/*"]
     },
+    "skipLibCheck": true,
 
     // Remix takes care of building everything in `remix build`.
     "noEmit": true

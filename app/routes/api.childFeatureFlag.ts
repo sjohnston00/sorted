@@ -1,10 +1,11 @@
 import { ActionFunctionArgs, json } from "@remix-run/node";
 import { prisma } from "~/db.server";
-import { getUser, isLoggedIn } from "~/utils/auth.server";
+import { authenticator } from "~/services/auth.server";
+import { isLoggedIn } from "~/utils/auth.server";
 
-export const action = async (args: ActionFunctionArgs) => {
-  const userLoggedIn = await isLoggedIn(args);
-  if (!userLoggedIn) {
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request);
+  if (!user) {
     return json(
       {
         error: "Not logged in",
@@ -13,7 +14,7 @@ export const action = async (args: ActionFunctionArgs) => {
     );
   }
 
-  const formData = await args.request.formData();
+  const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
   const childFeatureFlagId = Number(data.childFeatureFlagId);
@@ -35,21 +36,19 @@ export const action = async (args: ActionFunctionArgs) => {
     );
   }
 
-  const user = await getUser(args);
-
   if (_action === "updateUserChildFeatureFlag") {
     const userChildFeatureFlag = await prisma.userChildrenFeatureFlag.findFirst(
       {
         where: {
           childrenFeatureFlagId: childFeatureFlagId,
-          userId: user.userId,
+          userId: user.id,
         },
       }
     );
     if (!userChildFeatureFlag) {
       await prisma.userChildrenFeatureFlag.create({
         data: {
-          userId: user.userId,
+          userId: user.id,
           value,
           childrenFeatureFlagId: childFeatureFlagId,
         },

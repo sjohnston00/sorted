@@ -19,14 +19,17 @@ import {
 import { z } from "zod";
 import LinkButton from "~/components/LinkButton";
 import { prisma } from "~/db.server";
-import { getClerkUsersByIDs } from "~/utils";
+import { authenticator } from "~/services/auth.server";
 import { getUser } from "~/utils/auth.server";
 import { UserFeatureFlagQueries } from "~/utils/queries.server";
+import { getUserById } from "~/utils/users/queries.server";
 
-export const loader = async (args: LoaderFunctionArgs) => {
-  const { userId } = await getUser(args);
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const user = await authenticator.isAuthenticated(request, {
+    failureRedirect: "/login",
+  });
 
-  const url = new URL(args.request.url);
+  const url = new URL(request.url);
 
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
@@ -94,7 +97,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
   const parsedURL = urlSearchSchema.parse(Object.fromEntries(url.searchParams));
 
   const showPrivateHabits =
-    await UserFeatureFlagQueries.showPrivateHabitsEnabled(userId);
+    await UserFeatureFlagQueries.showPrivateHabitsEnabled(user.id);
 
   let beginDate: Date | undefined;
   let endDate: Date | undefined;
@@ -124,7 +127,7 @@ export const loader = async (args: LoaderFunctionArgs) => {
       habitId: true,
     },
     where: {
-      userId,
+      userId: user.id,
       date: {
         gte: beginDate,
         lte: endDate,
@@ -176,8 +179,9 @@ export const loader = async (args: LoaderFunctionArgs) => {
     habit: habits.find((habit) => habit.id === mostTrackedHabitAmount?.habitId),
   };
 
-  const [user] = await getClerkUsersByIDs([userId]);
-  const accountCreated = new Date(user.createdAt);
+  const dbUser = await getUserById(user.id);
+
+  const accountCreated = new Date(dbUser!.createdAt);
 
   return {
     accountCreated,
